@@ -2,11 +2,11 @@
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.134.0/containers/cpp
 
 {
-    "name": "px4-EVE",
-    "image": "px4io/px4-dev-simulation-jammy",
-    "runArgs": [ "--privileged" ],
-    "containerUser": "user",
-    "overrideCommand": true
+    "name": "PX4-EVE",
+    "image": "px4io/px4-dev-nuttx-jammy:latest", //jammy required for Ubuntu 22.04
+    "remoteUser": "user",
+    "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderBasename},type=bind",
+    "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}"
 }
 
 
