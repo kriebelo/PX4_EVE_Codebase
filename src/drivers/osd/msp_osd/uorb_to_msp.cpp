@@ -98,7 +98,7 @@ msp_name_t construct_display_message(const vehicle_status_s &vehicle_status,
 		case vehicle_status_s::NAVIGATION_STATE_POSCTL:   custom_mode_name = "POSCTL"; break;
 		case vehicle_status_s::NAVIGATION_STATE_AUTO_RTL: custom_mode_name = "RTL"; break;
 		case vehicle_status_s::NAVIGATION_STATE_ACRO:     custom_mode_name = "ACRO"; break;
-		default:                                          custom_mode_name = "PX4"; break;
+		default:                                          custom_mode_name = "EVE"; break;
 		}
 		display.set(MessageDisplayType::FLIGHT_MODE, custom_mode_name);
 			}
@@ -163,7 +163,7 @@ msp_fc_variant_t construct_FC_VARIANT()
 	// initialize result
 	msp_fc_variant_t variant{};
 
-	memcpy(variant.flightControlIdentifier, "BTFL", sizeof(variant.flightControlIdentifier));
+	memcpy(variant.flightControlIdentifier, "PX4", sizeof(variant.flightControlIdentifier));
 	return variant;
 }
 
@@ -207,6 +207,7 @@ msp_status_BF_t construct_STATUS(const vehicle_status_s &vehicle_status)
 	return status_BF;
 }
 
+// construct an MSP_ANALOG struct, not used for modern OSDs
 msp_analog_t construct_ANALOG(const battery_status_s &battery_status, const input_rc_s &input_rc)
 {
 	// initialize result
@@ -231,6 +232,7 @@ msp_rendor_rssi_t construct_rendor_RSSI(const input_rc_s &input_rc)
 	return rssi;
 }
 
+// old style battery state for display in the bottom right corner (not used for modern OSDs)
 msp_battery_state_t construct_BATTERY_STATE(const battery_status_s &battery_status)
 {
 	// initialize result
@@ -284,7 +286,37 @@ msp_rendor_battery_state_t construct_rendor_BATTERY_STATE(const battery_status_s
 	return battery_state;
 }
 
+msp_rendor_battery_state_t construct_rendor_BATTERY2_STATE(const battery_status_s &battery_status2)
+{
+        // initialize result
+        msp_rendor_battery_state_t battery_state = {0};
 
+        battery_state.subCommand = MSP_DP_WRITE_STRING; // 3 write string. fixed
+
+        // Wir setzen die zweite Batterie direkt unter die Erste (Y von 0x04 auf 0x05 erhöht)
+        battery_state.screenYPosition = 0x05;
+        battery_state.screenXPosition = 0x02;
+        battery_state.iconAttrs = 0x00;
+
+        float single_cell_v = battery_status2.voltage_v / battery_status2.cell_count;
+
+        // Gleiche Icon-Logik wie bei Batterie 1
+        if (single_cell_v > 4.0f) {
+                battery_state.iconIndex = 0x91; // Full battery Icon
+        } else if ((single_cell_v <= 4.0f) && (single_cell_v > 3.5f)) {
+                battery_state.iconIndex = 0x93; // Half battery Icon
+        } else if ((single_cell_v <= 3.5f) && (single_cell_v > 3.2f)) {
+                battery_state.iconIndex = 0x95; // Empty battery Icon
+        } else {
+                battery_state.iconIndex = 0x96; // Dead battery Icon
+        }
+
+        // Wir schreiben ein "B2:" davor, damit man sie im OSD unterscheiden kann
+        snprintf(&battery_state.str[0], sizeof(battery_state.str), "B2:%.1fV", (double)single_cell_v);
+        return battery_state;
+}
+
+// construct an MSP_RAW_GPS struct from the vehicle_gps_position topic, and airspeed_validated for ground speed (if available)
 msp_raw_gps_t construct_RAW_GPS(const sensor_gps_s &vehicle_gps_position,
 				const airspeed_validated_s &airspeed_validated)
 {

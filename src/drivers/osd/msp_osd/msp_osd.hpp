@@ -155,6 +155,7 @@ private:
 	// subscriptions to desired vehicle display information
 	uORB::Subscription _airspeed_validated_sub{ORB_ID(airspeed_validated)};
 	uORB::Subscription _battery_status_sub{ORB_ID(battery_status)};
+	uORB::Subscription _battery_status_sub_2{ORB_ID(battery_status), 1};
 	uORB::Subscription _home_position_sub{ORB_ID(home_position)};
 	uORB::Subscription _input_rc_sub{ORB_ID(input_rc)};
 	uORB::Subscription _log_message_sub{ORB_ID(log_message)};

@@ -154,6 +154,7 @@ bool MspOsd::init()
 	return true;
 }
 
+// not used for modern OSDs, but we can use it to send some information that doesn't have a dedicated MSP struct (e.g. RSSI as percentage)
 void MspOsd::SendConfig()
 {
 	msp_osd_config_t msp_osd_config;
@@ -359,14 +360,23 @@ void MspOsd::Run()
 
 	// MSP_BATTERY_STATE
 	{
-		battery_status_s battery_status{};
-		_battery_status_sub.copy(&battery_status);
+		// --- Hauptbatterie (Instanz 0) ---
+                battery_status_s battery_status{};
+                _battery_status_sub.copy(&battery_status);
 
-		const auto msg_original = msp_osd::construct_BATTERY_STATE(battery_status);
-		this->Send(MSP_BATTERY_STATE, &msg_original);
+                const auto msg_original = msp_osd::construct_BATTERY_STATE(battery_status);
+                this->Send(MSP_BATTERY_STATE, &msg_original);
 
-		const auto msg = msp_osd::construct_rendor_BATTERY_STATE(battery_status);
-		this->Send(MSP_CMD_DISPLAYPORT, &msg, sizeof(msp_rendor_battery_state_t));
+                const auto msg1 = msp_osd::construct_rendor_BATTERY_STATE(battery_status);
+                this->Send(MSP_CMD_DISPLAYPORT, &msg1, sizeof(msp_rendor_battery_state_t));
+
+                // --- Zweite Batterie (Instanz 1) ---
+                battery_status_s battery_status_2{};
+                // Hier ziehen wir die frischen Daten aus deiner neuen Subscription!
+                _battery_status_sub_2.copy(&battery_status_2);
+
+                const auto msg2 = msp_osd::construct_rendor_BATTERY2_STATE(battery_status_2);
+                this->Send(MSP_CMD_DISPLAYPORT, &msg2, sizeof(msp_rendor_battery_state_t));
 
 	}
 

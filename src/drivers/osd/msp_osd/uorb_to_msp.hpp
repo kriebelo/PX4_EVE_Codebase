@@ -90,6 +90,7 @@ msp_rendor_rssi_t construct_rendor_RSSI(const input_rc_s &input_rc);
 msp_battery_state_t construct_BATTERY_STATE(const battery_status_s &battery_status);
 
 msp_rendor_battery_state_t construct_rendor_BATTERY_STATE(const battery_status_s &battery_status);
+msp_rendor_battery_state_t construct_rendor_BATTERY2_STATE(const battery_status_s &battery_status2);
 
 // construct an MSP_RAW_GPS struct
 msp_raw_gps_t construct_RAW_GPS(const sensor_gps_s &vehicle_gps_position,
