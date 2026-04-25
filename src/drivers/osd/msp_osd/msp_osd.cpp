@@ -348,15 +348,15 @@ void MspOsd::Run()
 		this->Send(MSP_FC_VARIANT, &msg, sizeof(msg));
 	}
 
-	// MSP_ANALOG
-	{
-		if (enabled(SymbolIndex::RSSI_VALUE)) {
-			input_rc_s input_rc{};
-			_input_rc_sub.copy(&input_rc);
-			const auto msg = msp_osd::construct_rendor_RSSI(input_rc);
-			this->Send(MSP_CMD_DISPLAYPORT, &msg, sizeof(msp_rendor_rssi_t));
-		}
-	}
+	// // MSP_ANALOG
+	// {
+	// 	if (enabled(SymbolIndex::RSSI_VALUE)) {
+	// 		input_rc_s input_rc{};
+	// 		_input_rc_sub.copy(&input_rc);
+	// 		const auto msg = msp_osd::construct_rendor_RSSI(input_rc);
+	// 		this->Send(MSP_CMD_DISPLAYPORT, &msg, sizeof(msp_rendor_rssi_t));
+	// 	}
+	// }
 
 	// MSP_BATTERY_STATE
 	{
@@ -364,8 +364,8 @@ void MspOsd::Run()
                 battery_status_s battery_status{};
                 _battery_status_sub.copy(&battery_status);
 
-                const auto msg_original = msp_osd::construct_BATTERY_STATE(battery_status);
-                this->Send(MSP_BATTERY_STATE, &msg_original);
+                // const auto msg_original = msp_osd::construct_BATTERY_STATE(battery_status);
+                // this->Send(MSP_BATTERY_STATE, &msg_original);
 
                 const auto msg1 = msp_osd::construct_rendor_BATTERY_STATE(battery_status);
                 this->Send(MSP_CMD_DISPLAYPORT, &msg1, sizeof(msp_rendor_battery_state_t));
@@ -401,20 +401,20 @@ void MspOsd::Run()
 		}
 	}
 
-	// MSP_COMP_GPS
-	{
-		home_position_s home_position{};
-		_home_position_sub.copy(&home_position);
+	// // MSP_COMP_GPS
+	// {
+	// 	home_position_s home_position{};
+	// 	_home_position_sub.copy(&home_position);
 
-		vehicle_global_position_s vehicle_global_position{};
-		_vehicle_global_position_sub.copy(&vehicle_global_position);
+	// 	vehicle_global_position_s vehicle_global_position{};
+	// 	_vehicle_global_position_sub.copy(&vehicle_global_position);
 
-		if (enabled(SymbolIndex::HOME_DIST)) {
-			const auto msg =  msp_osd::construct_rendor_distanceToHome(home_position, vehicle_global_position);
+	// 	if (enabled(SymbolIndex::HOME_DIST)) {
+	// 		const auto msg =  msp_osd::construct_rendor_distanceToHome(home_position, vehicle_global_position);
 
-			this->Send(MSP_CMD_DISPLAYPORT, &msg, sizeof(msp_rendor_distanceToHome_t));
-		}
-	}
+	// 		this->Send(MSP_CMD_DISPLAYPORT, &msg, sizeof(msp_rendor_distanceToHome_t));
+	// 	}
+	// }
 
 	// MSP_ATTITUDE
 	{
@@ -447,28 +447,100 @@ void MspOsd::Run()
 		}
 	}
 
-	// MSP_MOTOR_TELEMETRY
-	{
+	// MSP_AIRSPEED
+        {
+                airspeed_validated_s airspeed_validated{};
 
-	}
+                if (_airspeed_validated_sub.copy(&airspeed_validated)) {
+                        const auto msg = msp_osd::construct_rendor_AIRSPEED(airspeed_validated);
+                        this->Send(MSP_CMD_DISPLAYPORT, &msg, sizeof(msp_rendor_airspeed_t));
+                }
+        }
 
-	// MSP_RC
-	{
-		if (_param_osd_rc_stick.get() == 1) {
-			vehicle_status_s vehicle_status{};
-			_vehicle_status_sub.copy(&vehicle_status);
+	// // MSP_MOTOR_TELEMETRY
+	// {
 
-			if (vehicle_status.arming_state != vehicle_status_s::ARMING_STATE_ARMED) {
-				input_rc_s input_rc{};
-				_input_rc_sub.copy(&input_rc);
-				const auto msg = msp_osd::construct_MSP_RC(input_rc);
-				this->Send(MSP_RC, &msg, sizeof(msp_rc_t));
-			}
-		}
+	// }
 
-	}
+	// // MSP_RC
+	// {
+	// 	if (_param_osd_rc_stick.get() == 1) {
+	// 		vehicle_status_s vehicle_status{};
+	// 		_vehicle_status_sub.copy(&vehicle_status);
 
-	// MSP_STATUS
+	// 		if (vehicle_status.arming_state != vehicle_status_s::ARMING_STATE_ARMED) {
+	// 			input_rc_s input_rc{};
+	// 			_input_rc_sub.copy(&input_rc);
+	// 			const auto msg = msp_osd::construct_MSP_RC(input_rc);
+	// 			this->Send(MSP_RC, &msg, sizeof(msp_rc_t));
+	// 		}
+	// 	}
+
+	// }
+
+
+// 1. Distance to Home (mit Pfeil)
+        {
+                home_position_s home{};
+                vehicle_global_position_s g_pos{};
+                vehicle_attitude_s att{};
+
+                _home_position_sub.copy(&home);
+                _vehicle_global_position_sub.copy(&g_pos);
+                _vehicle_attitude_sub.copy(&att);
+
+                const auto msg = msp_osd::construct_rendor_distanceToHome(home, g_pos, att);
+                this->Send(MSP_CMD_DISPLAYPORT, &msg, sizeof(msp_rendor_distanceToHome_t));
+        }
+
+        // 2. Batterie-Daten (mAh Used, Ampere, Effizienz)
+        {
+		battery_status_s battery_status{};
+		_battery_status_sub.copy(&battery_status);
+
+                battery_status_s battery_status_2{};
+                _battery_status_sub_2.copy(&battery_status_2);
+
+                const auto msg_mah = msp_osd::construct_rendor_mAh_used(battery_status);
+                this->Send(MSP_CMD_DISPLAYPORT, &msg_mah, sizeof(msp_rendor_mAh_used_t));
+
+		const auto msg_mah2 = msp_osd::construct_rendor_mAh_used2(battery_status_2);
+                this->Send(MSP_CMD_DISPLAYPORT, &msg_mah2, sizeof(msp_rendor_mAh_used_t));
+
+                const auto msg_amp = msp_osd::construct_rendor_Amp(battery_status);
+                this->Send(MSP_CMD_DISPLAYPORT, &msg_amp, sizeof(msp_rendor_Amp_t));
+
+		const auto msg_amp2 = msp_osd::construct_rendor_Amp2(battery_status_2);
+                this->Send(MSP_CMD_DISPLAYPORT, &msg_amp2, sizeof(msp_rendor_Amp_t));
+
+                const auto msg_eff = msp_osd::construct_rendor_mAh_per_km(battery_status);
+                this->Send(MSP_CMD_DISPLAYPORT, &msg_eff, sizeof(msp_rendor_mAh_per_km_t));
+
+        }
+
+        // 3. KM Flown
+        {
+                vehicle_global_position_s g_pos{};
+                vehicle_status_s v_status{};
+
+                _vehicle_global_position_sub.copy(&g_pos);
+                _vehicle_status_sub.copy(&v_status);
+
+                const auto msg = msp_osd::construct_rendor_km_flown(g_pos, v_status);
+                this->Send(MSP_CMD_DISPLAYPORT, &msg, sizeof(msp_rendor_km_flown_t));
+        }
+
+        // 4. Armed Timer
+        {
+                vehicle_status_s v_status{};
+                _vehicle_status_sub.copy(&v_status);
+
+                const auto msg = msp_osd::construct_rendor_armed_timer(v_status);
+                this->Send(MSP_CMD_DISPLAYPORT, &msg, sizeof(msp_rendor_armed_timer_t));
+        }
+
+
+	// MSP_STATUS Armed/Disarmed, Flight Mode, etc. Important to send this one towards the end, so that the display can make use of it for conditional display of other elements and setting the transmission Power
 	{
 		vehicle_status_s vehicle_status{};
 		_vehicle_status_sub.copy(&vehicle_status);

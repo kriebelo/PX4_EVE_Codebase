@@ -107,6 +107,10 @@ msp_rendor_longitude_t construct_rendor_GPS_LON(const sensor_gps_s &vehicle_gps_
 
 msp_rendor_satellites_used_t construct_rendor_GPS_NUM(const sensor_gps_s &vehicle_gps_position);
 
+msp_rendor_airspeed_t construct_rendor_AIRSPEED(const airspeed_validated_s &airspeed_validated);
+
+
+
 // construct an MSP_ATTITUDE struct
 msp_attitude_t construct_ATTITUDE(const vehicle_attitude_s &vehicle_attitude);
 
@@ -121,8 +125,27 @@ msp_altitude_t construct_ALTITUDE(const sensor_gps_s &vehicle_gps_position,
 msp_rendor_altitude_t construct_Rendor_ALTITUDE(const sensor_gps_s &vehicle_gps_position,
 		const vehicle_local_position_s &vehicle_local_position);
 
-msp_rendor_distanceToHome_t construct_rendor_distanceToHome(const home_position_s &home_position,
-		const vehicle_global_position_s &vehicle_global_position);
+// msp_rendor_distanceToHome_t construct_rendor_distanceToHome(const home_position_s &home_position,
+// 		const vehicle_global_position_s &vehicle_global_position);
+
+msp_rendor_distanceToHome_t construct_rendor_distanceToHome(const home_position_s &home, const vehicle_global_position_s &pos, const vehicle_attitude_s &att);
+
+msp_rendor_mAh_used_t construct_rendor_mAh_used(const battery_status_s &bat);
+
+msp_rendor_mAh_used_t construct_rendor_mAh_used2(const battery_status_s &bat);
+
+
+msp_rendor_Amp_t construct_rendor_Amp(const battery_status_s &bat);
+
+msp_rendor_Amp_t construct_rendor_Amp2(const battery_status_s &bat);
+
+
+msp_rendor_km_flown_t construct_rendor_km_flown(const vehicle_global_position_s &pos, const vehicle_status_s &status);
+
+msp_rendor_mAh_per_km_t construct_rendor_mAh_per_km(const battery_status_s &bat);
+
+msp_rendor_armed_timer_t construct_rendor_armed_timer(const vehicle_status_s &status);
+
 
 // construct an MSP_ESC_SENSOR_DATA struct
 msp_esc_sensor_data_dji_t construct_ESC_SENSOR_DATA();
