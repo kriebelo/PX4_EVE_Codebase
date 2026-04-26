@@ -31,24 +31,24 @@ PARAM_DEFINE_FLOAT(SL_FLOAT_PARAM, 0.0);
 /**
  * Commanded Pitch Angle
  * 
- * Commanded Pitch Angle for Glide Controller in deg
+ * Commanded Pitch Angle for Flight Testing in deg
  * 
  * @unit deg
  * @min -20
  * @max 20
- * @group Glide Controller
+ * @group Flight Testing
  */
 PARAM_DEFINE_FLOAT(THETA_COMMAND, 4);
 
 /**
  * Commanded Airspeed
  * 
- * Commanded True Air Speed for Glide Controller in m/s
+ * Commanded True Air Speed for Flight Testing in m/s
  * 
  * @unit m/s
  * @min 10
  * @max 30
- * @group Glide Controller
+ * @group Flight Testing
  */
 PARAM_DEFINE_FLOAT(AIRSPEED_COMMAND, 20);
 
@@ -60,7 +60,7 @@ PARAM_DEFINE_FLOAT(AIRSPEED_COMMAND, 20);
  * @unit deg
  * @min 0
  * @max 12.5
- * @group System Identification
+ * @group Flight Testing
  */
 PARAM_DEFINE_FLOAT(SP_DOUBLET_AMP, 3);
 
@@ -72,7 +72,7 @@ PARAM_DEFINE_FLOAT(SP_DOUBLET_AMP, 3);
  * @unit Hz
  * @min 0
  * @max 10
- * @group System Identification
+ * @group Flight Testing
  */
 PARAM_DEFINE_FLOAT(SP_DOUBLET_FREQ, 1.1);
 
@@ -84,7 +84,7 @@ PARAM_DEFINE_FLOAT(SP_DOUBLET_FREQ, 1.1);
  * @unit s
  * @min 0
  * @max 10
- * @group System Identification
+ * @group Flight Testing
  */
 PARAM_DEFINE_FLOAT(SP_DOUBLET_DUR, 2.5);
 
@@ -96,7 +96,7 @@ PARAM_DEFINE_FLOAT(SP_DOUBLET_DUR, 2.5);
  * @unit s
  * @min 0
  * @max 15
- * @group System Identification
+ * @group Flight Testing
  */
 PARAM_DEFINE_FLOAT(DR_DOUBLET_DUR, 7.5);
 
@@ -108,7 +108,7 @@ PARAM_DEFINE_FLOAT(DR_DOUBLET_DUR, 7.5);
  * @unit Hz
  * @min 0
  * @max 10
- * @group System Identification
+ * @group Flight Testing
  */
 PARAM_DEFINE_FLOAT(DR_DOUBLET_FREQ, 0.44);
 
@@ -120,7 +120,7 @@ PARAM_DEFINE_FLOAT(DR_DOUBLET_FREQ, 0.44);
  * @unit %
  * @min 0
  * @max 100
- * @group System Identification
+ * @group Flight Testing
  */
 PARAM_DEFINE_FLOAT(DR_DOUBLET_AMP, 10);
 
@@ -132,7 +132,7 @@ PARAM_DEFINE_FLOAT(DR_DOUBLET_AMP, 10);
  * @unit %
  * @min 0
  * @max 100
- * @group System Identification
+ * @group Flight Testing
  */
 PARAM_DEFINE_FLOAT(PH_DOUBLET_AMP, 10);
 
@@ -144,7 +144,7 @@ PARAM_DEFINE_FLOAT(PH_DOUBLET_AMP, 10);
  * @unit Hz
  * @min 0
  * @max 10
- * @group System Identification
+ * @group Flight Testing
  */
 PARAM_DEFINE_FLOAT(PH_DOUBLET_FREQ, 0.166667);
 
@@ -156,7 +156,7 @@ PARAM_DEFINE_FLOAT(PH_DOUBLET_FREQ, 0.166667);
  * @unit s
  * @min 0
  * @max 30
- * @group System Identification
+ * @group Flight Testing
  */
 PARAM_DEFINE_FLOAT(PH_DOUBLET_DUR, 20);
 
@@ -167,7 +167,7 @@ PARAM_DEFINE_FLOAT(PH_DOUBLET_DUR, 20);
  * 
  * @min -1
  * @max 0
- * @group Glide Controller
+ * @group Flight Testing
  */
 PARAM_DEFINE_FLOAT(VEL_CONTR_GAIN_P, -0.06);
 
@@ -178,7 +178,7 @@ PARAM_DEFINE_FLOAT(VEL_CONTR_GAIN_P, -0.06);
  * 
  * @min -1
  * @max 0
- * @group Glide Controller
+ * @group Flight Testing
  */
 PARAM_DEFINE_FLOAT(VEL_CONTR_GAIN_I, -0.015);
 
@@ -189,7 +189,7 @@ PARAM_DEFINE_FLOAT(VEL_CONTR_GAIN_I, -0.015);
  * 
  * @min -10
  * @max 0
- * @group Glide Controller
+ * @group Flight Testing
  */
 PARAM_DEFINE_FLOAT(PITCH_CON_GAIN_I, -2.2918);
 
@@ -200,7 +200,7 @@ PARAM_DEFINE_FLOAT(PITCH_CON_GAIN_I, -2.2918);
  * 
  * @min -10
  * @max 0
- * @group Glide Controller
+ * @group Flight Testing
  */
 PARAM_DEFINE_FLOAT(PITCH_CON_GAIN_P, -1.3751);
 

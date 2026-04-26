@@ -9,7 +9,7 @@
 //
 // Model version                  : 1.82
 // Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
-// C/C++ source code generated on : Fri Apr 24 10:49:02 2026
+// C/C++ source code generated on : Sat Apr 25 21:06:54 2026
 //
 // Target selection: ert.tlc
 // Embedded hardware selection: ARM Compatible->ARM Cortex
@@ -351,20 +351,20 @@ P_controller_T controller_P = {
     0.0F                               // confidence
   },
 
-  // Expression: double(1/12.5)
-  //  Referenced by: '<S12>/Gain'
+  // Expression: 1/100
+  //  Referenced by: '<S12>/Gain1'
 
-  0.08,
+  0.01,
 
   // Expression: 1/100
   //  Referenced by: '<S12>/Gain2'
 
   0.01,
 
-  // Expression: 1/100
-  //  Referenced by: '<S12>/Gain1'
+  // Expression: double(1/12.5)
+  //  Referenced by: '<S12>/Gain'
 
-  0.01,
+  0.08,
 
   // Computed Parameter: TmpRTBAtPX4TimestampOutport1_In
   //  Referenced by:

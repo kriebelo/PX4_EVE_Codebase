@@ -9,7 +9,7 @@
 //
 // Model version                  : 1.82
 // Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
-// C/C++ source code generated on : Fri Apr 24 10:49:02 2026
+// C/C++ source code generated on : Sat Apr 25 21:06:54 2026
 //
 // Target selection: ert.tlc
 // Embedded hardware selection: ARM Compatible->ARM Cortex
@@ -238,14 +238,14 @@ struct P_controller_T_ {
   px4_Bus_airspeed Constant_Value_a;   // Computed Parameter: Constant_Value_a
                                           //  Referenced by: '<S143>/Constant'
 
-  real_T Gain_Gain;                    // Expression: double(1/12.5)
-                                          //  Referenced by: '<S12>/Gain'
+  real_T Gain1_Gain;                   // Expression: 1/100
+                                          //  Referenced by: '<S12>/Gain1'
 
   real_T Gain2_Gain;                   // Expression: 1/100
                                           //  Referenced by: '<S12>/Gain2'
 
-  real_T Gain1_Gain;                   // Expression: 1/100
-                                          //  Referenced by: '<S12>/Gain1'
+  real_T Gain_Gain;                    // Expression: double(1/12.5)
+                                          //  Referenced by: '<S12>/Gain'
 
   uint64_T TmpRTBAtPX4TimestampOutport1_In;
                           // Computed Parameter: TmpRTBAtPX4TimestampOutport1_In
