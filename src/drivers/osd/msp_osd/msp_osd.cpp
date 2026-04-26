@@ -61,6 +61,14 @@
 #include <uORB/topics/vehicle_status.h>
 #include <uORB/topics/airspeed_validated.h>
 #include <uORB/topics/vehicle_air_data.h>
+#include <uORB/topics/vehicle_attitude.h>
+#include <uORB/topics/vehicle_global_position.h>
+#include <uORB/topics/vehicle_local_position.h>
+#include <uORB/topics/home_position.h>
+#include <uORB/topics/input_rc.h>
+#include <uORB/topics/log_message.h>
+#include <uORB/topics/manual_control_setpoint.h>
+#include <uORB/topics/actuator_motors.h>
 
 #include <lib/geo/geo.h>
 
@@ -334,7 +342,7 @@ void MspOsd::Run()
 		char msg[sizeof(msp_name_t) + 5] = {0};
 		int index = 0;
 		msg[index++] = MSP_DP_WRITE_STRING;
-		msg[index++] = 0x02; // row position
+		msg[index++] = 0x0F; // row position
 		msg[index++] = 0x14; // colum position
 		msg[index++] = 0;		// Icon attr
 		msg[index++] = 0x03; // Icon index >
@@ -348,15 +356,15 @@ void MspOsd::Run()
 		this->Send(MSP_FC_VARIANT, &msg, sizeof(msg));
 	}
 
-	// // MSP_ANALOG
-	// {
-	// 	if (enabled(SymbolIndex::RSSI_VALUE)) {
-	// 		input_rc_s input_rc{};
-	// 		_input_rc_sub.copy(&input_rc);
-	// 		const auto msg = msp_osd::construct_rendor_RSSI(input_rc);
-	// 		this->Send(MSP_CMD_DISPLAYPORT, &msg, sizeof(msp_rendor_rssi_t));
-	// 	}
-	// }
+	// MSP_ANALOG
+	{
+		if (enabled(SymbolIndex::RSSI_VALUE)) {
+			input_rc_s input_rc{};
+			_input_rc_sub.copy(&input_rc);
+			const auto msg = msp_osd::construct_rendor_RSSI(input_rc);
+			this->Send(MSP_CMD_DISPLAYPORT, &msg, sizeof(msp_rendor_rssi_t));
+		}
+	}
 
 	// MSP_BATTERY_STATE
 	{
@@ -416,6 +424,25 @@ void MspOsd::Run()
 	// 	}
 	// }
 
+	// Throttle Anzeige
+	// {
+	// manual_control_setpoint_s manual_control{};
+	// if (_manual_control_setpoint_sub.copy(&manual_control)) {
+	// 	const auto msg = msp_osd::construct_rendor_throttle(manual_control);
+	// 	this->Send(MSP_CMD_DISPLAYPORT, &msg, sizeof(msp_rendor_throttle_t));
+	// }
+
+	// }
+	// Motor Output Anzeige
+	{
+	actuator_motors_s motors{};
+	if (_actuator_motors_sub.copy(&motors)) {
+		const auto msg = msp_osd::construct_rendor_motor_output(motors);
+		this->Send(MSP_CMD_DISPLAYPORT, &msg, sizeof(msp_rendor_motor_output_t));
+	}
+	}
+
+
 	// MSP_ATTITUDE
 	{
 		vehicle_attitude_s vehicle_attitude{};
@@ -456,6 +483,15 @@ void MspOsd::Run()
                         this->Send(MSP_CMD_DISPLAYPORT, &msg, sizeof(msp_rendor_airspeed_t));
                 }
         }
+
+	//Compass Bar
+	{
+		vehicle_attitude_s vehicle_attitude{};
+		_vehicle_attitude_sub.copy(&vehicle_attitude);
+
+		const auto msg = msp_osd::construct_rendor_compass_bar(vehicle_attitude);
+		this->Send(MSP_CMD_DISPLAYPORT, &msg, sizeof(msp_rendor_compass_bar_t));
+	}
 
 	// // MSP_MOTOR_TELEMETRY
 	// {

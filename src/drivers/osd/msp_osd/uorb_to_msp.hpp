@@ -56,6 +56,8 @@
 #include <uORB/topics/vehicle_attitude.h>
 #include <uORB/topics/input_rc.h>
 #include <uORB/topics/log_message.h>
+#include <uORB/topics/manual_control_setpoint.h>
+#include <uORB/topics/actuator_motors.h>
 
 // PX4 events interface
 #include <px4_platform_common/events.h>
@@ -110,6 +112,10 @@ msp_rendor_satellites_used_t construct_rendor_GPS_NUM(const sensor_gps_s &vehicl
 msp_rendor_airspeed_t construct_rendor_AIRSPEED(const airspeed_validated_s &airspeed_validated);
 
 
+msp_rendor_throttle_t construct_rendor_throttle(const manual_control_setpoint_s &manual_control);
+
+
+
 
 // construct an MSP_ATTITUDE struct
 msp_attitude_t construct_ATTITUDE(const vehicle_attitude_s &vehicle_attitude);
@@ -139,12 +145,16 @@ msp_rendor_Amp_t construct_rendor_Amp(const battery_status_s &bat);
 
 msp_rendor_Amp_t construct_rendor_Amp2(const battery_status_s &bat);
 
+msp_rendor_motor_output_t construct_rendor_motor_output(const actuator_motors_s &motors);
+
 
 msp_rendor_km_flown_t construct_rendor_km_flown(const vehicle_global_position_s &pos, const vehicle_status_s &status);
 
 msp_rendor_mAh_per_km_t construct_rendor_mAh_per_km(const battery_status_s &bat);
 
 msp_rendor_armed_timer_t construct_rendor_armed_timer(const vehicle_status_s &status);
+
+msp_rendor_compass_bar_t construct_rendor_compass_bar(const vehicle_attitude_s &att);
 
 
 // construct an MSP_ESC_SENSOR_DATA struct

@@ -558,16 +558,6 @@ struct msp_rendor_armed_timer_t {
 	char str[17]; // 65536
 } __attribute__((packed));
 
-struct msp_rendor_throttle_t {
-        uint8_t subCommand = 0x03;
-        uint8_t screenYPosition;
-        uint8_t screenXPosition;
-        uint8_t iconAttrs = 0x00;
-        uint8_t iconIndex = 0x20; // 0x20 ist ein Leerzeichen, wir nutzen reinen Text "THR:"
-
-        char str[12]; // Platz für z.B. "THR: 100%"
-} __attribute__((packed));
-
 struct msp_rendor_heading_t {
         uint8_t subCommand = 0x03;
         uint8_t screenYPosition;
@@ -576,6 +566,35 @@ struct msp_rendor_heading_t {
         uint8_t iconIndex = 0x20; // Leerzeichen, wir nutzen reinen Text "HDG:"
 
         char str[12]; // Platz für z.B. "HDG: 359"
+} __attribute__((packed));
+
+
+struct msp_rendor_compass_bar_t {
+        uint8_t subCommand = 0x03;
+        uint8_t screenYPosition;
+        uint8_t screenXPosition;
+
+        char str[26]; // Platz für z.B. "HDG: 359"
+} __attribute__((packed));
+
+struct msp_rendor_throttle_t {
+    uint8_t subCommand = 0x03;
+    uint8_t screenYPosition;
+    uint8_t screenXPosition;
+    uint8_t iconAttrs = 0x00;
+    uint8_t iconIndex = 0x04; // Leerzeichen/Blank
+
+    char str[6]; // "100%"
+} __attribute__((packed));
+
+struct msp_rendor_motor_output_t {
+    uint8_t subCommand = 0x03;
+    uint8_t screenYPosition;
+    uint8_t screenXPosition;
+    uint8_t iconAttrs = 0x00;
+    uint8_t iconIndex = 0x04;
+
+    char str[6]; // Platz für "OUT: 100%"
 } __attribute__((packed));
 
 // values for msp_nav_status_t.mode

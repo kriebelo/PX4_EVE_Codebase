@@ -55,6 +55,8 @@
 #include <uORB/topics/vehicle_global_position.h>
 #include <uORB/topics/vehicle_local_position.h>
 #include <uORB/topics/vehicle_status.h>
+#include <uORB/topics/actuator_motors.h>
+
 
 #include "MspV1.hpp"
 #include "MessageDisplay/MessageDisplay.hpp"
@@ -166,6 +168,8 @@ private:
 	uORB::Subscription _vehicle_gps_position_sub{ORB_ID(vehicle_gps_position)};
 	uORB::Subscription _vehicle_local_position_sub{ORB_ID(vehicle_local_position)};
 	uORB::Subscription _vehicle_status_sub{ORB_ID(vehicle_status)};
+	uORB::Subscription _manual_control_setpoint_sub{ORB_ID(manual_control_setpoint)};
+	uORB::Subscription _actuator_motors_sub{ORB_ID(actuator_motors)};
 
 	uORB::SubscriptionInterval _parameter_update_sub{ORB_ID(parameter_update), 1_s};
 

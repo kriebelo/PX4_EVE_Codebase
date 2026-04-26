@@ -167,95 +167,19 @@ msp_fc_variant_t construct_FC_VARIANT()
 	return variant;
 }
 
-// msp_status_BF_t construct_STATUS(const vehicle_status_s &vehicle_status)
-// {
-// 	// initialize result
-// 	msp_status_BF_t status_BF = {0};
-
-// 	if (vehicle_status.arming_state == vehicle_status_s::ARMING_STATE_ARMED) {
-// 		status_BF.flight_mode_flags |= ARM_ACRO_BF;
-
-// 		switch (vehicle_status.nav_state) {
-// 		case vehicle_status_s::NAVIGATION_STATE_MANUAL:
-// 			status_BF.flight_mode_flags |= 0;
-// 			break;
-
-// 		case vehicle_status_s::NAVIGATION_STATE_ACRO:
-// 			status_BF.flight_mode_flags |= 0;
-// 			break;
-
-// 		case vehicle_status_s::NAVIGATION_STATE_STAB:
-// 			status_BF.flight_mode_flags |= STAB_BF;
-// 			break;
-
-// 		case vehicle_status_s::NAVIGATION_STATE_AUTO_RTL:
-// 			status_BF.flight_mode_flags |= RESC_BF;
-// 			break;
-
-// 		case vehicle_status_s::NAVIGATION_STATE_TERMINATION:
-// 			status_BF.flight_mode_flags |= FS_BF;
-// 			break;
-
-// 		default:
-// 			status_BF.flight_mode_flags |= 0;
-// 			break;
-// 		}
-// 	}
-
-// 	status_BF.arming_disable_flags_count = 1;
-// 	status_BF.arming_disable_flags  = !(vehicle_status.arming_state == vehicle_status_s::ARMING_STATE_ARMED);
-// 	return status_BF;
-// }
-
-// // construct an MSP_ANALOG struct, not used for modern OSDs
-// msp_analog_t construct_ANALOG(const battery_status_s &battery_status, const input_rc_s &input_rc)
-// {
-// 	// initialize result
-// 	msp_analog_t analog {0};
-
-// 	analog.vbat = battery_status.voltage_v * 10; // bottom right... v * 10
-// 	analog.rssi = (uint16_t)((input_rc.link_quality * 1023.0f) / 100.0f);
-// 	analog.amperage = battery_status.current_a * 100; // main amperage
-// 	analog.mAhDrawn = battery_status.discharged_mah; // unused
-// 	return analog;
-// }
 
 msp_rendor_rssi_t construct_rendor_RSSI(const input_rc_s &input_rc)
 {
 	msp_rendor_rssi_t rssi{};
-	rssi.screenYPosition = 0x0F;
+	rssi.screenYPosition = 0x10;
 	rssi.screenXPosition = 0x02;
 
-	snprintf(&rssi.str[0], sizeof(rssi.str), "%3d", input_rc.link_quality);
+	snprintf(&rssi.str[0], sizeof(rssi.str), "%3d", int(input_rc.rssi));
 	rssi.str[3] = '%';
 
 	return rssi;
 }
 
-// // old style battery state for display in the bottom right corner (not used for modern OSDs)
-// msp_battery_state_t construct_BATTERY_STATE(const battery_status_s &battery_status)
-// {
-// 	// initialize result
-// 	msp_battery_state_t battery_state = {0};
-
-// 	// MSP_BATTERY_STATE
-// 	battery_state.amperage = battery_status.current_a * 100.0f; // Used for power element
-// 	battery_state.batteryVoltage = (uint16_t)((battery_status.voltage_v / battery_status.cell_count) * 400.0f);  // OK
-// 	battery_state.mAhDrawn = battery_status.discharged_mah ; // OK
-// 	battery_state.batteryCellCount = battery_status.cell_count;
-// 	battery_state.batteryCapacity = battery_status.capacity; // not used?
-
-// 	// Voltage color 0==white, 1==red
-// 	if (battery_status.voltage_v < 14.4f) {
-// 		battery_state.batteryState = 1;
-
-// 	} else {
-// 		battery_state.batteryState = 0;
-// 	}
-
-// 	battery_state.legacyBatteryVoltage = battery_status.voltage_v * 10;
-// 	return battery_state;
-// }
 
 msp_rendor_battery_state_t construct_rendor_BATTERY_STATE(const battery_status_s &battery_status)
 {
@@ -316,67 +240,6 @@ msp_rendor_battery_state_t construct_rendor_BATTERY2_STATE(const battery_status_
         return battery_state;
 }
 
-// // construct an MSP_RAW_GPS struct from the vehicle_gps_position topic, and airspeed_validated for ground speed (if available)
-// msp_raw_gps_t construct_RAW_GPS(const sensor_gps_s &vehicle_gps_position,
-// 				const airspeed_validated_s &airspeed_validated)
-// {
-// 	// initialize result
-// 	msp_raw_gps_t raw_gps {0};
-
-// 	if (vehicle_gps_position.fix_type >= 2) {
-// 		// ALT: raw_gps.lat = static_cast<int32_t>(vehicle_gps_position.latitude_deg * 1e7);
-// 		raw_gps.lat = vehicle_gps_position.lat;
-
-// 		// ALT: raw_gps.lon = static_cast<int32_t>(vehicle_gps_position.longitude_deg * 1e7);
-// 		raw_gps.lon = vehicle_gps_position.lon;
-
-// 		// ALT: raw_gps.alt = static_cast<int16_t>(vehicle_gps_position.altitude_msl_m * 100.0);
-// 		raw_gps.alt = vehicle_gps_position.alt / 10; // alt ist in mm, wir brauchen cm
-
-// 		float course = math::degrees(vehicle_gps_position.cog_rad);
-
-// 		if (course < 0) {
-// 			course += 360.0f;
-// 		}
-
-// 		raw_gps.groundCourse = course * 100.0f; // centidegrees
-
-// 	} else {
-// 		raw_gps.lat = 0;
-// 		raw_gps.lon = 0;
-// 		raw_gps.alt = 0;
-// 		raw_gps.groundCourse = 0; // centidegrees
-// 	}
-
-// 	raw_gps.groundCourse = 0; // centidegrees
-
-// 	if (vehicle_gps_position.fix_type == 0
-// 	    || vehicle_gps_position.fix_type == 1) {
-// 		raw_gps.fixType = MSP_GPS_NO_FIX;
-
-// 	} else if (vehicle_gps_position.fix_type == 2) {
-// 		raw_gps.fixType = MSP_GPS_FIX_2D;
-
-// 	} else if (vehicle_gps_position.fix_type >= 3 && vehicle_gps_position.fix_type <= 5) {
-// 		raw_gps.fixType = MSP_GPS_FIX_3D;
-
-// 	} else {
-// 		raw_gps.fixType = MSP_GPS_NO_FIX;
-// 	}
-
-// 	//raw_gps.hdop = vehicle_gps_position_struct.hdop
-// 	raw_gps.numSat = vehicle_gps_position.satellites_used;
-
-// 	// NEU (v1.14 Style): Wir lassen die Abfrage der Source einfach weg
-// 	if (PX4_ISFINITE(airspeed_validated.indicated_airspeed_m_s))
-// 	 {
-// 		raw_gps.groundSpeed = airspeed_validated.indicated_airspeed_m_s * 100;
-// 	} else {
-// 		raw_gps.groundSpeed = 0;
-// 	}
-
-// 	return raw_gps;
-// }
 
 msp_rendor_latitude_t construct_rendor_GPS_LAT(const sensor_gps_s &vehicle_gps_position)
 {
@@ -429,8 +292,8 @@ msp_rendor_airspeed_t construct_rendor_AIRSPEED(const airspeed_validated_s &airs
         // Initialisiert automatisch subCommand, iconAttrs und iconIndex durch die Struct-Definition!
         msp_rendor_airspeed_t as{};
 
-        as.screenYPosition = 0x0F; // Passe die Zeile an dein Wunsch-Layout an
-        as.screenXPosition = 0x1D; // Passe die Spalte an
+        as.screenYPosition = 0x03; // Passe die Zeile an dein Wunsch-Layout an
+        as.screenXPosition = 0x1C; // Passe die Spalte an
 
         // --- Low-Pass Filter ---
         static float filtered_ias = 0.0f;
@@ -461,70 +324,6 @@ msp_rendor_airspeed_t construct_rendor_AIRSPEED(const airspeed_validated_s &airs
         return as;
 }
 
-
-// msp_comp_gps_t construct_COMP_GPS(const home_position_s &home_position,
-// 				  const vehicle_global_position_s &vehicle_global_position,
-// 				  const bool heartbeat)
-// {
-// 	// initialize result
-// 	msp_comp_gps_t comp_gps {0};
-
-// 	// Calculate distance and direction to home
-// 	if (home_position.valid_hpos
-// 	    && home_position.valid_lpos
-// 	    && (hrt_elapsed_time(&vehicle_global_position.timestamp) < 1_s)) {
-
-// 		float bearing_to_home = math::degrees(get_bearing_to_next_waypoint(vehicle_global_position.lat,
-// 						      vehicle_global_position.lon,
-// 						      home_position.lat, home_position.lon));
-
-// 		if (bearing_to_home < 0) {
-// 			bearing_to_home += 360.0f;
-// 		}
-
-// 		float distance_to_home = get_distance_to_next_waypoint(vehicle_global_position.lat,
-// 					 vehicle_global_position.lon,
-// 					 home_position.lat, home_position.lon);
-
-// 		comp_gps.distanceToHome = (int16_t)distance_to_home; // meters
-// 		comp_gps.directionToHome = bearing_to_home;
-
-// 	} else {
-// 		comp_gps.distanceToHome = 0; // meters
-// 		comp_gps.directionToHome = 0;
-// 	}
-
-// 	comp_gps.heartbeat = heartbeat;
-// 	return comp_gps;
-// }
-
-// msp_rendor_distanceToHome_t construct_rendor_distanceToHome(const home_position_s &home_position,
-// 		const vehicle_global_position_s &vehicle_global_position)
-// {
-// 	msp_rendor_distanceToHome_t distance;
-
-// 	distance.screenYPosition = 0x08;
-// 	distance.screenXPosition = 0x02;
-
-// 	int16_t dist_i = 0;
-
-// 	if (home_position.valid_hpos
-// 	    && home_position.valid_lpos
-// 	    && (hrt_elapsed_time(&vehicle_global_position.timestamp) < 1_s)) {
-
-// 		float distance_to_home = get_distance_to_next_waypoint(vehicle_global_position.lat,
-// 					 vehicle_global_position.lon,
-// 					 home_position.lat, home_position.lon);
-
-// 		dist_i = (int16_t)distance_to_home; // meters
-
-// 	}
-
-// 	memset(&distance.str[0], 0, sizeof(distance.str));
-// 	snprintf(&distance.str[0], sizeof(distance.str), "%d\x0C", dist_i); // 65536
-
-// 	return distance;
-// }
 
 
 // --- 1. Distance to Home (mit dynamischem Pfeil) ---
@@ -694,36 +493,103 @@ msp_rendor_armed_timer_t construct_rendor_armed_timer(const vehicle_status_s &st
 }
 
 
-// msp_attitude_t construct_ATTITUDE(const vehicle_attitude_s &vehicle_attitude)
-// {
-// 	// initialize results
-// 	msp_attitude_t attitude {0};
+// --- 9. Scrolling Compass Bar (Mit Betaflight Icons) ---
+msp_rendor_compass_bar_t construct_rendor_compass_bar(const vehicle_attitude_s &att)
+{
+        msp_rendor_compass_bar_t bar{};
+        bar.screenYPosition = 0x01; // Meistens ganz oben
+        bar.screenXPosition = 0x14; // Schön mittig
 
-// 	// convert from quaternion to RPY
-// 	matrix::Eulerf euler_attitude(matrix::Quatf(vehicle_attitude.q));
-// 	attitude.pitch = math::degrees(euler_attitude.theta()) * 10;
-// 	attitude.roll = math::degrees(euler_attitude.phi()) * 10;
-// 	//attitude.yaw = math::degrees(euler_attitude.psi()) * 10;
+        #define _N  "\x18"
+        #define _E  "\x1A"
+        #define _S  "\x19"
+        #define _W  "\x1B"
+        #define _M  "\x1C"
+        #define _T  "\x1D"
 
-// 	float yaw_fixed = math::degrees(euler_attitude.psi());
+        #define COMPASS_CIRCLE \
+            _N _T _T _T _M _T _T _T \
+            _E _T _T _T _M _T _T _T \
+            _S _T _T _T _M _T _T _T \
+            _W _T _T _T _M _T _T _T
 
-// 	if (yaw_fixed < 0) {
-// 		yaw_fixed += 360.0f;
-// 	}
+        const char ribbon[] = COMPASS_CIRCLE COMPASS_CIRCLE COMPASS_CIRCLE;
 
-// 	attitude.yaw = yaw_fixed;
+        matrix::Eulerf euler(matrix::Quatf(att.q));
+        double yaw_deg = (double)math::degrees(euler.psi());
 
-// 	//attitude.yaw = 360;
+        if (yaw_deg < 0.0) {
+                yaw_deg += 360.0;
+        }
 
-// 	return attitude;
-// }
+        int index = (int)((yaw_deg + 5.625) / 11.25);
+        index = index % 32;
+
+        int center_pos = index + 32;
+
+        // Der Kombi-Trick: "%.13s" für die Icons, dann ein Leerzeichen, dann "%03.0f" für die Zahl
+        snprintf(&bar.str[0], sizeof(bar.str), "%.13s %03.0f", &ribbon[center_pos - 6], yaw_deg);
+
+        return bar;
+}
+
+// --- Throttle in % ---
+msp_rendor_throttle_t construct_rendor_throttle(const manual_control_setpoint_s &manual_control)
+{
+    msp_rendor_throttle_t msg{};
+    msg.screenYPosition = 0x0B; // Zeile anpassen
+    msg.screenXPosition = 0x02;
+
+    // PX4 Throttle geht von -1 (unten) bis 1 (oben)
+    float throttle_percent = (manual_control.throttle + 1.0f) * 50.0f;
+
+    if (throttle_percent < 0.0f) throttle_percent = 0.0f;
+    if (throttle_percent > 100.0f) throttle_percent = 100.0f;
+
+    snprintf(&msg.str[0], sizeof(msg.str), "%3.0f%%", (double)throttle_percent);
+    return msg;
+}
+
+// --- Realer Motor-Output (Average) ---
+msp_rendor_motor_output_t construct_rendor_motor_output(const actuator_motors_s &motors)
+{
+    msp_rendor_motor_output_t msg{};
+    msg.screenYPosition = 0x0C;
+    msg.screenXPosition = 0x02;
+
+    float avg_output = 0.0f;
+    int motor_count = 0;
+
+    // Wir zählen nur Motoren, die nicht "NaN" (Not a Number) sind
+    for (int i = 0; i < 4; i++) {
+        if (PX4_ISFINITE(motors.control[i])) {
+            avg_output += motors.control[i];
+            motor_count++;
+        }
+    }
+
+    if (motor_count > 0) {
+        avg_output /= motor_count;
+    }
+
+    float output_percent = avg_output * 100.0f;
+
+    // Clipping für Sicherheit
+    if (output_percent < 0.0f) output_percent = 0.0f;
+    if (output_percent > 100.0f) output_percent = 100.0f;
+
+    // Wieder der %%-Trick für das OSD
+    snprintf(&msg.str[0], sizeof(msg.str), "%3.0f%%", (double)output_percent);
+    return msg;
+}
+
 
 msp_rendor_pitch_t  construct_rendor_PITCH(const vehicle_attitude_s &vehicle_attitude)
 {
 	// initialize results
 	msp_rendor_pitch_t pit{};
 
-	pit.screenYPosition = 0x0C;
+	pit.screenYPosition = 0x0D;
 	pit.screenXPosition = 0x02;
 
 	// convert from quaternion to RPY
@@ -742,7 +608,7 @@ msp_rendor_roll_t  construct_rendor_ROLL(const vehicle_attitude_s &vehicle_attit
 	// initialize results
 	msp_rendor_roll_t roll{};
 
-	roll.screenYPosition = 0x0D;
+	roll.screenYPosition = 0x0E;
 	roll.screenXPosition = 0x02;
 
 	// convert from quaternion to RPY
@@ -757,34 +623,12 @@ msp_rendor_roll_t  construct_rendor_ROLL(const vehicle_attitude_s &vehicle_attit
 }
 
 
-// msp_altitude_t construct_ALTITUDE(const sensor_gps_s &vehicle_gps_position,
-// 				  const vehicle_local_position_s &vehicle_local_position)
-// {
-// 	// initialize result
-// 	msp_altitude_t altitude {0};
-
-// 	if (vehicle_gps_position.fix_type >= 2) {
-// 		altitude.estimatedActualPosition = vehicle_gps_position.alt / 10; // alt ist in mm, wir brauchen cm
-// 	} else {
-// 		altitude.estimatedActualPosition = 0;
-// 	}
-
-// 	if (vehicle_local_position.v_z_valid) {
-// 		altitude.estimatedActualVelocity = -vehicle_local_position.vz * 100; //m/s to cm/s
-
-// 	} else {
-// 		altitude.estimatedActualVelocity = 0;
-// 	}
-
-// 	return altitude;
-// }
-
 msp_rendor_altitude_t construct_Rendor_ALTITUDE(const sensor_gps_s &vehicle_gps_position,
 		const vehicle_local_position_s &vehicle_local_position)
 {
 	msp_rendor_altitude_t altitude{};
 
-	altitude.screenYPosition = 0x0F;
+	altitude.screenYPosition = 0x03;
 	altitude.screenXPosition = 0x13;
 
 	double alt;
@@ -801,17 +645,6 @@ msp_rendor_altitude_t construct_Rendor_ALTITUDE(const sensor_gps_s &vehicle_gps_
 
 	return altitude;
 }
-
-// msp_esc_sensor_data_dji_t construct_ESC_SENSOR_DATA()
-// {
-// 	// initialize result
-// 	msp_esc_sensor_data_dji_t esc_sensor_data {0};
-
-// 	esc_sensor_data.rpm = 0;
-// 	esc_sensor_data.temperature = 50;
-
-// 	return esc_sensor_data;
-// }
 
 msp_rc_t construct_MSP_RC(const input_rc_s &input_rc)
 {
