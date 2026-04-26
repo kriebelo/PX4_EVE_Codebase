@@ -9,7 +9,7 @@
 //
 // Model version                  : 1.82
 // Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
-// C/C++ source code generated on : Sat Apr 25 21:06:54 2026
+// C/C++ source code generated on : Sun Apr 26 21:15:41 2026
 //
 // Target selection: ert.tlc
 // Embedded hardware selection: ARM Compatible->ARM Cortex
@@ -165,7 +165,6 @@ void controller_step0(void)            // Sample time: [0.001s, 0.0s]
   int32_T i;
   real32_T ParamStep;
   real32_T ParamStep_0;
-  real32_T ParamStep_1;
   real32_T rtb_Converttimefromustos;
   real32_T rtb_FunctionforDeflectionValu_e;
   real32_T rtb_Kb;
@@ -174,6 +173,7 @@ void controller_step0(void)            // Sample time: [0.001s, 0.0s]
   real32_T rtb_Saturation10;
   real32_T rtb_Saturation7;
   real32_T rtb_Saturation8;
+  real32_T rtb_theta;
   real32_T yTemp;
   boolean_T b_varargout_1;
   boolean_T tmp;
@@ -397,51 +397,11 @@ void controller_step0(void)            // Sample time: [0.001s, 0.0s]
      controller_DW.StoreStartTime_PreviousInput) *
     controller_P.Converttimefromustos_Gain;
 
-  // MATLABSystem: '<S12>/Read Parameter3'
-  b_varargout_1 = MW_ParamRead_Step(controller_DW.obj_f.MW_PARAMHANDLE,
-    MW_SINGLE, &ParamStep);
-  if (b_varargout_1) {
-    ParamStep = 0.0F;
-  }
-
-  // ParameterWriter: '<S12>/Parameter Writer3' incorporates:
-  //   DataTypeConversion: '<S12>/Cast To Double4'
-  //   Gain: '<S12>/Gain1'
-  //   MATLABSystem: '<S12>/Read Parameter3'
-  //
-  controller_InstP.dutch_roll_amp = controller_P.Gain1_Gain * ParamStep;
-
-  // MATLABSystem: '<S12>/Read Parameter7'
-  b_varargout_1 = MW_ParamRead_Step(controller_DW.obj_l1.MW_PARAMHANDLE,
-    MW_SINGLE, &ParamStep);
-  if (b_varargout_1) {
-    ParamStep = 0.0F;
-  }
-
-  // ParameterWriter: '<S12>/Parameter Writer9' incorporates:
-  //   DataTypeConversion: '<S12>/Cast To Double8'
-  //   MATLABSystem: '<S12>/Read Parameter7'
-  //   Product: '<S12>/Reciprocal'
-  //
-  controller_InstP.phugoid_period = static_cast<real32_T>(1.0 / ParamStep);
-
-  // MATLABSystem: '<S12>/Read Parameter1'
-  b_varargout_1 = MW_ParamRead_Step(controller_DW.obj_a.MW_PARAMHANDLE,
-    MW_SINGLE, &ParamStep_0);
-  if (b_varargout_1) {
-    ParamStep_0 = 0.0F;
-  }
-
-  // ParameterWriter: '<S12>/Parameter Writer1' incorporates:
-  //   MATLABSystem: '<S12>/Read Parameter1'
-  //
-  controller_InstP.short_period_freq = ParamStep_0;
-
   // MATLABSystem: '<S12>/Read Parameter6'
   b_varargout_1 = MW_ParamRead_Step(controller_DW.obj_pe.MW_PARAMHANDLE,
-    MW_SINGLE, &ParamStep_1);
+    MW_SINGLE, &ParamStep);
   if (b_varargout_1) {
-    ParamStep_1 = 0.0F;
+    ParamStep = 0.0F;
   }
 
   // ParameterWriter: '<S12>/Parameter Writer6' incorporates:
@@ -449,58 +409,19 @@ void controller_step0(void)            // Sample time: [0.001s, 0.0s]
   //   Gain: '<S12>/Gain2'
   //   MATLABSystem: '<S12>/Read Parameter6'
   //
-  controller_InstP.phugoid_amp = controller_P.Gain2_Gain * ParamStep_1;
+  controller_InstP.phugoid_amp = controller_P.Gain2_Gain * ParamStep;
 
-  // MATLABSystem: '<S12>/Read Parameter'
-  b_varargout_1 = MW_ParamRead_Step(controller_DW.obj_ng.MW_PARAMHANDLE,
-    MW_SINGLE, &ParamStep_1);
+  // MATLABSystem: '<S12>/Read Parameter1'
+  b_varargout_1 = MW_ParamRead_Step(controller_DW.obj_a.MW_PARAMHANDLE,
+    MW_SINGLE, &ParamStep);
   if (b_varargout_1) {
-    ParamStep_1 = 0.0F;
+    ParamStep = 0.0F;
   }
 
-  // ParameterWriter: '<S12>/Parameter Writer' incorporates:
-  //   DataTypeConversion: '<S12>/Cast To Double1'
-  //   Gain: '<S12>/Gain'
-  //   MATLABSystem: '<S12>/Read Parameter'
-  //
-  controller_InstP.short_period_amp = controller_P.Gain_Gain * ParamStep_1;
-
-  // MATLABSystem: '<S12>/Read Parameter8' incorporates:
-  //   ParameterWriter: '<S12>/Parameter Writer8'
-
-  b_varargout_1 = MW_ParamRead_Step(controller_DW.obj_p.MW_PARAMHANDLE,
-    MW_SINGLE, &controller_InstP.phugoid_dur);
-  if (b_varargout_1) {
-    controller_InstP.phugoid_dur = 0.0F;
-  }
-
-  // End of MATLABSystem: '<S12>/Read Parameter8'
-
-  // MATLABSystem: '<S12>/Read Parameter4'
-  b_varargout_1 = MW_ParamRead_Step(controller_DW.obj_e.MW_PARAMHANDLE,
-    MW_SINGLE, &ParamStep_1);
-  if (b_varargout_1) {
-    ParamStep_1 = 0.0F;
-  }
-
-  // ParameterWriter: '<S12>/Parameter Writer10' incorporates:
-  //   DataTypeConversion: '<S12>/Cast To Double5'
-  //   MATLABSystem: '<S12>/Read Parameter4'
-  //   Product: '<S12>/Reciprocal1'
-  //
-  controller_InstP.dutch_roll_period = static_cast<real32_T>(1.0 / ParamStep_1);
-
-  // ParameterWriter: '<S12>/Parameter Writer7' incorporates:
-  //   MATLABSystem: '<S12>/Read Parameter7'
-  //
-  controller_InstP.phugoid_freq = ParamStep;
-
-  // ParameterWriter: '<S12>/Parameter Writer11' incorporates:
-  //   DataTypeConversion: '<S12>/Cast To Double2'
+  // ParameterWriter: '<S12>/Parameter Writer1' incorporates:
   //   MATLABSystem: '<S12>/Read Parameter1'
-  //   Product: '<S12>/Reciprocal2'
   //
-  controller_InstP.short_period_period = static_cast<real32_T>(1.0 / ParamStep_0);
+  controller_InstP.short_period_freq = ParamStep;
 
   // MATLABSystem: '<S12>/Read Parameter5' incorporates:
   //   ParameterWriter: '<S12>/Parameter Writer5'
@@ -513,6 +434,90 @@ void controller_step0(void)            // Sample time: [0.001s, 0.0s]
 
   // End of MATLABSystem: '<S12>/Read Parameter5'
 
+  // ParameterWriter: '<S12>/Parameter Writer11' incorporates:
+  //   DataTypeConversion: '<S12>/Cast To Double2'
+  //   MATLABSystem: '<S12>/Read Parameter1'
+  //   Product: '<S12>/Reciprocal2'
+  //
+  controller_InstP.short_period_period = static_cast<real32_T>(1.0 / ParamStep);
+
+  // MATLABSystem: '<S12>/Read Parameter7'
+  b_varargout_1 = MW_ParamRead_Step(controller_DW.obj_l1.MW_PARAMHANDLE,
+    MW_SINGLE, &ParamStep);
+  if (b_varargout_1) {
+    ParamStep = 0.0F;
+  }
+
+  // ParameterWriter: '<S12>/Parameter Writer7' incorporates:
+  //   MATLABSystem: '<S12>/Read Parameter7'
+  //
+  controller_InstP.phugoid_freq = ParamStep;
+
+  // MATLABSystem: '<S12>/Read Parameter'
+  b_varargout_1 = MW_ParamRead_Step(controller_DW.obj_ng.MW_PARAMHANDLE,
+    MW_SINGLE, &ParamStep_0);
+  if (b_varargout_1) {
+    ParamStep_0 = 0.0F;
+  }
+
+  // ParameterWriter: '<S12>/Parameter Writer' incorporates:
+  //   DataTypeConversion: '<S12>/Cast To Double1'
+  //   Gain: '<S12>/Gain'
+  //   MATLABSystem: '<S12>/Read Parameter'
+  //
+  controller_InstP.short_period_amp = controller_P.Gain_Gain * ParamStep_0;
+
+  // MATLABSystem: '<S12>/Read Parameter3'
+  b_varargout_1 = MW_ParamRead_Step(controller_DW.obj_f.MW_PARAMHANDLE,
+    MW_SINGLE, &ParamStep_0);
+  if (b_varargout_1) {
+    ParamStep_0 = 0.0F;
+  }
+
+  // ParameterWriter: '<S12>/Parameter Writer3' incorporates:
+  //   DataTypeConversion: '<S12>/Cast To Double4'
+  //   Gain: '<S12>/Gain1'
+  //   MATLABSystem: '<S12>/Read Parameter3'
+  //
+  controller_InstP.dutch_roll_amp = controller_P.Gain1_Gain * ParamStep_0;
+
+  // MATLABSystem: '<S12>/Read Parameter4'
+  b_varargout_1 = MW_ParamRead_Step(controller_DW.obj_e.MW_PARAMHANDLE,
+    MW_SINGLE, &ParamStep_0);
+  if (b_varargout_1) {
+    ParamStep_0 = 0.0F;
+  }
+
+  // ParameterWriter: '<S12>/Parameter Writer4' incorporates:
+  //   MATLABSystem: '<S12>/Read Parameter4'
+  //
+  controller_InstP.dutch_roll_freq = ParamStep_0;
+
+  // MATLABSystem: '<S12>/Read Parameter8' incorporates:
+  //   ParameterWriter: '<S12>/Parameter Writer8'
+
+  b_varargout_1 = MW_ParamRead_Step(controller_DW.obj_p.MW_PARAMHANDLE,
+    MW_SINGLE, &controller_InstP.phugoid_dur);
+  if (b_varargout_1) {
+    controller_InstP.phugoid_dur = 0.0F;
+  }
+
+  // End of MATLABSystem: '<S12>/Read Parameter8'
+
+  // ParameterWriter: '<S12>/Parameter Writer10' incorporates:
+  //   DataTypeConversion: '<S12>/Cast To Double5'
+  //   MATLABSystem: '<S12>/Read Parameter4'
+  //   Product: '<S12>/Reciprocal1'
+  //
+  controller_InstP.dutch_roll_period = static_cast<real32_T>(1.0 / ParamStep_0);
+
+  // ParameterWriter: '<S12>/Parameter Writer9' incorporates:
+  //   DataTypeConversion: '<S12>/Cast To Double8'
+  //   MATLABSystem: '<S12>/Read Parameter7'
+  //   Product: '<S12>/Reciprocal'
+  //
+  controller_InstP.phugoid_period = static_cast<real32_T>(1.0 / ParamStep);
+
   // MATLABSystem: '<S12>/Read Parameter2' incorporates:
   //   ParameterWriter: '<S12>/Parameter Writer2'
 
@@ -523,11 +528,6 @@ void controller_step0(void)            // Sample time: [0.001s, 0.0s]
   }
 
   // End of MATLABSystem: '<S12>/Read Parameter2'
-
-  // ParameterWriter: '<S12>/Parameter Writer4' incorporates:
-  //   MATLABSystem: '<S12>/Read Parameter4'
-  //
-  controller_InstP.dutch_roll_freq = ParamStep_1;
 
   // If: '<S19>/Activate different control logics after activation flag is triggered' 
   if ((rtb_Saturation1 > 0.5F) && (rtb_Saturation < 0.5F)) {
@@ -647,25 +647,6 @@ void controller_step0(void)            // Sample time: [0.001s, 0.0s]
   }
 
   // End of If: '<S19>/Activate different control logics after activation flag is triggered' 
-  controller_ReadParameter11(&controller_B.ReadParameter11,
-    &controller_DW.ReadParameter11);
-
-  // ParameterWriter: '<S12>/Parameter Writer14' incorporates:
-  //   DataTypeConversion: '<S12>/Cast To Double12'
-
-  controller_InstP.vel_con_gain_i =
-    controller_B.ReadParameter11.ReadParameter11_o1;
-
-  // MATLABSystem: '<S12>/Read Parameter10' incorporates:
-  //   ParameterWriter: '<S12>/Parameter Writer13'
-
-  b_varargout_1 = MW_ParamRead_Step(controller_DW.obj_b.MW_PARAMHANDLE,
-    MW_SINGLE, &controller_InstP.pitch_con_gain_p);
-  if (b_varargout_1) {
-    controller_InstP.pitch_con_gain_p = 0.0F;
-  }
-
-  // End of MATLABSystem: '<S12>/Read Parameter10'
 
   // MATLABSystem: '<S12>/Read Parameter9' incorporates:
   //   ParameterWriter: '<S12>/Parameter Writer12'
@@ -686,6 +667,25 @@ void controller_step0(void)            // Sample time: [0.001s, 0.0s]
   controller_InstP.vel_con_gain_p =
     controller_B.ReadParameter12.ReadParameter11_o1;
 
+  // MATLABSystem: '<S12>/Read Parameter10' incorporates:
+  //   ParameterWriter: '<S12>/Parameter Writer13'
+
+  b_varargout_1 = MW_ParamRead_Step(controller_DW.obj_b.MW_PARAMHANDLE,
+    MW_SINGLE, &controller_InstP.pitch_con_gain_p);
+  if (b_varargout_1) {
+    controller_InstP.pitch_con_gain_p = 0.0F;
+  }
+
+  // End of MATLABSystem: '<S12>/Read Parameter10'
+  controller_ReadParameter11(&controller_B.ReadParameter11,
+    &controller_DW.ReadParameter11);
+
+  // ParameterWriter: '<S12>/Parameter Writer14' incorporates:
+  //   DataTypeConversion: '<S12>/Cast To Double12'
+
+  controller_InstP.vel_con_gain_i =
+    controller_B.ReadParameter11.ReadParameter11_o1;
+
   // MATLABSystem: '<S151>/SourceBlock'
   b_varargout_1 = uORB_read_step(controller_DW.obj_l.orbMetadataObj,
     &controller_DW.obj_l.eventStructObj, &controller_B.r, false, 1.0);
@@ -702,7 +702,7 @@ void controller_step0(void)            // Sample time: [0.001s, 0.0s]
   // End of Outputs for SubSystem: '<S151>/Enabled Subsystem'
 
   // MATLAB Function: '<S2>/quat2eul'
-  ParamStep_1 = static_cast<real32_T>(asin(static_cast<real_T>
+  rtb_theta = static_cast<real32_T>(asin(static_cast<real_T>
     ((controller_B.In1.q[1] * controller_B.In1.q[3] - controller_B.In1.q[0] *
       controller_B.In1.q[2]) * -2.0F)));
 
@@ -744,12 +744,12 @@ void controller_step0(void)            // Sample time: [0.001s, 0.0s]
 
   // DiscreteIntegrator: '<S121>/Integrator'
   if (controller_DW.Integrator_IC_LOADING != 0) {
-    controller_DW.Integrator_DSTATE = ParamStep_1;
+    controller_DW.Integrator_DSTATE = rtb_theta;
   }
 
   if ((rtb_Saturation1 > 0.0F) && (controller_DW.Integrator_PrevResetState <= 0))
   {
-    controller_DW.Integrator_DSTATE = ParamStep_1;
+    controller_DW.Integrator_DSTATE = rtb_theta;
   }
 
   // Sum: '<S130>/Sum' incorporates:
@@ -789,7 +789,7 @@ void controller_step0(void)            // Sample time: [0.001s, 0.0s]
   // End of Switch: '<S30>/Switch'
 
   // Sum: '<S31>/Sum'
-  ParamStep_0 -= ParamStep_1;
+  ParamStep_0 -= rtb_theta;
 
   // DiscreteIntegrator: '<S68>/Integrator'
   if (controller_DW.Integrator_IC_LOADING_p != 0) {
@@ -1131,17 +1131,17 @@ void controller_initialize(void)
 
   {
     static const char_T ParameterNameStr[14] = "MODE_SELECTOR";
-    static const char_T ParameterNameStr_0[15] = "DR_DOUBLET_AMP";
-    static const char_T ParameterNameStr_1[16] = "PH_DOUBLET_FREQ";
-    static const char_T ParameterNameStr_2[16] = "SP_DOUBLET_FREQ";
-    static const char_T ParameterNameStr_3[15] = "PH_DOUBLET_AMP";
+    static const char_T ParameterNameStr_0[15] = "PH_DOUBLET_AMP";
+    static const char_T ParameterNameStr_1[16] = "SP_DOUBLET_FREQ";
+    static const char_T ParameterNameStr_2[15] = "DR_DOUBLET_DUR";
+    static const char_T ParameterNameStr_3[16] = "PH_DOUBLET_FREQ";
     static const char_T ParameterNameStr_4[15] = "SP_DOUBLET_AMP";
-    static const char_T ParameterNameStr_5[15] = "PH_DOUBLET_DUR";
+    static const char_T ParameterNameStr_5[15] = "DR_DOUBLET_AMP";
     static const char_T ParameterNameStr_6[16] = "DR_DOUBLET_FREQ";
-    static const char_T ParameterNameStr_7[15] = "DR_DOUBLET_DUR";
+    static const char_T ParameterNameStr_7[15] = "PH_DOUBLET_DUR";
     static const char_T ParameterNameStr_8[15] = "SP_DOUBLET_DUR";
-    static const char_T ParameterNameStr_9[17] = "PITCH_CON_GAIN_P";
-    static const char_T ParameterNameStr_a[17] = "PITCH_CON_GAIN_I";
+    static const char_T ParameterNameStr_9[17] = "PITCH_CON_GAIN_I";
+    static const char_T ParameterNameStr_a[17] = "PITCH_CON_GAIN_P";
     static const char_T ParameterNameStr_b[14] = "THETA_COMMAND";
     static const char_T ParameterNameStr_c[17] = "AIRSPEED_COMMAND";
     int32_T i;
@@ -1259,33 +1259,33 @@ void controller_initialize(void)
       true, 1.0);
     controller_DW.obj_ms.isSetupComplete = true;
 
-    // Start for MATLABSystem: '<S12>/Read Parameter3'
-    controller_DW.obj_f.matlabCodegenIsDeleted = false;
-    controller_DW.obj_f.isInitialized = 1;
-    controller_DW.obj_f.MW_PARAMHANDLE = MW_Init_Param(&ParameterNameStr_0[0],
+    // Start for MATLABSystem: '<S12>/Read Parameter6'
+    controller_DW.obj_pe.matlabCodegenIsDeleted = false;
+    controller_DW.obj_pe.isInitialized = 1;
+    controller_DW.obj_pe.MW_PARAMHANDLE = MW_Init_Param(&ParameterNameStr_0[0],
       true, 1.0);
-    controller_DW.obj_f.isSetupComplete = true;
-
-    // Start for MATLABSystem: '<S12>/Read Parameter7'
-    controller_DW.obj_l1.matlabCodegenIsDeleted = false;
-    controller_DW.obj_l1.isInitialized = 1;
-    controller_DW.obj_l1.MW_PARAMHANDLE = MW_Init_Param(&ParameterNameStr_1[0],
-      true, 1.0);
-    controller_DW.obj_l1.isSetupComplete = true;
+    controller_DW.obj_pe.isSetupComplete = true;
 
     // Start for MATLABSystem: '<S12>/Read Parameter1'
     controller_DW.obj_a.matlabCodegenIsDeleted = false;
     controller_DW.obj_a.isInitialized = 1;
-    controller_DW.obj_a.MW_PARAMHANDLE = MW_Init_Param(&ParameterNameStr_2[0],
+    controller_DW.obj_a.MW_PARAMHANDLE = MW_Init_Param(&ParameterNameStr_1[0],
       true, 1.0);
     controller_DW.obj_a.isSetupComplete = true;
 
-    // Start for MATLABSystem: '<S12>/Read Parameter6'
-    controller_DW.obj_pe.matlabCodegenIsDeleted = false;
-    controller_DW.obj_pe.isInitialized = 1;
-    controller_DW.obj_pe.MW_PARAMHANDLE = MW_Init_Param(&ParameterNameStr_3[0],
+    // Start for MATLABSystem: '<S12>/Read Parameter5'
+    controller_DW.obj_o5.matlabCodegenIsDeleted = false;
+    controller_DW.obj_o5.isInitialized = 1;
+    controller_DW.obj_o5.MW_PARAMHANDLE = MW_Init_Param(&ParameterNameStr_2[0],
       true, 1.0);
-    controller_DW.obj_pe.isSetupComplete = true;
+    controller_DW.obj_o5.isSetupComplete = true;
+
+    // Start for MATLABSystem: '<S12>/Read Parameter7'
+    controller_DW.obj_l1.matlabCodegenIsDeleted = false;
+    controller_DW.obj_l1.isInitialized = 1;
+    controller_DW.obj_l1.MW_PARAMHANDLE = MW_Init_Param(&ParameterNameStr_3[0],
+      true, 1.0);
+    controller_DW.obj_l1.isSetupComplete = true;
 
     // Start for MATLABSystem: '<S12>/Read Parameter'
     controller_DW.obj_ng.matlabCodegenIsDeleted = false;
@@ -1294,12 +1294,12 @@ void controller_initialize(void)
       true, 1.0);
     controller_DW.obj_ng.isSetupComplete = true;
 
-    // Start for MATLABSystem: '<S12>/Read Parameter8'
-    controller_DW.obj_p.matlabCodegenIsDeleted = false;
-    controller_DW.obj_p.isInitialized = 1;
-    controller_DW.obj_p.MW_PARAMHANDLE = MW_Init_Param(&ParameterNameStr_5[0],
+    // Start for MATLABSystem: '<S12>/Read Parameter3'
+    controller_DW.obj_f.matlabCodegenIsDeleted = false;
+    controller_DW.obj_f.isInitialized = 1;
+    controller_DW.obj_f.MW_PARAMHANDLE = MW_Init_Param(&ParameterNameStr_5[0],
       true, 1.0);
-    controller_DW.obj_p.isSetupComplete = true;
+    controller_DW.obj_f.isSetupComplete = true;
 
     // Start for MATLABSystem: '<S12>/Read Parameter4'
     controller_DW.obj_e.matlabCodegenIsDeleted = false;
@@ -1308,12 +1308,12 @@ void controller_initialize(void)
       true, 1.0);
     controller_DW.obj_e.isSetupComplete = true;
 
-    // Start for MATLABSystem: '<S12>/Read Parameter5'
-    controller_DW.obj_o5.matlabCodegenIsDeleted = false;
-    controller_DW.obj_o5.isInitialized = 1;
-    controller_DW.obj_o5.MW_PARAMHANDLE = MW_Init_Param(&ParameterNameStr_7[0],
+    // Start for MATLABSystem: '<S12>/Read Parameter8'
+    controller_DW.obj_p.matlabCodegenIsDeleted = false;
+    controller_DW.obj_p.isInitialized = 1;
+    controller_DW.obj_p.MW_PARAMHANDLE = MW_Init_Param(&ParameterNameStr_7[0],
       true, 1.0);
-    controller_DW.obj_o5.isSetupComplete = true;
+    controller_DW.obj_p.isSetupComplete = true;
 
     // Start for MATLABSystem: '<S12>/Read Parameter2'
     controller_DW.obj_ju.matlabCodegenIsDeleted = false;
@@ -1321,22 +1321,22 @@ void controller_initialize(void)
     controller_DW.obj_ju.MW_PARAMHANDLE = MW_Init_Param(&ParameterNameStr_8[0],
       true, 1.0);
     controller_DW.obj_ju.isSetupComplete = true;
-    contro_ReadParameter11_Init(&controller_DW.ReadParameter11);
-
-    // Start for MATLABSystem: '<S12>/Read Parameter10'
-    controller_DW.obj_b.matlabCodegenIsDeleted = false;
-    controller_DW.obj_b.isInitialized = 1;
-    controller_DW.obj_b.MW_PARAMHANDLE = MW_Init_Param(&ParameterNameStr_9[0],
-      true, 1.0);
-    controller_DW.obj_b.isSetupComplete = true;
 
     // Start for MATLABSystem: '<S12>/Read Parameter9'
     controller_DW.obj_mf.matlabCodegenIsDeleted = false;
     controller_DW.obj_mf.isInitialized = 1;
-    controller_DW.obj_mf.MW_PARAMHANDLE = MW_Init_Param(&ParameterNameStr_a[0],
+    controller_DW.obj_mf.MW_PARAMHANDLE = MW_Init_Param(&ParameterNameStr_9[0],
       true, 1.0);
     controller_DW.obj_mf.isSetupComplete = true;
     contro_ReadParameter11_Init(&controller_DW.ReadParameter12);
+
+    // Start for MATLABSystem: '<S12>/Read Parameter10'
+    controller_DW.obj_b.matlabCodegenIsDeleted = false;
+    controller_DW.obj_b.isInitialized = 1;
+    controller_DW.obj_b.MW_PARAMHANDLE = MW_Init_Param(&ParameterNameStr_a[0],
+      true, 1.0);
+    controller_DW.obj_b.isSetupComplete = true;
+    contro_ReadParameter11_Init(&controller_DW.ReadParameter11);
 
     // Start for MATLABSystem: '<S151>/SourceBlock'
     controller_DW.obj_l.matlabCodegenIsDeleted = false;
@@ -1460,19 +1460,12 @@ void controller_terminate(void)
 
   // End of Terminate for MATLABSystem: '<S14>/Read Parameter2'
 
-  // Terminate for MATLABSystem: '<S12>/Read Parameter3'
-  if (!controller_DW.obj_f.matlabCodegenIsDeleted) {
-    controller_DW.obj_f.matlabCodegenIsDeleted = true;
+  // Terminate for MATLABSystem: '<S12>/Read Parameter6'
+  if (!controller_DW.obj_pe.matlabCodegenIsDeleted) {
+    controller_DW.obj_pe.matlabCodegenIsDeleted = true;
   }
 
-  // End of Terminate for MATLABSystem: '<S12>/Read Parameter3'
-
-  // Terminate for MATLABSystem: '<S12>/Read Parameter7'
-  if (!controller_DW.obj_l1.matlabCodegenIsDeleted) {
-    controller_DW.obj_l1.matlabCodegenIsDeleted = true;
-  }
-
-  // End of Terminate for MATLABSystem: '<S12>/Read Parameter7'
+  // End of Terminate for MATLABSystem: '<S12>/Read Parameter6'
 
   // Terminate for MATLABSystem: '<S12>/Read Parameter1'
   if (!controller_DW.obj_a.matlabCodegenIsDeleted) {
@@ -1481,12 +1474,19 @@ void controller_terminate(void)
 
   // End of Terminate for MATLABSystem: '<S12>/Read Parameter1'
 
-  // Terminate for MATLABSystem: '<S12>/Read Parameter6'
-  if (!controller_DW.obj_pe.matlabCodegenIsDeleted) {
-    controller_DW.obj_pe.matlabCodegenIsDeleted = true;
+  // Terminate for MATLABSystem: '<S12>/Read Parameter5'
+  if (!controller_DW.obj_o5.matlabCodegenIsDeleted) {
+    controller_DW.obj_o5.matlabCodegenIsDeleted = true;
   }
 
-  // End of Terminate for MATLABSystem: '<S12>/Read Parameter6'
+  // End of Terminate for MATLABSystem: '<S12>/Read Parameter5'
+
+  // Terminate for MATLABSystem: '<S12>/Read Parameter7'
+  if (!controller_DW.obj_l1.matlabCodegenIsDeleted) {
+    controller_DW.obj_l1.matlabCodegenIsDeleted = true;
+  }
+
+  // End of Terminate for MATLABSystem: '<S12>/Read Parameter7'
 
   // Terminate for MATLABSystem: '<S12>/Read Parameter'
   if (!controller_DW.obj_ng.matlabCodegenIsDeleted) {
@@ -1495,12 +1495,12 @@ void controller_terminate(void)
 
   // End of Terminate for MATLABSystem: '<S12>/Read Parameter'
 
-  // Terminate for MATLABSystem: '<S12>/Read Parameter8'
-  if (!controller_DW.obj_p.matlabCodegenIsDeleted) {
-    controller_DW.obj_p.matlabCodegenIsDeleted = true;
+  // Terminate for MATLABSystem: '<S12>/Read Parameter3'
+  if (!controller_DW.obj_f.matlabCodegenIsDeleted) {
+    controller_DW.obj_f.matlabCodegenIsDeleted = true;
   }
 
-  // End of Terminate for MATLABSystem: '<S12>/Read Parameter8'
+  // End of Terminate for MATLABSystem: '<S12>/Read Parameter3'
 
   // Terminate for MATLABSystem: '<S12>/Read Parameter4'
   if (!controller_DW.obj_e.matlabCodegenIsDeleted) {
@@ -1509,12 +1509,12 @@ void controller_terminate(void)
 
   // End of Terminate for MATLABSystem: '<S12>/Read Parameter4'
 
-  // Terminate for MATLABSystem: '<S12>/Read Parameter5'
-  if (!controller_DW.obj_o5.matlabCodegenIsDeleted) {
-    controller_DW.obj_o5.matlabCodegenIsDeleted = true;
+  // Terminate for MATLABSystem: '<S12>/Read Parameter8'
+  if (!controller_DW.obj_p.matlabCodegenIsDeleted) {
+    controller_DW.obj_p.matlabCodegenIsDeleted = true;
   }
 
-  // End of Terminate for MATLABSystem: '<S12>/Read Parameter5'
+  // End of Terminate for MATLABSystem: '<S12>/Read Parameter8'
 
   // Terminate for MATLABSystem: '<S12>/Read Parameter2'
   if (!controller_DW.obj_ju.matlabCodegenIsDeleted) {
@@ -1522,14 +1522,6 @@ void controller_terminate(void)
   }
 
   // End of Terminate for MATLABSystem: '<S12>/Read Parameter2'
-  contro_ReadParameter11_Term(&controller_DW.ReadParameter11);
-
-  // Terminate for MATLABSystem: '<S12>/Read Parameter10'
-  if (!controller_DW.obj_b.matlabCodegenIsDeleted) {
-    controller_DW.obj_b.matlabCodegenIsDeleted = true;
-  }
-
-  // End of Terminate for MATLABSystem: '<S12>/Read Parameter10'
 
   // Terminate for MATLABSystem: '<S12>/Read Parameter9'
   if (!controller_DW.obj_mf.matlabCodegenIsDeleted) {
@@ -1538,6 +1530,14 @@ void controller_terminate(void)
 
   // End of Terminate for MATLABSystem: '<S12>/Read Parameter9'
   contro_ReadParameter11_Term(&controller_DW.ReadParameter12);
+
+  // Terminate for MATLABSystem: '<S12>/Read Parameter10'
+  if (!controller_DW.obj_b.matlabCodegenIsDeleted) {
+    controller_DW.obj_b.matlabCodegenIsDeleted = true;
+  }
+
+  // End of Terminate for MATLABSystem: '<S12>/Read Parameter10'
+  contro_ReadParameter11_Term(&controller_DW.ReadParameter11);
 
   // Terminate for MATLABSystem: '<S151>/SourceBlock'
   if (!controller_DW.obj_l.matlabCodegenIsDeleted) {

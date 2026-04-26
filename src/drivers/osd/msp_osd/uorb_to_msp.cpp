@@ -551,35 +551,21 @@ msp_rendor_throttle_t construct_rendor_throttle(const manual_control_setpoint_s 
 }
 
 // --- Realer Motor-Output (Average) ---
-msp_rendor_motor_output_t construct_rendor_motor_output(const actuator_motors_s &motors)
+msp_rendor_motor_output_t construct_rendor_motor_output(const manual_control_setpoint_s &manual_control)
 {
     msp_rendor_motor_output_t msg{};
     msg.screenYPosition = 0x0C;
     msg.screenXPosition = 0x02;
 
-    float avg_output = 0.0f;
-    int motor_count = 0;
+    // Umrechnung von -1.0 (Knüppel unten) auf 1.0 (Knüppel oben) zu 0 - 100%
+    float throttle_percent = (manual_control.throttle + 1.0f) * 50.0f;
 
-    // Wir zählen nur Motoren, die nicht "NaN" (Not a Number) sind
-    for (int i = 0; i < 4; i++) {
-        if (PX4_ISFINITE(motors.control[i])) {
-            avg_output += motors.control[i];
-            motor_count++;
-        }
-    }
-
-    if (motor_count > 0) {
-        avg_output /= motor_count;
-    }
-
-    float output_percent = avg_output * 100.0f;
-
-    // Clipping für Sicherheit
-    if (output_percent < 0.0f) output_percent = 0.0f;
-    if (output_percent > 100.0f) output_percent = 100.0f;
+    // Clipping für Sicherheit (falls leichte Kalibrierungs-Ungenauigkeiten bestehen)
+    if (throttle_percent < 0.0f) throttle_percent = 0.0f;
+    if (throttle_percent > 100.0f) throttle_percent = 100.0f;
 
     // Wieder der %%-Trick für das OSD
-    snprintf(&msg.str[0], sizeof(msg.str), "%3.0f%%", (double)output_percent);
+    snprintf(&msg.str[0], sizeof(msg.str), "%3.0f%%", (double)throttle_percent);
     return msg;
 }
 
@@ -633,12 +619,14 @@ msp_rendor_altitude_t construct_Rendor_ALTITUDE(const sensor_gps_s &vehicle_gps_
 
 	double alt;
 
-	if (vehicle_gps_position.fix_type >= 2) {
-		// Ersetze altitude_msl_m durch (alt * 1e-3)
-		alt = (double)vehicle_gps_position.alt / 1000.0; // mm zu Meter konvertieren
-	} else {
-		alt = (double)(vehicle_local_position.z * -1.0f);
-	}
+	// if (vehicle_gps_position.fix_type >= 2) {
+	// 	// Ersetze altitude_msl_m durch (alt * 1e-3)
+	// 	alt = (double)vehicle_gps_position.alt / 1000.0; // mm zu Meter konvertieren
+	// } else {
+	// 	alt = (double)(vehicle_local_position.z * -1.0f);
+	// }
+        //allways use local_position.z, which is relative to the takeoff point and thus more meaningful for den OSD user.
+        alt = (double)(vehicle_local_position.z * -1.0f);
 
 	memset(&altitude.str[0], 0, sizeof(altitude.str));
 	snprintf(&altitude.str[0], sizeof(altitude.str), "%.1f\x0C", alt);

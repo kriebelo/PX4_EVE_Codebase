@@ -145,8 +145,7 @@ msp_rendor_Amp_t construct_rendor_Amp(const battery_status_s &bat);
 
 msp_rendor_Amp_t construct_rendor_Amp2(const battery_status_s &bat);
 
-msp_rendor_motor_output_t construct_rendor_motor_output(const actuator_motors_s &motors);
-
+msp_rendor_motor_output_t construct_rendor_motor_output(const manual_control_setpoint_s &manual_control);
 
 msp_rendor_km_flown_t construct_rendor_km_flown(const vehicle_global_position_s &pos, const vehicle_status_s &status);
 

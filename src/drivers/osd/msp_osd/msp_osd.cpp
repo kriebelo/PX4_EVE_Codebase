@@ -435,11 +435,11 @@ void MspOsd::Run()
 	// }
 	// Motor Output Anzeige
 	{
-	actuator_motors_s motors{};
-	if (_actuator_motors_sub.copy(&motors)) {
-		const auto msg = msp_osd::construct_rendor_motor_output(motors);
-		this->Send(MSP_CMD_DISPLAYPORT, &msg, sizeof(msp_rendor_motor_output_t));
-	}
+		manual_control_setpoint_s manual_control{};
+		if (_manual_control_setpoint_sub.copy(&manual_control)) {
+			const auto msg = msp_osd::construct_rendor_motor_output(manual_control);
+			this->Send(MSP_CMD_DISPLAYPORT, &msg, sizeof(msp_rendor_motor_output_t));
+		}
 	}
 
 
