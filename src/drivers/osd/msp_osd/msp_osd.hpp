@@ -40,6 +40,7 @@
 #include <px4_platform_common/px4_work_queue/ScheduledWorkItem.hpp>
 #include <uORB/SubscriptionInterval.hpp>
 
+
 #include <uORB/Subscription.hpp>
 #include <uORB/topics/airspeed_validated.h>
 #include <uORB/topics/battery_status.h>
@@ -54,6 +55,8 @@
 #include <uORB/topics/vehicle_global_position.h>
 #include <uORB/topics/vehicle_local_position.h>
 #include <uORB/topics/vehicle_status.h>
+#include <uORB/topics/actuator_motors.h>
+
 
 #include "MspV1.hpp"
 #include "MessageDisplay/MessageDisplay.hpp"
@@ -155,6 +158,7 @@ private:
 	// subscriptions to desired vehicle display information
 	uORB::Subscription _airspeed_validated_sub{ORB_ID(airspeed_validated)};
 	uORB::Subscription _battery_status_sub{ORB_ID(battery_status)};
+	uORB::Subscription _battery_status_sub_2{ORB_ID(battery_status), 1};
 	uORB::Subscription _home_position_sub{ORB_ID(home_position)};
 	uORB::Subscription _input_rc_sub{ORB_ID(input_rc)};
 	uORB::Subscription _log_message_sub{ORB_ID(log_message)};
@@ -164,6 +168,8 @@ private:
 	uORB::Subscription _vehicle_gps_position_sub{ORB_ID(vehicle_gps_position)};
 	uORB::Subscription _vehicle_local_position_sub{ORB_ID(vehicle_local_position)};
 	uORB::Subscription _vehicle_status_sub{ORB_ID(vehicle_status)};
+	uORB::Subscription _manual_control_setpoint_sub{ORB_ID(manual_control_setpoint)};
+	uORB::Subscription _actuator_motors_sub{ORB_ID(actuator_motors)};
 
 	uORB::SubscriptionInterval _parameter_update_sub{ORB_ID(parameter_update), 1_s};
 

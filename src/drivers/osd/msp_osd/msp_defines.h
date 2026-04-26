@@ -469,6 +469,16 @@ struct msp_rendor_satellites_used_t {
 	char str[3]; // 99
 } __attribute__((packed));
 
+struct msp_rendor_airspeed_t {
+        uint8_t subCommand = 0x03;
+        uint8_t screenYPosition;
+        uint8_t screenXPosition;
+        uint8_t iconAttrs = 0x00;
+        uint8_t iconIndex = 0x70; // Das vordere Icon (z.B. Wind)
+
+        char str[6]; // Hier kommt gleich die Zahl + das hintere Icon rein
+} __attribute__((packed));
+
 
 // MSP_COMP_GPS reply
 struct msp_comp_gps_t {
@@ -482,11 +492,110 @@ struct msp_rendor_distanceToHome_t {
 	uint8_t screenYPosition;
 	uint8_t screenXPosition;
 	uint8_t iconAttrs = 0x00; //
-	uint8_t iconIndex = 0x71; //distanceToHome icon
+	uint8_t iconIndex = 0x11; //distanceToHome icon
 
-	char str[6]; // 65536
+	char str[12]; // 65536
 } __attribute__((packed));
 
+struct msp_rendor_mAh_used_t {
+	uint8_t subCommand = 0x03; // 0x03 subcommand write string. fixed
+	uint8_t screenYPosition;
+	uint8_t screenXPosition;
+	uint8_t iconAttrs = 0x00;
+	uint8_t iconIndex = 0x20; //Blank
+
+	char str[10]; // 65536
+} __attribute__((packed));
+
+struct msp_rendor_Amp_t {
+	uint8_t subCommand = 0x03; // 0x03 subcommand write string. fixed
+	uint8_t screenYPosition;
+	uint8_t screenXPosition;
+	uint8_t iconAttrs = 0x00;
+	uint8_t iconIndex = 0x20; //Blank
+
+	char str[10]; // 65536
+} __attribute__((packed));
+
+struct msp_rendor_mAh_per_km_t {
+	uint8_t subCommand = 0x03; // 0x03 subcommand write string. fixed
+	uint8_t screenYPosition;
+	uint8_t screenXPosition;
+	uint8_t iconAttrs = 0x00; //
+	uint8_t iconIndex = 0x12; //full battery icon
+
+	char str[12]; // 65536
+} __attribute__((packed));
+
+
+// struct msp_rendor_home_arrow_t {
+// 	uint8_t subCommand = 0x03; // 0x03 subcommand write string. fixed
+// 	uint8_t screenYPosition;
+// 	uint8_t screenXPosition;
+// 	uint8_t iconAttrs = 0x00; //
+// 	uint8_t iconIndex = 0x60; //home arrow icon
+
+// 	char str[1]; // 65536
+// } __attribute__((packed));
+
+struct msp_rendor_km_flown_t {
+	uint8_t subCommand = 0x03; // 0x03 subcommand write string. fixed
+	uint8_t screenYPosition;
+	uint8_t screenXPosition;
+	uint8_t iconAttrs = 0x00; //
+	uint8_t iconIndex = 0x71; //distanceflown icon
+
+	char str[12]; // 65536
+} __attribute__((packed));
+
+struct msp_rendor_armed_timer_t {
+	uint8_t subCommand = 0x03; // 0x03 subcommand write string. fixed
+	uint8_t screenYPosition;
+	uint8_t screenXPosition;
+	uint8_t iconAttrs = 0x00; //
+	uint8_t iconIndex = 0x9C; //flyminutes icon
+
+	char str[17]; // 65536
+} __attribute__((packed));
+
+struct msp_rendor_heading_t {
+        uint8_t subCommand = 0x03;
+        uint8_t screenYPosition;
+        uint8_t screenXPosition;
+        uint8_t iconAttrs = 0x00;
+        uint8_t iconIndex = 0x20; // Leerzeichen, wir nutzen reinen Text "HDG:"
+
+        char str[12]; // Platz für z.B. "HDG: 359"
+} __attribute__((packed));
+
+
+struct msp_rendor_compass_bar_t {
+        uint8_t subCommand = 0x03;
+        uint8_t screenYPosition;
+        uint8_t screenXPosition;
+
+        char str[26]; // Platz für z.B. "HDG: 359"
+} __attribute__((packed));
+
+struct msp_rendor_throttle_t {
+    uint8_t subCommand = 0x03;
+    uint8_t screenYPosition;
+    uint8_t screenXPosition;
+    uint8_t iconAttrs = 0x00;
+    uint8_t iconIndex = 0x04; // Leerzeichen/Blank
+
+    char str[6]; // "100%"
+} __attribute__((packed));
+
+struct msp_rendor_motor_output_t {
+    uint8_t subCommand = 0x03;
+    uint8_t screenYPosition;
+    uint8_t screenXPosition;
+    uint8_t iconAttrs = 0x00;
+    uint8_t iconIndex = 0x04;
+
+    char str[6]; // Platz für "OUT: 100%"
+} __attribute__((packed));
 
 // values for msp_nav_status_t.mode
 #define MSP_NAV_STATUS_MODE_NONE   0
@@ -881,7 +990,7 @@ struct msp_rendor_battery_state_t {
 	uint8_t screenXPosition;
 	uint8_t iconAttrs;
 	uint8_t iconIndex;
-	char str[5];
+	char str[6];
 } __attribute__((packed));
 
 // MSP_STATUS reply customized for BF/DJI
