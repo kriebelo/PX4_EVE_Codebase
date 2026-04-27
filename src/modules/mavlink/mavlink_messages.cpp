@@ -113,6 +113,7 @@
 #include "streams/STATUSTEXT.hpp"
 #include "streams/STORAGE_INFORMATION.hpp"
 #include "streams/SYS_STATUS.hpp"
+#include "streams/SYSTEM_IDENTIFICATION.hpp"
 #include "streams/SYSTEM_TIME.hpp"
 #include "streams/TIME_ESTIMATE_TO_TARGET.hpp"
 #include "streams/TIMESYNC.hpp"
@@ -483,6 +484,9 @@ static const StreamListItem streams_list[] = {
 #if defined(UAVIONIX_ADSB_OUT_DYNAMIC_HPP)
 	create_stream_list_item<MavlinkStreamUavionixADSBOutDynamic>()
 #endif // UAVIONIX_ADSB_OUT_DYNAMIC_HPP
+#if defined(SYSTEM_IDENTIFICATION_HPP)
+	create_stream_list_item<MavlinkStreamSystemIdentification>()
+#endif // SYSTEM_IDENTIFICATION_HPP
 };
 
 const char *get_stream_name(const uint16_t msg_id)

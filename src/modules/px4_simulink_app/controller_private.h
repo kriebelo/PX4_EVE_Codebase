@@ -7,9 +7,9 @@
 //
 // Code generated for Simulink model 'controller'.
 //
-// Model version                  : 1.82
+// Model version                  : 1.86
 // Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
-// C/C++ source code generated on : Sun Apr 26 21:15:41 2026
+// C/C++ source code generated on : Mon Apr 27 13:35:29 2026
 //
 // Target selection: ert.tlc
 // Embedded hardware selection: ARM Compatible->ARM Cortex
@@ -70,10 +70,10 @@ preprocessor word size checks.
 #endif
 
 // Skipping ulong_long/long_long check: insufficient preprocessor integer range. 
-extern void contro_ReadParameter11_Init(DW_ReadParameter11_controller_T *localDW);
-extern void controller_ReadParameter11(B_ReadParameter11_controller_T *localB,
-  DW_ReadParameter11_controller_T *localDW);
-extern void contro_ReadParameter11_Term(DW_ReadParameter11_controller_T *localDW);
+extern real32_T rt_atan2f_snf(real32_T u0, real32_T u1);
+extern void controller_PX4Timestamp_Init(DW_PX4Timestamp_controller_T *localDW);
+extern void controller_PX4Timestamp(B_PX4Timestamp_controller_T *localB);
+extern void controller_PX4Timestamp_Term(DW_PX4Timestamp_controller_T *localDW);
 
 #endif                                 // controller_private_h_
 

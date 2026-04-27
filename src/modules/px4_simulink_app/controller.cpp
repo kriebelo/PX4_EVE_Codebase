@@ -7,9 +7,9 @@
 //
 // Code generated for Simulink model 'controller'.
 //
-// Model version                  : 1.82
+// Model version                  : 1.86
 // Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
-// C/C++ source code generated on : Sun Apr 26 21:15:41 2026
+// C/C++ source code generated on : Mon Apr 27 13:35:29 2026
 //
 // Target selection: ert.tlc
 // Embedded hardware selection: ARM Compatible->ARM Cortex
@@ -19,7 +19,6 @@
 #include "controller.h"
 #include "controller_types.h"
 #include "controller_private.h"
-#include "rtwtypes.h"
 
 extern "C"
 {
@@ -29,6 +28,8 @@ extern "C"
 }
 
 #include <math.h>
+#include "rtwtypes.h"
+#include "rt_defines.h"
 
 // Block signals (default storage)
 B_controller_T controller_B;
@@ -42,89 +43,71 @@ RT_MODEL_controller_T *const controller_M = &controller_M_;
 
 // Forward declaration for local functions
 static void controll_PX4Actuators_setupImpl(px4_internal_block_PX4Actuato_T *obj);
-static void rate_monotonic_scheduler(void);
-
-//
-// Set which subrates need to run this base step (base rate always runs).
-// This function must be called prior to calling the model step function
-// in order to remember which rates need to run this base step.  The
-// buffering of events allows for overlapping preemption.
-//
-void controller_SetEventsForThisBaseStep(boolean_T *eventFlags)
-{
-  // Task runs when its counter is zero, computed via rtmStepTask macro
-  eventFlags[1] = ((boolean_T)controller_M->StepTask(1));
-}
-
-//
-//         This function updates active task flag for each subrate
-//         and rate transition flags for tasks that exchange data.
-//         The function assumes rate-monotonic multitasking scheduler.
-//         The function must be called at model base rate so that
-//         the generated code self-manages all its subrates and rate
-//         transition flags.
-//
-static void rate_monotonic_scheduler(void)
-{
-  // To ensure a deterministic data transfer between two rates,
-  //  data is transferred at the priority of a fast task and the frequency
-  //  of the slow task.  The following flags indicate when the data transfer
-  //  happens.  That is, a rate interaction flag is set true when both rates
-  //  will run, and false otherwise.
-
-
-  // tid 0 shares data with slower tid rate: 1
-  controller_M->Timing.RateInteraction.TID0_1 =
-    (controller_M->Timing.TaskCounters.TID[1] == 0);
-
-  // Compute which subrates run during the next base time step.  Subrates
-  //  are an integer multiple of the base rate counter.  Therefore, the subtask
-  //  counter is reset when it reaches its limit (zero means run).
-
-  (controller_M->Timing.TaskCounters.TID[1])++;
-  if ((controller_M->Timing.TaskCounters.TID[1]) > 3) {// Sample time: [0.004s, 0.0s] 
-    controller_M->Timing.TaskCounters.TID[1] = 0;
-  }
-}
 
 // System initialize for atomic system:
-void contro_ReadParameter11_Init(DW_ReadParameter11_controller_T *localDW)
+void controller_PX4Timestamp_Init(DW_PX4Timestamp_controller_T *localDW)
 {
-  static const char_T ParameterNameStr[17] = "VEL_CONTR_GAIN_I";
-
-  // Start for MATLABSystem: '<S12>/Read Parameter11'
+  // Start for MATLABSystem: '<S32>/PX4 Timestamp'
   localDW->obj.matlabCodegenIsDeleted = false;
   localDW->objisempty = true;
   localDW->obj.isInitialized = 1;
-  localDW->obj.MW_PARAMHANDLE = MW_Init_Param(&ParameterNameStr[0], true, 1.0);
   localDW->obj.isSetupComplete = true;
 }
 
 // Output and update for atomic system:
-void controller_ReadParameter11(B_ReadParameter11_controller_T *localB,
-  DW_ReadParameter11_controller_T *localDW)
+void controller_PX4Timestamp(B_PX4Timestamp_controller_T *localB)
 {
-  boolean_T b_varargout_2;
-
-  // MATLABSystem: '<S12>/Read Parameter11'
-  b_varargout_2 = MW_ParamRead_Step(localDW->obj.MW_PARAMHANDLE, MW_SINGLE,
-    &localB->ReadParameter11_o1);
-  if (b_varargout_2) {
-    localB->ReadParameter11_o1 = 0.0F;
-  }
-
-  // End of MATLABSystem: '<S12>/Read Parameter11'
+  // MATLABSystem: '<S32>/PX4 Timestamp'
+  localB->PX4Timestamp = hrt_absolute_time();
 }
 
 // Termination for atomic system:
-void contro_ReadParameter11_Term(DW_ReadParameter11_controller_T *localDW)
+void controller_PX4Timestamp_Term(DW_PX4Timestamp_controller_T *localDW)
 {
-  // Terminate for MATLABSystem: '<S12>/Read Parameter11'
+  // Terminate for MATLABSystem: '<S32>/PX4 Timestamp'
   if (!localDW->obj.matlabCodegenIsDeleted) {
     localDW->obj.matlabCodegenIsDeleted = true;
   }
 
-  // End of Terminate for MATLABSystem: '<S12>/Read Parameter11'
+  // End of Terminate for MATLABSystem: '<S32>/PX4 Timestamp'
+}
+
+real32_T rt_atan2f_snf(real32_T u0, real32_T u1)
+{
+  real32_T y;
+  if (rtIsNaNF(u0) || rtIsNaNF(u1)) {
+    y = (rtNaNF);
+  } else if (rtIsInfF(u0) && rtIsInfF(u1)) {
+    int32_T tmp;
+    int32_T tmp_0;
+    if (u0 > 0.0F) {
+      tmp = 1;
+    } else {
+      tmp = -1;
+    }
+
+    if (u1 > 0.0F) {
+      tmp_0 = 1;
+    } else {
+      tmp_0 = -1;
+    }
+
+    y = static_cast<real32_T>(atan2(static_cast<real_T>(static_cast<real32_T>
+      (tmp)), static_cast<real_T>(static_cast<real32_T>(tmp_0))));
+  } else if (u1 == 0.0F) {
+    if (u0 > 0.0F) {
+      y = RT_PIF / 2.0F;
+    } else if (u0 < 0.0F) {
+      y = -(RT_PIF / 2.0F);
+    } else {
+      y = 0.0F;
+    }
+  } else {
+    y = static_cast<real32_T>(atan2(static_cast<real_T>(u0), static_cast<real_T>
+      (u1)));
+  }
+
+  return y;
 }
 
 static void controll_PX4Actuators_setupImpl(px4_internal_block_PX4Actuato_T *obj)
@@ -158,88 +141,38 @@ static void controll_PX4Actuators_setupImpl(px4_internal_block_PX4Actuato_T *obj
   MW_actuators_init(obj->QSize);
 }
 
-// Model step function for TID0
-void controller_step0(void)            // Sample time: [0.001s, 0.0s]
+// Model step function
+void controller_step(void)
 {
-  real_T temp;
-  int32_T i;
-  real32_T ParamStep;
-  real32_T ParamStep_0;
+  int32_T ParamStep;
+  real32_T rtb_Add1_e;
   real32_T rtb_Converttimefromustos;
-  real32_T rtb_FunctionforDeflectionValu_e;
-  real32_T rtb_Kb;
+  real32_T rtb_OutputLimitation3;
+  real32_T rtb_OutputLimitation_e;
   real32_T rtb_Saturation;
   real32_T rtb_Saturation1;
   real32_T rtb_Saturation10;
   real32_T rtb_Saturation7;
   real32_T rtb_Saturation8;
-  real32_T rtb_theta;
-  real32_T yTemp;
+  real32_T rtb_Saturation_f;
+  real32_T rtb_Sum_d;
+  real32_T rtb_Sum_f;
   boolean_T b_varargout_1;
-  boolean_T tmp;
 
-  {                                    // Sample time: [0.001s, 0.0s]
-    rate_monotonic_scheduler();
-  }
-
-  // MATLABSystem: '<S149>/SourceBlock'
+  // MATLABSystem: '<S161>/SourceBlock'
   b_varargout_1 = uORB_read_step(controller_DW.obj_d.orbMetadataObj,
     &controller_DW.obj_d.eventStructObj, &controller_B.r1, false, 5000.0);
 
-  // Outputs for Enabled SubSystem: '<S149>/Enabled Subsystem' incorporates:
-  //   EnablePort: '<S150>/Enable'
+  // Outputs for Enabled SubSystem: '<S161>/Enabled Subsystem' incorporates:
+  //   EnablePort: '<S162>/Enable'
 
-  // Start for MATLABSystem: '<S149>/SourceBlock'
+  // Start for MATLABSystem: '<S161>/SourceBlock'
   if (b_varargout_1) {
-    // SignalConversion generated from: '<S150>/In1'
+    // SignalConversion generated from: '<S162>/In1'
     controller_B.In1_d = controller_B.r1;
   }
 
-  // End of Outputs for SubSystem: '<S149>/Enabled Subsystem'
-
-  // RateTransition generated from: '<S2>/Output Limitation' incorporates:
-  //   RateTransition generated from: '<Root>/PX4 Timestamp'
-  //   RateTransition generated from: '<S19>/Controller'
-  //   RateTransition generated from: '<S22>/Function for Deflection Value Rudder Left'
-  //   RateTransition generated from: '<S22>/Function for Deflection Value Rudder Right'
-  //   RateTransition generated from: '<S2>/Control Authority Gain'
-
-  tmp = controller_M->Timing.RateInteraction.TID0_1;
-  if (tmp) {
-    // RateTransition generated from: '<S2>/Output Limitation'
-    for (i = 0; i < 6; i++) {
-      controller_B.TmpRTBAtOutputLimitationOutport[i] =
-        controller_DW.TmpRTBAtOutputLimitationOutport[i];
-    }
-
-    // End of RateTransition generated from: '<S2>/Output Limitation'
-  }
-
-  // End of RateTransition generated from: '<S2>/Output Limitation'
-
-  // MATLABSystem: '<Root>/PX4 Actuator Write' incorporates:
-  //   Constant: '<S16>/Constant'
-  //   RelationalOperator: '<S16>/Compare'
-
-  for (i = 0; i < 12; i++) {
-    controller_B.motorValues[i] = (rtNaNF);
-  }
-
-  for (i = 0; i < 8; i++) {
-    controller_B.servoValues[i] = (rtNaNF);
-  }
-
-  controller_B.motorValues[0] = controller_B.TmpRTBAtOutputLimitationOutport[0];
-  controller_B.motorValues[1] = controller_B.TmpRTBAtOutputLimitationOutport[1];
-  controller_B.servoValues[0] = controller_B.TmpRTBAtOutputLimitationOutport[2];
-  controller_B.servoValues[5] = controller_B.TmpRTBAtOutputLimitationOutport[3];
-  controller_B.servoValues[6] = controller_B.TmpRTBAtOutputLimitationOutport[4];
-  controller_B.servoValues[7] = controller_B.TmpRTBAtOutputLimitationOutport[5];
-  MW_actuators_set(controller_B.In1_d.values[4] >=
-                   controller_P.CompareToConstant3_const,
-                   &controller_B.motorValues[0], &controller_B.servoValues[0]);
-
-  // End of MATLABSystem: '<Root>/PX4 Actuator Write'
+  // End of Outputs for SubSystem: '<S161>/Enabled Subsystem'
 
   // Fcn: '<S14>/Fcn1' incorporates:
   //   DataTypeConversion: '<S14>/Cast To Single1'
@@ -256,47 +189,25 @@ void controller_step0(void)            // Sample time: [0.001s, 0.0s]
 
   // End of Saturate: '<S14>/Saturation1'
 
-  // Fcn: '<S13>/Fcn5' incorporates:
-  //   DataTypeConversion: '<S13>/Data Type Conversion1'
-
-  rtb_Saturation8 = (static_cast<real32_T>(controller_B.In1_d.values[1]) -
-                     1500.0F) / 500.0F;
-
-  // Saturate: '<S13>/Saturation8'
-  if (rtb_Saturation8 > controller_P.Saturation8_UpperSat) {
-    rtb_Saturation8 = controller_P.Saturation8_UpperSat;
-  } else if (rtb_Saturation8 < controller_P.Saturation8_LowerSat) {
-    rtb_Saturation8 = controller_P.Saturation8_LowerSat;
-  }
-
-  // End of Saturate: '<S13>/Saturation8'
-
-  // Switch: '<S25>/Check for activation'
-  if (!(rtb_Saturation1 > controller_P.Checkforactivation_Threshold)) {
-    // Switch: '<S25>/Check for activation'
-    controller_DW.Savedpitchinput_PreviousInput = rtb_Saturation8;
-  }
-
-  // End of Switch: '<S25>/Check for activation'
-
   // MATLABSystem: '<S14>/Read Parameter2'
   b_varargout_1 = MW_ParamRead_Step(controller_DW.obj_ms.MW_PARAMHANDLE,
-    MW_SINGLE, &ParamStep);
+    MW_SINGLE, &controller_B.ParamStep);
   if (b_varargout_1) {
-    ParamStep = 0.0F;
+    controller_B.ParamStep = 0.0F;
   }
 
   // MATLABSystem: '<S14>/Modulo by Constant' incorporates:
   //   MATLABSystem: '<S14>/Read Parameter2'
   //
-  if (rtIsNaNF(ParamStep) || rtIsInfF(ParamStep)) {
-    yTemp = (rtNaNF);
+  if (rtIsNaNF(controller_B.ParamStep) || rtIsInfF(controller_B.ParamStep)) {
+    controller_B.yTemp = (rtNaNF);
   } else {
-    yTemp = static_cast<real32_T>(fmod(static_cast<real_T>(ParamStep), 3.0));
-    if (yTemp == 0.0F) {
-      yTemp = 0.0F;
-    } else if (yTemp < 0.0F) {
-      yTemp += 3.0F;
+    controller_B.yTemp = static_cast<real32_T>(fmod(static_cast<real_T>
+      (controller_B.ParamStep), 3.0));
+    if (controller_B.yTemp == 0.0F) {
+      controller_B.yTemp = 0.0F;
+    } else if (controller_B.yTemp < 0.0F) {
+      controller_B.yTemp += 3.0F;
     }
   }
 
@@ -305,7 +216,7 @@ void controller_step0(void)            // Sample time: [0.001s, 0.0s]
   //   Constant: '<S14>/Constant7'
   //   MATLABSystem: '<S14>/Read Parameter2'
   //
-  if (ParamStep > controller_P.Switch4_Threshold) {
+  if (controller_B.ParamStep > controller_P.Switch4_Threshold) {
     rtb_Saturation = controller_P.Constant7_Value;
   } else {
     rtb_Saturation = controller_P.Constant6_Value;
@@ -322,6 +233,29 @@ void controller_step0(void)            // Sample time: [0.001s, 0.0s]
 
   // End of Saturate: '<S14>/Saturation'
 
+  // Fcn: '<S13>/Fcn5' incorporates:
+  //   DataTypeConversion: '<S13>/Data Type Conversion1'
+
+  rtb_Saturation8 = (static_cast<real32_T>(controller_B.In1_d.values[1]) -
+                     1500.0F) / 500.0F;
+
+  // Saturate: '<S13>/Saturation8'
+  if (rtb_Saturation8 > controller_P.Saturation8_UpperSat) {
+    rtb_Saturation8 = controller_P.Saturation8_UpperSat;
+  } else if (rtb_Saturation8 < controller_P.Saturation8_LowerSat) {
+    rtb_Saturation8 = controller_P.Saturation8_LowerSat;
+  }
+
+  // End of Saturate: '<S13>/Saturation8'
+
+  // Switch: '<S26>/Check for activation'
+  if (!(rtb_Saturation1 > controller_P.Checkforactivation_Threshold)) {
+    // Switch: '<S26>/Check for activation'
+    controller_DW.Savedpitchinput_PreviousInput = rtb_Saturation8;
+  }
+
+  // End of Switch: '<S26>/Check for activation'
+
   // Fcn: '<S13>/Fcn7' incorporates:
   //   DataTypeConversion: '<S13>/Data Type Conversion2'
 
@@ -337,13 +271,13 @@ void controller_step0(void)            // Sample time: [0.001s, 0.0s]
 
   // End of Saturate: '<S13>/Saturation7'
 
-  // Switch: '<S27>/Check for activation'
+  // Switch: '<S28>/Check for activation'
   if (!(rtb_Saturation1 > controller_P.Checkforactivation_Threshold_d)) {
-    // Switch: '<S27>/Check for activation'
+    // Switch: '<S28>/Check for activation'
     controller_DW.Savedyawinput_PreviousInput = rtb_Saturation7;
   }
 
-  // End of Switch: '<S27>/Check for activation'
+  // End of Switch: '<S28>/Check for activation'
 
   // Fcn: '<S13>/Fcn6' incorporates:
   //   DataTypeConversion: '<S13>/Data Type Conversion3'
@@ -360,48 +294,111 @@ void controller_step0(void)            // Sample time: [0.001s, 0.0s]
 
   // End of Saturate: '<S13>/Saturation10'
 
-  // Switch: '<S26>/Check for activation'
+  // Switch: '<S27>/Check for activation'
   if (!(rtb_Saturation1 > controller_P.Checkforactivation_Threshold_m)) {
-    // Switch: '<S26>/Check for activation'
+    // Switch: '<S27>/Check for activation'
     controller_DW.SavedThrustinput_PreviousInput = rtb_Saturation10;
   }
 
-  // End of Switch: '<S26>/Check for activation'
+  // End of Switch: '<S27>/Check for activation'
 
-  // RateTransition generated from: '<Root>/PX4 Timestamp'
-  if (tmp) {
-    // RateTransition generated from: '<Root>/PX4 Timestamp'
-    controller_B.TmpRTBAtPX4TimestampOutport1 =
-      controller_DW.TmpRTBAtPX4TimestampOutport1_Bu;
-  }
+  // MATLABSystem: '<Root>/PX4 Timestamp'
+  controller_B.rtb_PX4Timestamp_c = hrt_absolute_time();
 
-  // Switch: '<S29>/Give stored time instead  of current time after activation'
+  // Switch: '<S30>/Give stored time instead  of current time after activation'
   if (!(rtb_Saturation1 > controller_P.Givestoredtimeinsteadofcurrentt)) {
-    // Switch: '<S29>/Give stored time instead  of current time after activation' incorporates:
-    //   RateTransition generated from: '<Root>/PX4 Timestamp'
+    // Switch: '<S30>/Give stored time instead  of current time after activation' incorporates:
+    //   MATLABSystem: '<Root>/PX4 Timestamp'
 
-    controller_DW.StoreStartTime_PreviousInput =
-      controller_B.TmpRTBAtPX4TimestampOutport1;
+    controller_DW.StoreStartTime_PreviousInput = controller_B.rtb_PX4Timestamp_c;
   }
 
-  // End of Switch: '<S29>/Give stored time instead  of current time after activation' 
+  // End of Switch: '<S30>/Give stored time instead  of current time after activation' 
 
-  // Gain: '<S29>/Convert time from us to s' incorporates:
-  //   DataTypeConversion: '<S29>/Convert time from  uint64 to single'
-  //   RateTransition generated from: '<Root>/PX4 Timestamp'
-  //   Sum: '<S29>/Get difference between  activation time and current time'
-  //   Switch: '<S29>/Give stored time instead  of current time after activation'
+  // Gain: '<S30>/Convert time from us to s' incorporates:
+  //   DataTypeConversion: '<S30>/Convert time from  uint64 to single'
+  //   MATLABSystem: '<Root>/PX4 Timestamp'
+  //   Sum: '<S30>/Get difference between  activation time and current time'
+  //   Switch: '<S30>/Give stored time instead  of current time after activation'
 
   rtb_Converttimefromustos = static_cast<real32_T>
-    (controller_B.TmpRTBAtPX4TimestampOutport1 -
+    (controller_B.rtb_PX4Timestamp_c -
      controller_DW.StoreStartTime_PreviousInput) *
     controller_P.Converttimefromustos_Gain;
 
+  // MATLABSystem: '<S12>/Read Parameter4'
+  b_varargout_1 = MW_ParamRead_Step(controller_DW.obj_e.MW_PARAMHANDLE,
+    MW_SINGLE, &controller_B.ParamStep);
+  if (b_varargout_1) {
+    controller_B.ParamStep = 0.0F;
+  }
+
+  // ParameterWriter: '<S12>/Parameter Writer10' incorporates:
+  //   DataTypeConversion: '<S12>/Cast To Double5'
+  //   MATLABSystem: '<S12>/Read Parameter4'
+  //   Product: '<S12>/Reciprocal1'
+  //
+  controller_InstP.dutch_roll_period = static_cast<real32_T>(1.0 /
+    controller_B.ParamStep);
+
+  // MATLABSystem: '<S12>/Read Parameter8'
+  b_varargout_1 = MW_ParamRead_Step(controller_DW.obj_p.MW_PARAMHANDLE,
+    MW_SINGLE, &controller_InstP.phugoid_dur);
+  if (b_varargout_1) {
+    controller_InstP.phugoid_dur = 0.0F;
+  }
+
+  // MATLABSystem: '<S12>/Read Parameter5'
+  b_varargout_1 = MW_ParamRead_Step(controller_DW.obj_o5.MW_PARAMHANDLE,
+    MW_SINGLE, &controller_InstP.dutch_roll_dur);
+  if (b_varargout_1) {
+    controller_InstP.dutch_roll_dur = 0.0F;
+  }
+
+  // MATLABSystem: '<S12>/Read Parameter1'
+  b_varargout_1 = MW_ParamRead_Step(controller_DW.obj_a.MW_PARAMHANDLE,
+    MW_SINGLE, &controller_B.ParamStep_k);
+  if (b_varargout_1) {
+    controller_B.ParamStep_k = 0.0F;
+  }
+
+  // ParameterWriter: '<S12>/Parameter Writer1' incorporates:
+  //   MATLABSystem: '<S12>/Read Parameter1'
+  //
+  controller_InstP.short_period_freq = controller_B.ParamStep_k;
+
+  // MATLABSystem: '<S12>/Read Parameter7'
+  b_varargout_1 = MW_ParamRead_Step(controller_DW.obj_l1.MW_PARAMHANDLE,
+    MW_SINGLE, &controller_B.ParamStep_c);
+  if (b_varargout_1) {
+    controller_B.ParamStep_c = 0.0F;
+  }
+
+  // ParameterWriter: '<S12>/Parameter Writer9' incorporates:
+  //   DataTypeConversion: '<S12>/Cast To Double8'
+  //   MATLABSystem: '<S12>/Read Parameter7'
+  //   Product: '<S12>/Reciprocal'
+  //
+  controller_InstP.phugoid_period = static_cast<real32_T>(1.0 /
+    controller_B.ParamStep_c);
+
+  // ParameterWriter: '<S12>/Parameter Writer7' incorporates:
+  //   MATLABSystem: '<S12>/Read Parameter7'
+  //
+  controller_InstP.phugoid_freq = controller_B.ParamStep_c;
+
+  // MATLABSystem: '<S12>/Read Parameter2'
+  b_varargout_1 = MW_ParamRead_Step(controller_DW.obj_ju.MW_PARAMHANDLE,
+    MW_SINGLE, &controller_InstP.short_period_dur);
+  if (b_varargout_1) {
+    controller_InstP.short_period_dur = 0.0F;
+  }
+
   // MATLABSystem: '<S12>/Read Parameter6'
   b_varargout_1 = MW_ParamRead_Step(controller_DW.obj_pe.MW_PARAMHANDLE,
-    MW_SINGLE, &ParamStep);
+    MW_SINGLE, &controller_B.ParamStep_b);
   if (b_varargout_1) {
-    ParamStep = 0.0F;
+    controller_B.ParamStep_b = 0.0F;
   }
 
   // ParameterWriter: '<S12>/Parameter Writer6' incorporates:
@@ -409,69 +406,19 @@ void controller_step0(void)            // Sample time: [0.001s, 0.0s]
   //   Gain: '<S12>/Gain2'
   //   MATLABSystem: '<S12>/Read Parameter6'
   //
-  controller_InstP.phugoid_amp = controller_P.Gain2_Gain * ParamStep;
+  controller_InstP.phugoid_amp = controller_P.Gain2_Gain *
+    controller_B.ParamStep_b;
 
-  // MATLABSystem: '<S12>/Read Parameter1'
-  b_varargout_1 = MW_ParamRead_Step(controller_DW.obj_a.MW_PARAMHANDLE,
-    MW_SINGLE, &ParamStep);
-  if (b_varargout_1) {
-    ParamStep = 0.0F;
-  }
-
-  // ParameterWriter: '<S12>/Parameter Writer1' incorporates:
-  //   MATLABSystem: '<S12>/Read Parameter1'
+  // ParameterWriter: '<S12>/Parameter Writer4' incorporates:
+  //   MATLABSystem: '<S12>/Read Parameter4'
   //
-  controller_InstP.short_period_freq = ParamStep;
-
-  // MATLABSystem: '<S12>/Read Parameter5' incorporates:
-  //   ParameterWriter: '<S12>/Parameter Writer5'
-
-  b_varargout_1 = MW_ParamRead_Step(controller_DW.obj_o5.MW_PARAMHANDLE,
-    MW_SINGLE, &controller_InstP.dutch_roll_dur);
-  if (b_varargout_1) {
-    controller_InstP.dutch_roll_dur = 0.0F;
-  }
-
-  // End of MATLABSystem: '<S12>/Read Parameter5'
-
-  // ParameterWriter: '<S12>/Parameter Writer11' incorporates:
-  //   DataTypeConversion: '<S12>/Cast To Double2'
-  //   MATLABSystem: '<S12>/Read Parameter1'
-  //   Product: '<S12>/Reciprocal2'
-  //
-  controller_InstP.short_period_period = static_cast<real32_T>(1.0 / ParamStep);
-
-  // MATLABSystem: '<S12>/Read Parameter7'
-  b_varargout_1 = MW_ParamRead_Step(controller_DW.obj_l1.MW_PARAMHANDLE,
-    MW_SINGLE, &ParamStep);
-  if (b_varargout_1) {
-    ParamStep = 0.0F;
-  }
-
-  // ParameterWriter: '<S12>/Parameter Writer7' incorporates:
-  //   MATLABSystem: '<S12>/Read Parameter7'
-  //
-  controller_InstP.phugoid_freq = ParamStep;
-
-  // MATLABSystem: '<S12>/Read Parameter'
-  b_varargout_1 = MW_ParamRead_Step(controller_DW.obj_ng.MW_PARAMHANDLE,
-    MW_SINGLE, &ParamStep_0);
-  if (b_varargout_1) {
-    ParamStep_0 = 0.0F;
-  }
-
-  // ParameterWriter: '<S12>/Parameter Writer' incorporates:
-  //   DataTypeConversion: '<S12>/Cast To Double1'
-  //   Gain: '<S12>/Gain'
-  //   MATLABSystem: '<S12>/Read Parameter'
-  //
-  controller_InstP.short_period_amp = controller_P.Gain_Gain * ParamStep_0;
+  controller_InstP.dutch_roll_freq = controller_B.ParamStep;
 
   // MATLABSystem: '<S12>/Read Parameter3'
   b_varargout_1 = MW_ParamRead_Step(controller_DW.obj_f.MW_PARAMHANDLE,
-    MW_SINGLE, &ParamStep_0);
+    MW_SINGLE, &controller_B.ParamStep_p);
   if (b_varargout_1) {
-    ParamStep_0 = 0.0F;
+    controller_B.ParamStep_p = 0.0F;
   }
 
   // ParameterWriter: '<S12>/Parameter Writer3' incorporates:
@@ -479,319 +426,298 @@ void controller_step0(void)            // Sample time: [0.001s, 0.0s]
   //   Gain: '<S12>/Gain1'
   //   MATLABSystem: '<S12>/Read Parameter3'
   //
-  controller_InstP.dutch_roll_amp = controller_P.Gain1_Gain * ParamStep_0;
+  controller_InstP.dutch_roll_amp = controller_P.Gain1_Gain *
+    controller_B.ParamStep_p;
 
-  // MATLABSystem: '<S12>/Read Parameter4'
-  b_varargout_1 = MW_ParamRead_Step(controller_DW.obj_e.MW_PARAMHANDLE,
-    MW_SINGLE, &ParamStep_0);
+  // ParameterWriter: '<S12>/Parameter Writer11' incorporates:
+  //   DataTypeConversion: '<S12>/Cast To Double2'
+  //   MATLABSystem: '<S12>/Read Parameter1'
+  //   Product: '<S12>/Reciprocal2'
+  //
+  controller_InstP.short_period_period = static_cast<real32_T>(1.0 /
+    controller_B.ParamStep_k);
+
+  // MATLABSystem: '<S12>/Read Parameter'
+  b_varargout_1 = MW_ParamRead_Step(controller_DW.obj_ng.MW_PARAMHANDLE,
+    MW_SINGLE, &controller_B.ParamStep_cv);
   if (b_varargout_1) {
-    ParamStep_0 = 0.0F;
+    controller_B.ParamStep_cv = 0.0F;
   }
 
-  // ParameterWriter: '<S12>/Parameter Writer4' incorporates:
-  //   MATLABSystem: '<S12>/Read Parameter4'
+  // ParameterWriter: '<S12>/Parameter Writer' incorporates:
+  //   DataTypeConversion: '<S12>/Cast To Double1'
+  //   Gain: '<S12>/Gain'
+  //   MATLABSystem: '<S12>/Read Parameter'
   //
-  controller_InstP.dutch_roll_freq = ParamStep_0;
+  controller_InstP.short_period_amp = controller_P.Gain_Gain *
+    controller_B.ParamStep_cv;
 
-  // MATLABSystem: '<S12>/Read Parameter8' incorporates:
-  //   ParameterWriter: '<S12>/Parameter Writer8'
-
-  b_varargout_1 = MW_ParamRead_Step(controller_DW.obj_p.MW_PARAMHANDLE,
-    MW_SINGLE, &controller_InstP.phugoid_dur);
-  if (b_varargout_1) {
-    controller_InstP.phugoid_dur = 0.0F;
-  }
-
-  // End of MATLABSystem: '<S12>/Read Parameter8'
-
-  // ParameterWriter: '<S12>/Parameter Writer10' incorporates:
-  //   DataTypeConversion: '<S12>/Cast To Double5'
-  //   MATLABSystem: '<S12>/Read Parameter4'
-  //   Product: '<S12>/Reciprocal1'
-  //
-  controller_InstP.dutch_roll_period = static_cast<real32_T>(1.0 / ParamStep_0);
-
-  // ParameterWriter: '<S12>/Parameter Writer9' incorporates:
-  //   DataTypeConversion: '<S12>/Cast To Double8'
-  //   MATLABSystem: '<S12>/Read Parameter7'
-  //   Product: '<S12>/Reciprocal'
-  //
-  controller_InstP.phugoid_period = static_cast<real32_T>(1.0 / ParamStep);
-
-  // MATLABSystem: '<S12>/Read Parameter2' incorporates:
-  //   ParameterWriter: '<S12>/Parameter Writer2'
-
-  b_varargout_1 = MW_ParamRead_Step(controller_DW.obj_ju.MW_PARAMHANDLE,
-    MW_SINGLE, &controller_InstP.short_period_dur);
-  if (b_varargout_1) {
-    controller_InstP.short_period_dur = 0.0F;
-  }
-
-  // End of MATLABSystem: '<S12>/Read Parameter2'
-
-  // If: '<S19>/Activate different control logics after activation flag is triggered' 
+  // If: '<S20>/Activate different control logics after activation flag is triggered' 
   if ((rtb_Saturation1 > 0.5F) && (rtb_Saturation < 0.5F)) {
-    // Outputs for IfAction SubSystem: '<S19>/Mode Selection - SysID' incorporates:
-    //   ActionPort: '<S28>/Action Port'
+    // Outputs for IfAction SubSystem: '<S20>/Mode Selection - SysID' incorporates:
+    //   ActionPort: '<S29>/Action Port'
 
-    // If: '<S28>/Set if condition for mode to be chosen' incorporates:
+    // If: '<S29>/Set if condition for mode to be chosen' incorporates:
     //   MATLABSystem: '<S14>/Modulo by Constant'
 
-    if ((yTemp >= -0.5F) && (yTemp < 0.5F)) {
-      // Outputs for IfAction SubSystem: '<S28>/Short Period Doublet' incorporates:
-      //   ActionPort: '<S142>/Action Port'
+    if ((controller_B.yTemp >= -0.5F) && (controller_B.yTemp < 0.5F)) {
+      // Outputs for IfAction SubSystem: '<S29>/Short Period Doublet' incorporates:
+      //   ActionPort: '<S148>/Action Port'
 
-      // Switch: '<S142>/Set time to re-allow  pilot inputs'
+      // Switch: '<S148>/Set time to re-allow  pilot inputs'
       if (!(rtb_Converttimefromustos > controller_InstP.short_period_dur)) {
-        // Switch: '<S142>/Set end time of doublet' incorporates:
-        //   DataTypeConversion: '<S142>/Cast To Single'
-        //   SignalGenerator: '<S142>/Doublet Generator'
-        //   Sum: '<S142>/Sum Initial Pitch Input  and Doublet Wave'
+        // Switch: '<S148>/Set end time of doublet' incorporates:
+        //   DataTypeConversion: '<S148>/Cast To Single'
+        //   SignalGenerator: '<S148>/Doublet Generator'
+        //   Sum: '<S148>/Sum Initial Pitch Input  and Doublet Wave'
 
         if (rtb_Converttimefromustos >= controller_InstP.short_period_period) {
           rtb_Saturation8 = controller_DW.Savedpitchinput_PreviousInput;
         } else {
-          // SignalGenerator: '<S142>/Doublet Generator' incorporates:
-          //   DataTypeConversion: '<S142>/Cast To Double'
+          // SignalGenerator: '<S148>/Doublet Generator' incorporates:
+          //   DataTypeConversion: '<S148>/Cast To Double'
 
-          temp = controller_InstP.short_period_freq * rtb_Converttimefromustos;
-          if (temp - floor(temp) >= 0.5) {
-            temp = controller_InstP.short_period_amp;
+          controller_B.temp = controller_InstP.short_period_freq *
+            rtb_Converttimefromustos;
+          if (controller_B.temp - floor(controller_B.temp) >= 0.5) {
+            controller_B.temp = controller_InstP.short_period_amp;
           } else {
-            temp = -controller_InstP.short_period_amp;
+            controller_B.temp = -controller_InstP.short_period_amp;
           }
 
           rtb_Saturation8 = controller_DW.Savedpitchinput_PreviousInput +
-            static_cast<real32_T>(temp);
+            static_cast<real32_T>(controller_B.temp);
         }
 
-        // End of Switch: '<S142>/Set end time of doublet'
+        // End of Switch: '<S148>/Set end time of doublet'
       }
 
-      // End of Switch: '<S142>/Set time to re-allow  pilot inputs'
-      // End of Outputs for SubSystem: '<S28>/Short Period Doublet'
-    } else if ((yTemp >= 0.5F) && (yTemp < 1.5F)) {
-      // Outputs for IfAction SubSystem: '<S28>/Dutch Roll Doublet' incorporates:
-      //   ActionPort: '<S140>/Action Port'
+      // End of Switch: '<S148>/Set time to re-allow  pilot inputs'
+      // End of Outputs for SubSystem: '<S29>/Short Period Doublet'
+    } else if ((controller_B.yTemp >= 0.5F) && (controller_B.yTemp < 1.5F)) {
+      // Outputs for IfAction SubSystem: '<S29>/Dutch Roll Doublet' incorporates:
+      //   ActionPort: '<S146>/Action Port'
 
-      // Switch: '<S140>/Set time to re-allow  pilot inputs'
+      // Switch: '<S146>/Set time to re-allow  pilot inputs'
       if (!(rtb_Converttimefromustos > controller_InstP.dutch_roll_dur)) {
-        // Switch: '<S140>/Switch1'
+        // Switch: '<S146>/Switch1'
         if (rtb_Converttimefromustos > controller_InstP.dutch_roll_period) {
-          // DataTypeConversion: '<S140>/Cast To Single1'
+          // DataTypeConversion: '<S146>/Cast To Single1'
           rtb_Saturation7 = controller_DW.Savedyawinput_PreviousInput;
         } else {
-          // SignalGenerator: '<S140>/Doublet Generator' incorporates:
-          //   DataTypeConversion: '<S140>/Cast To Double'
+          // SignalGenerator: '<S146>/Doublet Generator' incorporates:
+          //   DataTypeConversion: '<S146>/Cast To Double'
 
-          temp = controller_InstP.dutch_roll_freq * rtb_Converttimefromustos;
-          if (temp - floor(temp) >= 0.5) {
-            temp = controller_InstP.dutch_roll_amp;
+          controller_B.temp = controller_InstP.dutch_roll_freq *
+            rtb_Converttimefromustos;
+          if (controller_B.temp - floor(controller_B.temp) >= 0.5) {
+            controller_B.temp = controller_InstP.dutch_roll_amp;
           } else {
-            temp = -controller_InstP.dutch_roll_amp;
+            controller_B.temp = -controller_InstP.dutch_roll_amp;
           }
 
-          // DataTypeConversion: '<S140>/Cast To Single1' incorporates:
-          //   DataTypeConversion: '<S140>/Cast To Single'
-          //   SignalGenerator: '<S140>/Doublet Generator'
-          //   Sum: '<S140>/Sum Initial Yaw Input  and Doublet Wave'
+          // DataTypeConversion: '<S146>/Cast To Single1' incorporates:
+          //   DataTypeConversion: '<S146>/Cast To Single'
+          //   SignalGenerator: '<S146>/Doublet Generator'
+          //   Sum: '<S146>/Sum Initial Yaw Input  and Doublet Wave'
 
           rtb_Saturation7 = controller_DW.Savedyawinput_PreviousInput +
-            static_cast<real32_T>(temp);
+            static_cast<real32_T>(controller_B.temp);
         }
 
-        // End of Switch: '<S140>/Switch1'
+        // End of Switch: '<S146>/Switch1'
       }
 
-      // End of Switch: '<S140>/Set time to re-allow  pilot inputs'
-      // End of Outputs for SubSystem: '<S28>/Dutch Roll Doublet'
-    } else if ((yTemp >= 1.5F) && (yTemp < 2.5F)) {
-      // Outputs for IfAction SubSystem: '<S28>/Phugoid Doublet' incorporates:
-      //   ActionPort: '<S141>/Action Port'
+      // End of Switch: '<S146>/Set time to re-allow  pilot inputs'
+      // End of Outputs for SubSystem: '<S29>/Dutch Roll Doublet'
+    } else if ((controller_B.yTemp >= 1.5F) && (controller_B.yTemp < 2.5F)) {
+      // Outputs for IfAction SubSystem: '<S29>/Phugoid Doublet' incorporates:
+      //   ActionPort: '<S147>/Action Port'
 
-      // Switch: '<S141>/Set time to re-allow  pilot inputs'
+      // Switch: '<S147>/Set time to re-allow  pilot inputs'
       if (!(rtb_Converttimefromustos > controller_InstP.phugoid_dur)) {
-        // Switch: '<S141>/Switch1'
+        // Switch: '<S147>/Switch1'
         if (rtb_Converttimefromustos > controller_InstP.phugoid_period) {
-          // DataTypeConversion: '<S141>/Cast To Single1'
+          // DataTypeConversion: '<S147>/Cast To Single1'
           rtb_Saturation10 = controller_DW.SavedThrustinput_PreviousInput;
         } else {
-          // SignalGenerator: '<S141>/Doublet Generator' incorporates:
-          //   DataTypeConversion: '<S141>/Cast To Double'
+          // SignalGenerator: '<S147>/Doublet Generator' incorporates:
+          //   DataTypeConversion: '<S147>/Cast To Double'
 
-          temp = controller_InstP.phugoid_freq * rtb_Converttimefromustos;
-          if (temp - floor(temp) >= 0.5) {
-            temp = controller_InstP.phugoid_amp;
+          controller_B.temp = controller_InstP.phugoid_freq *
+            rtb_Converttimefromustos;
+          if (controller_B.temp - floor(controller_B.temp) >= 0.5) {
+            controller_B.temp = controller_InstP.phugoid_amp;
           } else {
-            temp = -controller_InstP.phugoid_amp;
+            controller_B.temp = -controller_InstP.phugoid_amp;
           }
 
-          // DataTypeConversion: '<S141>/Cast To Single1' incorporates:
-          //   DataTypeConversion: '<S141>/Cast To Single'
-          //   SignalGenerator: '<S141>/Doublet Generator'
-          //   Sum: '<S141>/Sum Initial Thrust Input  and Doublet Wave'
+          // DataTypeConversion: '<S147>/Cast To Single1' incorporates:
+          //   DataTypeConversion: '<S147>/Cast To Single'
+          //   SignalGenerator: '<S147>/Doublet Generator'
+          //   Sum: '<S147>/Sum Initial Thrust Input  and Doublet Wave'
 
           rtb_Saturation10 = controller_DW.SavedThrustinput_PreviousInput +
-            static_cast<real32_T>(temp);
+            static_cast<real32_T>(controller_B.temp);
         }
 
-        // End of Switch: '<S141>/Switch1'
+        // End of Switch: '<S147>/Switch1'
       }
 
-      // End of Switch: '<S141>/Set time to re-allow  pilot inputs'
-      // End of Outputs for SubSystem: '<S28>/Phugoid Doublet'
+      // End of Switch: '<S147>/Set time to re-allow  pilot inputs'
+      // End of Outputs for SubSystem: '<S29>/Phugoid Doublet'
     }
 
-    // End of If: '<S28>/Set if condition for mode to be chosen'
-    // End of Outputs for SubSystem: '<S19>/Mode Selection - SysID'
+    // End of If: '<S29>/Set if condition for mode to be chosen'
+    // End of Outputs for SubSystem: '<S20>/Mode Selection - SysID'
   }
 
-  // End of If: '<S19>/Activate different control logics after activation flag is triggered' 
+  // End of If: '<S20>/Activate different control logics after activation flag is triggered' 
 
-  // MATLABSystem: '<S12>/Read Parameter9' incorporates:
-  //   ParameterWriter: '<S12>/Parameter Writer12'
-
+  // MATLABSystem: '<S12>/Read Parameter9'
   b_varargout_1 = MW_ParamRead_Step(controller_DW.obj_mf.MW_PARAMHANDLE,
     MW_SINGLE, &controller_InstP.pitch_con_gain_i);
   if (b_varargout_1) {
     controller_InstP.pitch_con_gain_i = 0.0F;
   }
 
-  // End of MATLABSystem: '<S12>/Read Parameter9'
-  controller_ReadParameter11(&controller_B.ReadParameter12,
-    &controller_DW.ReadParameter12);
+  // MATLABSystem: '<S12>/Read Parameter11'
+  b_varargout_1 = MW_ParamRead_Step(controller_DW.obj_i.MW_PARAMHANDLE,
+    MW_SINGLE, &controller_InstP.vel_con_gain_i);
+  if (b_varargout_1) {
+    controller_InstP.vel_con_gain_i = 0.0F;
+  }
 
-  // ParameterWriter: '<S12>/Parameter Writer15' incorporates:
-  //   DataTypeConversion: '<S12>/Cast To Double13'
-
-  controller_InstP.vel_con_gain_p =
-    controller_B.ReadParameter12.ReadParameter11_o1;
-
-  // MATLABSystem: '<S12>/Read Parameter10' incorporates:
-  //   ParameterWriter: '<S12>/Parameter Writer13'
-
+  // MATLABSystem: '<S12>/Read Parameter10'
   b_varargout_1 = MW_ParamRead_Step(controller_DW.obj_b.MW_PARAMHANDLE,
     MW_SINGLE, &controller_InstP.pitch_con_gain_p);
   if (b_varargout_1) {
     controller_InstP.pitch_con_gain_p = 0.0F;
   }
 
-  // End of MATLABSystem: '<S12>/Read Parameter10'
-  controller_ReadParameter11(&controller_B.ReadParameter11,
-    &controller_DW.ReadParameter11);
+  // MATLABSystem: '<S12>/Read Parameter12'
+  b_varargout_1 = MW_ParamRead_Step(controller_DW.obj_g.MW_PARAMHANDLE,
+    MW_SINGLE, &controller_InstP.vel_con_gain_p);
+  if (b_varargout_1) {
+    controller_InstP.vel_con_gain_p = 0.0F;
+  }
 
-  // ParameterWriter: '<S12>/Parameter Writer14' incorporates:
-  //   DataTypeConversion: '<S12>/Cast To Double12'
-
-  controller_InstP.vel_con_gain_i =
-    controller_B.ReadParameter11.ReadParameter11_o1;
-
-  // MATLABSystem: '<S151>/SourceBlock'
+  // MATLABSystem: '<S163>/SourceBlock'
   b_varargout_1 = uORB_read_step(controller_DW.obj_l.orbMetadataObj,
     &controller_DW.obj_l.eventStructObj, &controller_B.r, false, 1.0);
 
-  // Outputs for Enabled SubSystem: '<S151>/Enabled Subsystem' incorporates:
-  //   EnablePort: '<S152>/Enable'
+  // Outputs for Enabled SubSystem: '<S163>/Enabled Subsystem' incorporates:
+  //   EnablePort: '<S164>/Enable'
 
-  // Start for MATLABSystem: '<S151>/SourceBlock'
+  // Start for MATLABSystem: '<S163>/SourceBlock'
   if (b_varargout_1) {
-    // SignalConversion generated from: '<S152>/In1'
+    // SignalConversion generated from: '<S164>/In1'
     controller_B.In1 = controller_B.r;
   }
 
-  // End of Outputs for SubSystem: '<S151>/Enabled Subsystem'
+  // End of Outputs for SubSystem: '<S163>/Enabled Subsystem'
 
   // MATLAB Function: '<S2>/quat2eul'
-  rtb_theta = static_cast<real32_T>(asin(static_cast<real_T>
+  rtb_Converttimefromustos = static_cast<real32_T>(asin(static_cast<real_T>
     ((controller_B.In1.q[1] * controller_B.In1.q[3] - controller_B.In1.q[0] *
       controller_B.In1.q[2]) * -2.0F)));
 
-  // MATLABSystem: '<S143>/SourceBlock'
+  // MATLABSystem: '<S149>/SourceBlock'
   b_varargout_1 = uORB_read_step(controller_DW.obj_m.orbMetadataObj,
     &controller_DW.obj_m.eventStructObj, &controller_B.r4, false, 1.0);
 
-  // Outputs for Enabled SubSystem: '<S143>/Enabled Subsystem' incorporates:
-  //   EnablePort: '<S144>/Enable'
+  // Outputs for Enabled SubSystem: '<S149>/Enabled Subsystem' incorporates:
+  //   EnablePort: '<S150>/Enable'
 
-  // Start for MATLABSystem: '<S143>/SourceBlock'
+  // Start for MATLABSystem: '<S149>/SourceBlock'
   if (b_varargout_1) {
-    // SignalConversion generated from: '<S144>/In1'
+    // SignalConversion generated from: '<S150>/In1'
     controller_B.In1_m = controller_B.r4;
   }
 
-  // End of Outputs for SubSystem: '<S143>/Enabled Subsystem'
+  // End of Outputs for SubSystem: '<S149>/Enabled Subsystem'
 
   // MATLABSystem: '<S14>/Read Parameter'
-  b_varargout_1 = MW_ParamRead_Step(controller_DW.obj_n.MW_PARAMHANDLE,
-    MW_SINGLE, &ParamStep);
+  b_varargout_1 = MW_ParamRead_Step(controller_DW.obj_nh.MW_PARAMHANDLE,
+    MW_SINGLE, &controller_B.ParamStep_f);
   if (b_varargout_1) {
-    ParamStep = 0.0F;
+    controller_B.ParamStep_f = 0.0F;
   }
 
   // MATLABSystem: '<S14>/Read Parameter1'
   b_varargout_1 = MW_ParamRead_Step(controller_DW.obj_k.MW_PARAMHANDLE,
-    MW_SINGLE, &ParamStep_0);
+    MW_SINGLE, &controller_B.ParamStep_g);
   if (b_varargout_1) {
-    ParamStep_0 = 0.0F;
+    controller_B.ParamStep_g = 0.0F;
   }
 
-  // Outputs for Atomic SubSystem: '<S19>/Controller'
-  // Sum: '<S32>/Sum' incorporates:
+  // Outputs for Atomic SubSystem: '<S20>/Controller'
+  // Switch: '<S24>/Switch3'
+  if (rtb_Saturation > controller_P.Switch3_Threshold) {
+    // Switch: '<S24>/Switch2' incorporates:
+    //   Constant: '<S24>/Constant'
+
+    if (rtb_Saturation1 > controller_P.Switch2_Threshold) {
+      rtb_Saturation10 = controller_P.Constant_Value_b;
+    }
+
+    // End of Switch: '<S24>/Switch2'
+  }
+
+  // End of Switch: '<S24>/Switch3'
+  controller_PX4Timestamp(&controller_B.PX4Timestamp_h);
+
+  // Sum: '<S36>/Sum' incorporates:
   //   MATLABSystem: '<S14>/Read Parameter1'
   //
-  rtb_FunctionforDeflectionValu_e = ParamStep_0 -
-    controller_B.In1_m.true_airspeed_m_s;
+  rtb_Add1_e = controller_B.ParamStep_g - controller_B.In1_m.true_airspeed_m_s;
 
-  // DiscreteIntegrator: '<S121>/Integrator'
+  // DiscreteIntegrator: '<S127>/Integrator'
   if (controller_DW.Integrator_IC_LOADING != 0) {
-    controller_DW.Integrator_DSTATE = rtb_theta;
+    controller_DW.Integrator_DSTATE = rtb_Converttimefromustos;
   }
 
   if ((rtb_Saturation1 > 0.0F) && (controller_DW.Integrator_PrevResetState <= 0))
   {
-    controller_DW.Integrator_DSTATE = rtb_theta;
+    controller_DW.Integrator_DSTATE = rtb_Converttimefromustos;
   }
 
-  // Sum: '<S130>/Sum' incorporates:
-  //   DiscreteIntegrator: '<S121>/Integrator'
-  //   Gain: '<S126>/Proportional Gain'
+  // Sum: '<S136>/Sum' incorporates:
+  //   DiscreteIntegrator: '<S127>/Integrator'
+  //   Gain: '<S132>/Proportional Gain'
 
-  rtb_Converttimefromustos = controller_InstP.vel_con_gain_p *
-    rtb_FunctionforDeflectionValu_e + controller_DW.Integrator_DSTATE;
+  rtb_OutputLimitation_e = controller_InstP.vel_con_gain_p * rtb_Add1_e +
+    controller_DW.Integrator_DSTATE;
 
-  // Saturate: '<S128>/Saturation'
-  if (rtb_Converttimefromustos > controller_P.PIDController_UpperSaturationLi) {
-    ParamStep_0 = controller_P.PIDController_UpperSaturationLi;
-  } else if (rtb_Converttimefromustos <
+  // Saturate: '<S134>/Saturation'
+  if (rtb_OutputLimitation_e > controller_P.PIDController_UpperSaturationLi) {
+    rtb_OutputLimitation3 = controller_P.PIDController_UpperSaturationLi;
+  } else if (rtb_OutputLimitation_e <
              controller_P.PIDController_LowerSaturationLi) {
-    ParamStep_0 = controller_P.PIDController_LowerSaturationLi;
+    rtb_OutputLimitation3 = controller_P.PIDController_LowerSaturationLi;
   } else {
-    ParamStep_0 = rtb_Converttimefromustos;
+    rtb_OutputLimitation3 = rtb_OutputLimitation_e;
   }
 
-  // End of Saturate: '<S128>/Saturation'
+  // End of Saturate: '<S134>/Saturation'
 
-  // Gain: '<S113>/Kb' incorporates:
-  //   Sum: '<S113>/SumI2'
-
-  rtb_Kb = (ParamStep_0 - rtb_Converttimefromustos) *
-    controller_P.PIDController_Kb;
-
-  // Switch: '<S30>/Switch' incorporates:
-  //   Gain: '<S18>/Gain1'
+  // Switch: '<S31>/Switch' incorporates:
+  //   Gain: '<S19>/Gain1'
   //   MATLABSystem: '<S14>/Modulo by Constant'
   //   MATLABSystem: '<S14>/Read Parameter'
   //
-  if (!(yTemp > controller_P.Switch_Threshold_k)) {
-    ParamStep_0 = controller_P.Gain1_Gain_o * ParamStep;
+  if (controller_B.yTemp > controller_P.Switch_Threshold_k) {
+    controller_B.ParamStep_f = rtb_OutputLimitation3;
+  } else {
+    controller_B.ParamStep_f *= controller_P.Gain1_Gain_o;
   }
 
-  // End of Switch: '<S30>/Switch'
+  // End of Switch: '<S31>/Switch'
 
-  // Sum: '<S31>/Sum'
-  ParamStep_0 -= rtb_theta;
+  // Sum: '<S35>/Sum'
+  rtb_Sum_f = controller_B.ParamStep_f - rtb_Converttimefromustos;
 
-  // DiscreteIntegrator: '<S68>/Integrator'
+  // DiscreteIntegrator: '<S74>/Integrator'
   if (controller_DW.Integrator_IC_LOADING_p != 0) {
     controller_DW.Integrator_DSTATE_e =
       controller_DW.Savedpitchinput_PreviousInput;
@@ -804,33 +730,65 @@ void controller_step0(void)            // Sample time: [0.001s, 0.0s]
       controller_DW.Savedpitchinput_PreviousInput;
   }
 
-  // Sum: '<S77>/Sum' incorporates:
-  //   DiscreteIntegrator: '<S68>/Integrator'
-  //   Gain: '<S73>/Proportional Gain'
+  // Sum: '<S83>/Sum' incorporates:
+  //   DiscreteIntegrator: '<S74>/Integrator'
+  //   Gain: '<S79>/Proportional Gain'
 
-  rtb_Converttimefromustos = controller_InstP.pitch_con_gain_p * ParamStep_0 +
+  rtb_Sum_d = controller_InstP.pitch_con_gain_p * rtb_Sum_f +
     controller_DW.Integrator_DSTATE_e;
 
-  // Saturate: '<S75>/Saturation'
-  if (rtb_Converttimefromustos > controller_P.PIDController_UpperSaturation_d) {
-    ParamStep = controller_P.PIDController_UpperSaturation_d;
-  } else if (rtb_Converttimefromustos <
-             controller_P.PIDController_LowerSaturation_m) {
-    ParamStep = controller_P.PIDController_LowerSaturation_m;
+  // Saturate: '<S81>/Saturation'
+  if (rtb_Sum_d > controller_P.PIDController_UpperSaturation_d) {
+    rtb_Saturation_f = controller_P.PIDController_UpperSaturation_d;
+  } else if (rtb_Sum_d < controller_P.PIDController_LowerSaturation_m) {
+    rtb_Saturation_f = controller_P.PIDController_LowerSaturation_m;
   } else {
-    ParamStep = rtb_Converttimefromustos;
+    rtb_Saturation_f = rtb_Sum_d;
   }
 
-  // End of Saturate: '<S75>/Saturation'
+  // End of Saturate: '<S81>/Saturation'
 
-  // Update for DiscreteIntegrator: '<S121>/Integrator' incorporates:
-  //   DiscreteIntegrator: '<S68>/Integrator'
-  //   Gain: '<S118>/Integral Gain'
-  //   Sum: '<S113>/SumI4'
+  // BusAssignment: '<S32>/Bus Assignment' incorporates:
+  //   Gain: '<S31>/Gain'
+  //   Gain: '<S33>/Gain'
+  //   Gain: '<S34>/Gain'
+  //   MATLABSystem: '<S14>/Modulo by Constant'
+  //   MATLABSystem: '<S14>/Read Parameter1'
+  //   MATLABSystem: '<S32>/PX4 Timestamp'
+  //
+  controller_B.BusAssignment_e.timestamp =
+    controller_B.PX4Timestamp_h.PX4Timestamp;
+  controller_B.BusAssignment_e.activation_flag = rtb_Saturation1;
+  controller_B.BusAssignment_e.mode_selector = controller_B.yTemp;
+  controller_B.BusAssignment_e.test_mode_selector = rtb_Saturation;
+  controller_B.BusAssignment_e.elevator_cmd = controller_P.Gain_Gain_p *
+    rtb_Saturation_f;
+  controller_B.BusAssignment_e.pitch_angle = controller_P.Gain_Gain_o *
+    rtb_Converttimefromustos;
+  controller_B.BusAssignment_e.pitch_angle_cmd = controller_P.Gain_Gain_m *
+    controller_B.ParamStep_f;
+  controller_B.BusAssignment_e.airspeed = controller_B.In1_m.true_airspeed_m_s;
+  controller_B.BusAssignment_e.airspeed_cmd = controller_B.ParamStep_g;
+
+  // MATLABSystem: '<S38>/SinkBlock' incorporates:
+  //   BusAssignment: '<S32>/Bus Assignment'
+
+  uORB_write_step(controller_DW.obj_h0.orbMetadataObj,
+                  &controller_DW.obj_h0.orbAdvertiseObj,
+                  &controller_B.BusAssignment_e);
+
+  // Update for DiscreteIntegrator: '<S127>/Integrator' incorporates:
+  //   DiscreteIntegrator: '<S74>/Integrator'
+  //   Gain: '<S119>/Kb'
+  //   Gain: '<S124>/Integral Gain'
+  //   Sum: '<S119>/SumI2'
+  //   Sum: '<S119>/SumI4'
 
   controller_DW.Integrator_IC_LOADING = 0U;
-  controller_DW.Integrator_DSTATE += (controller_InstP.vel_con_gain_i *
-    rtb_FunctionforDeflectionValu_e + rtb_Kb) * controller_P.Integrator_gainval;
+  controller_DW.Integrator_DSTATE += ((rtb_OutputLimitation3 -
+    rtb_OutputLimitation_e) * controller_P.PIDController_Kb_p +
+    controller_InstP.vel_con_gain_i * rtb_Add1_e) *
+    controller_P.Integrator_gainval;
   if (rtb_Saturation1 > 0.0F) {
     controller_DW.Integrator_PrevResetState = 1;
     controller_DW.Integrator_PrevResetState_k = 1;
@@ -845,280 +803,368 @@ void controller_step0(void)            // Sample time: [0.001s, 0.0s]
     controller_DW.Integrator_PrevResetState_k = 2;
   }
 
-  // End of Update for DiscreteIntegrator: '<S121>/Integrator'
+  // End of Update for DiscreteIntegrator: '<S127>/Integrator'
 
-  // Update for DiscreteIntegrator: '<S68>/Integrator' incorporates:
-  //   Gain: '<S60>/Kb'
-  //   Gain: '<S65>/Integral Gain'
-  //   Sum: '<S60>/SumI2'
-  //   Sum: '<S60>/SumI4'
+  // Update for DiscreteIntegrator: '<S74>/Integrator' incorporates:
+  //   Gain: '<S66>/Kb'
+  //   Gain: '<S71>/Integral Gain'
+  //   Sum: '<S66>/SumI2'
+  //   Sum: '<S66>/SumI4'
 
   controller_DW.Integrator_IC_LOADING_p = 0U;
-  controller_DW.Integrator_DSTATE_e += ((ParamStep - rtb_Converttimefromustos) *
-    controller_P.PIDController_Kb_c + controller_InstP.pitch_con_gain_i *
-    ParamStep_0) * controller_P.Integrator_gainval_b;
+  controller_DW.Integrator_DSTATE_e += ((rtb_Saturation_f - rtb_Sum_d) *
+    controller_P.PIDController_Kb + controller_InstP.pitch_con_gain_i *
+    rtb_Sum_f) * controller_P.Integrator_gainval_b;
 
-  // End of Outputs for SubSystem: '<S19>/Controller'
-
-  // RateTransition generated from: '<S19>/Controller'
-  if (tmp) {
-    // Outputs for Atomic SubSystem: '<S19>/Controller'
-    // Switch: '<S23>/Switch3'
-    if (rtb_Saturation > controller_P.Switch3_Threshold) {
-      // Switch: '<S23>/Switch2' incorporates:
-      //   Constant: '<S23>/Constant'
-
-      if (rtb_Saturation1 > controller_P.Switch2_Threshold) {
-        controller_DW.TmpRTBAtControllerOutport2_Buff =
-          controller_P.Constant_Value_b;
-      } else {
-        controller_DW.TmpRTBAtControllerOutport2_Buff = rtb_Saturation10;
-      }
-
-      // End of Switch: '<S23>/Switch2'
-    } else {
-      controller_DW.TmpRTBAtControllerOutport2_Buff = rtb_Saturation10;
-    }
-
-    // End of Switch: '<S23>/Switch3'
-    // End of Outputs for SubSystem: '<S19>/Controller'
-  }
-
-  // Outputs for Atomic SubSystem: '<S19>/Controller'
-  // Switch: '<S23>/Switch1'
+  // Switch: '<S24>/Switch1'
   if (rtb_Saturation > controller_P.Switch1_Threshold) {
-    // Switch: '<S23>/Switch'
+    // Switch: '<S24>/Switch'
     if (rtb_Saturation1 > controller_P.Switch_Threshold) {
-      rtb_Saturation8 = ParamStep;
+      rtb_Saturation8 = rtb_Saturation_f;
     }
 
-    // End of Switch: '<S23>/Switch'
+    // End of Switch: '<S24>/Switch'
   }
 
-  // Gain: '<S21>/Pitch control portion' incorporates:
-  //   Switch: '<S23>/Switch1'
+  // Gain: '<S22>/Pitch control portion' incorporates:
+  //   Switch: '<S24>/Switch1'
 
-  ParamStep_0 = controller_P.Pitchcontrolportion_Gain * rtb_Saturation8;
+  rtb_OutputLimitation3 = controller_P.Pitchcontrolportion_Gain *
+    rtb_Saturation8;
 
-  // End of Outputs for SubSystem: '<S19>/Controller'
+  // End of Outputs for SubSystem: '<S20>/Controller'
 
   // Fcn: '<S13>/Fcn2' incorporates:
   //   DataTypeConversion: '<S13>/Data Type Conversion'
 
-  rtb_Saturation1 = (static_cast<real32_T>(controller_B.In1_d.values[0]) -
-                     1500.0F) / 500.0F;
+  controller_B.ParamStep_g = (static_cast<real32_T>(controller_B.In1_d.values[0])
+    - 1500.0F) / 500.0F;
 
   // Saturate: '<S13>/Saturation9'
-  if (rtb_Saturation1 > controller_P.Saturation9_UpperSat) {
-    rtb_Saturation1 = controller_P.Saturation9_UpperSat;
-  } else if (rtb_Saturation1 < controller_P.Saturation9_LowerSat) {
-    rtb_Saturation1 = controller_P.Saturation9_LowerSat;
+  if (controller_B.ParamStep_g > controller_P.Saturation9_UpperSat) {
+    controller_B.ParamStep_g = controller_P.Saturation9_UpperSat;
+  } else if (controller_B.ParamStep_g < controller_P.Saturation9_LowerSat) {
+    controller_B.ParamStep_g = controller_P.Saturation9_LowerSat;
   }
 
-  // Gain: '<S21>/Roll control portion' incorporates:
+  // Gain: '<S22>/Roll control portion' incorporates:
   //   Gain: '<S13>/Gain'
   //   Saturate: '<S13>/Saturation9'
 
-  rtb_Converttimefromustos = controller_P.Gain_Gain_h * rtb_Saturation1 *
+  rtb_OutputLimitation_e = controller_P.Gain_Gain_h * controller_B.ParamStep_g *
     controller_P.Rollcontrolportion_Gain;
 
-  // Sum: '<S21>/Add Elevon Left'
-  rtb_Saturation1 = rtb_Converttimefromustos - ParamStep_0;
+  // Sum: '<S22>/Add Elevon Left'
+  rtb_Saturation8 = rtb_OutputLimitation_e - rtb_OutputLimitation3;
 
-  // Sum: '<S21>/Add Elevon Right'
-  rtb_Converttimefromustos = (0.0F - rtb_Converttimefromustos) - ParamStep_0;
-
-  // RateTransition generated from: '<S2>/Control Authority Gain'
-  if (tmp) {
-    controller_DW.TmpRTBAtControlAuthorityGainInp[0] = rtb_Saturation1;
-    controller_DW.TmpRTBAtControlAuthorityGainInp[1] = rtb_Converttimefromustos;
-  }
+  // Sum: '<S22>/Add Elevon Right'
+  rtb_OutputLimitation_e = (0.0F - rtb_OutputLimitation_e) -
+    rtb_OutputLimitation3;
 
   // Fcn: '<S14>/Fcn7' incorporates:
   //   DataTypeConversion: '<S14>/Cast To Single'
 
-  rtb_Saturation1 = (static_cast<real32_T>(controller_B.In1_d.values[5]) -
-                     1000.0F) / 500.0F;
+  controller_B.ParamStep_g = (static_cast<real32_T>(controller_B.In1_d.values[5])
+    - 1000.0F) / 500.0F;
 
   // Saturate: '<S14>/Saturation7'
-  if (rtb_Saturation1 > controller_P.Saturation7_UpperSat_m) {
-    rtb_Saturation1 = controller_P.Saturation7_UpperSat_m;
-  } else if (rtb_Saturation1 < controller_P.Saturation7_LowerSat_b) {
-    rtb_Saturation1 = controller_P.Saturation7_LowerSat_b;
+  if (controller_B.ParamStep_g > controller_P.Saturation7_UpperSat_m) {
+    controller_B.ParamStep_g = controller_P.Saturation7_UpperSat_m;
+  } else if (controller_B.ParamStep_g < controller_P.Saturation7_LowerSat_b) {
+    controller_B.ParamStep_g = controller_P.Saturation7_LowerSat_b;
   }
 
-  // Switch: '<S22>/Switch' incorporates:
-  //   Constant: '<S22>/No Rudder Deflection Value'
-  //   Constant: '<S22>/Spoiler Rudder Deflection Value'
+  // Switch: '<S23>/Switch' incorporates:
+  //   Constant: '<S23>/No Rudder Deflection Value'
+  //   Constant: '<S23>/Spoiler Rudder Deflection Value'
   //   Saturate: '<S14>/Saturation7'
 
-  if (rtb_Saturation1 > controller_P.Switch_Threshold_j) {
-    ParamStep_0 = controller_P.SpoilerRudderDeflectionValue_Va;
+  if (controller_B.ParamStep_g > controller_P.Switch_Threshold_j) {
+    rtb_Add1_e = controller_P.SpoilerRudderDeflectionValue_Va;
   } else {
-    ParamStep_0 = controller_P.NoRudderDeflectionValue_Value;
+    rtb_Add1_e = controller_P.NoRudderDeflectionValue_Value;
   }
 
-  // End of Switch: '<S22>/Switch'
+  // End of Switch: '<S23>/Switch'
 
-  // RateTransition generated from: '<S22>/Function for Deflection Value Rudder Right' incorporates:
-  //   Fcn: '<S22>/Function for Deflection Value Rudder Right'
-  //   Sum: '<S22>/Add'
-  //   Switch: '<S22>/Deflection Logic Rudder Right'
+  // Switch: '<S23>/Deflection Logic Rudder Right' incorporates:
+  //   Constant: '<S23>/No Rudder Deflection Value'
 
-  if (tmp) {
-    // Switch: '<S22>/Deflection Logic Rudder Right' incorporates:
-    //   Constant: '<S22>/No Rudder Deflection Value'
-
-    if (rtb_Saturation7 > controller_P.DeflectionLogicRudderRight_Thre) {
-      rtb_Saturation1 = rtb_Saturation7;
-    } else {
-      rtb_Saturation1 = controller_P.NoRudderDeflectionValue_Value;
-    }
-
-    controller_DW.TmpRTBAtFunctionforDeflectionVa = ((rtb_Saturation1 +
-      ParamStep_0) - 0.5F) * 2.0F;
+  if (rtb_Saturation7 > controller_P.DeflectionLogicRudderRight_Thre) {
+    rtb_OutputLimitation3 = rtb_Saturation7;
+  } else {
+    rtb_OutputLimitation3 = controller_P.NoRudderDeflectionValue_Value;
   }
 
-  // Gain: '<S22>/Reverse for Rudder Left'
+  // Fcn: '<S23>/Function for Deflection Value Rudder Right' incorporates:
+  //   Sum: '<S23>/Add'
+  //   Switch: '<S23>/Deflection Logic Rudder Right'
+
+  rtb_OutputLimitation3 = ((rtb_OutputLimitation3 + rtb_Add1_e) - 0.5F) * 2.0F;
+
+  // Gain: '<S23>/Reverse for Rudder Left'
   rtb_Saturation7 *= controller_P.ReverseforRudderLeft_Gain;
 
-  // RateTransition generated from: '<S22>/Function for Deflection Value Rudder Left' incorporates:
-  //   Fcn: '<S22>/Function for Deflection Value Rudder Left'
-  //   Sum: '<S22>/Add1'
-  //   Switch: '<S22>/Deflection Logic Rudder Left'
+  // Switch: '<S23>/Deflection Logic Rudder Left' incorporates:
+  //   Constant: '<S23>/No Rudder Deflection Value'
 
-  if (tmp) {
-    // Switch: '<S22>/Deflection Logic Rudder Left' incorporates:
-    //   Constant: '<S22>/No Rudder Deflection Value'
-
-    if (!(rtb_Saturation7 > controller_P.DeflectionLogicRudderLeft_Thres)) {
-      rtb_Saturation7 = controller_P.NoRudderDeflectionValue_Value;
-    }
-
-    controller_DW.TmpRTBAtFunctionforDeflection_m = ((ParamStep_0 +
-      rtb_Saturation7) - 0.5F) * 2.0F;
+  if (!(rtb_Saturation7 > controller_P.DeflectionLogicRudderLeft_Thres)) {
+    rtb_Saturation7 = controller_P.NoRudderDeflectionValue_Value;
   }
 
-  // MATLABSystem: '<S145>/SourceBlock'
-  uORB_read_step(controller_DW.obj_j.orbMetadataObj,
-                 &controller_DW.obj_j.eventStructObj, &controller_B.r1, false,
-                 1.0);
-}
+  // Fcn: '<S23>/Function for Deflection Value Rudder Left' incorporates:
+  //   Sum: '<S23>/Add1'
+  //   Switch: '<S23>/Deflection Logic Rudder Left'
 
-// Model step function for TID1
-void controller_step1(void)            // Sample time: [0.004s, 0.0s]
-{
-  real32_T rtb_OutputLimitation[6];
-  real32_T u0;
+  rtb_Add1_e = ((rtb_Add1_e + rtb_Saturation7) - 0.5F) * 2.0F;
+
+  // Gain: '<S2>/Control Authority Gain'
+  controller_B.ParamStep_g = controller_P.ControlAuthorityGain_Gain *
+    rtb_Saturation8;
+  rtb_Saturation7 = controller_P.ControlAuthorityGain_Gain *
+    rtb_OutputLimitation_e;
+
+  // MATLABSystem: '<Root>/PX4 Actuator Write'
+  for (ParamStep = 0; ParamStep < 12; ParamStep++) {
+    controller_B.motorValues[ParamStep] = (rtNaNF);
+  }
+
+  for (ParamStep = 0; ParamStep < 8; ParamStep++) {
+    controller_B.servoValues[ParamStep] = (rtNaNF);
+  }
 
   // Saturate: '<S2>/Output Limitation'
-  if (controller_DW.TmpRTBAtControllerOutport2_Buff >
-      controller_P.OutputLimitation_UpperSat) {
-    rtb_OutputLimitation[0] = controller_P.OutputLimitation_UpperSat;
-    rtb_OutputLimitation[1] = controller_P.OutputLimitation_UpperSat;
-  } else if (controller_DW.TmpRTBAtControllerOutport2_Buff <
-             controller_P.OutputLimitation_LowerSat) {
-    rtb_OutputLimitation[0] = controller_P.OutputLimitation_LowerSat;
-    rtb_OutputLimitation[1] = controller_P.OutputLimitation_LowerSat;
+  if (rtb_Saturation10 > controller_P.OutputLimitation_UpperSat) {
+    // MATLABSystem: '<Root>/PX4 Actuator Write'
+    controller_B.motorValues[0] = controller_P.OutputLimitation_UpperSat;
+    controller_B.motorValues[1] = controller_P.OutputLimitation_UpperSat;
+  } else if (rtb_Saturation10 < controller_P.OutputLimitation_LowerSat) {
+    // MATLABSystem: '<Root>/PX4 Actuator Write'
+    controller_B.motorValues[0] = controller_P.OutputLimitation_LowerSat;
+    controller_B.motorValues[1] = controller_P.OutputLimitation_LowerSat;
   } else {
-    rtb_OutputLimitation[0] = controller_DW.TmpRTBAtControllerOutport2_Buff;
-    rtb_OutputLimitation[1] = controller_DW.TmpRTBAtControllerOutport2_Buff;
+    // MATLABSystem: '<Root>/PX4 Actuator Write'
+    controller_B.motorValues[0] = rtb_Saturation10;
+    controller_B.motorValues[1] = rtb_Saturation10;
   }
 
-  // Gain: '<S2>/Control Authority Gain' incorporates:
-  //   RateTransition generated from: '<S2>/Control Authority Gain'
-
-  u0 = controller_P.ControlAuthorityGain_Gain *
-    controller_DW.TmpRTBAtControlAuthorityGainInp[0];
-
-  // Saturate: '<S2>/Output Limitation'
-  if (u0 > controller_P.OutputLimitation_UpperSat) {
-    rtb_OutputLimitation[2] = controller_P.OutputLimitation_UpperSat;
-  } else if (u0 < controller_P.OutputLimitation_LowerSat) {
-    rtb_OutputLimitation[2] = controller_P.OutputLimitation_LowerSat;
+  if (controller_B.ParamStep_g > controller_P.OutputLimitation_UpperSat) {
+    // MATLABSystem: '<Root>/PX4 Actuator Write'
+    controller_B.servoValues[0] = controller_P.OutputLimitation_UpperSat;
+  } else if (controller_B.ParamStep_g < controller_P.OutputLimitation_LowerSat)
+  {
+    // MATLABSystem: '<Root>/PX4 Actuator Write'
+    controller_B.servoValues[0] = controller_P.OutputLimitation_LowerSat;
   } else {
-    rtb_OutputLimitation[2] = u0;
+    // MATLABSystem: '<Root>/PX4 Actuator Write'
+    controller_B.servoValues[0] = controller_B.ParamStep_g;
   }
 
-  // Gain: '<S2>/Control Authority Gain' incorporates:
-  //   RateTransition generated from: '<S2>/Control Authority Gain'
-
-  u0 = controller_P.ControlAuthorityGain_Gain *
-    controller_DW.TmpRTBAtControlAuthorityGainInp[1];
-
-  // Saturate: '<S2>/Output Limitation'
-  if (u0 > controller_P.OutputLimitation_UpperSat) {
-    rtb_OutputLimitation[3] = controller_P.OutputLimitation_UpperSat;
-  } else if (u0 < controller_P.OutputLimitation_LowerSat) {
-    rtb_OutputLimitation[3] = controller_P.OutputLimitation_LowerSat;
+  if (rtb_Saturation7 > controller_P.OutputLimitation_UpperSat) {
+    // MATLABSystem: '<Root>/PX4 Actuator Write'
+    controller_B.servoValues[5] = controller_P.OutputLimitation_UpperSat;
+  } else if (rtb_Saturation7 < controller_P.OutputLimitation_LowerSat) {
+    // MATLABSystem: '<Root>/PX4 Actuator Write'
+    controller_B.servoValues[5] = controller_P.OutputLimitation_LowerSat;
   } else {
-    rtb_OutputLimitation[3] = u0;
+    // MATLABSystem: '<Root>/PX4 Actuator Write'
+    controller_B.servoValues[5] = rtb_Saturation7;
   }
 
-  if (controller_DW.TmpRTBAtFunctionforDeflectionVa >
-      controller_P.OutputLimitation_UpperSat) {
-    rtb_OutputLimitation[4] = controller_P.OutputLimitation_UpperSat;
-  } else if (controller_DW.TmpRTBAtFunctionforDeflectionVa <
-             controller_P.OutputLimitation_LowerSat) {
-    rtb_OutputLimitation[4] = controller_P.OutputLimitation_LowerSat;
+  if (rtb_OutputLimitation3 > controller_P.OutputLimitation_UpperSat) {
+    // MATLABSystem: '<Root>/PX4 Actuator Write'
+    controller_B.servoValues[6] = controller_P.OutputLimitation_UpperSat;
+  } else if (rtb_OutputLimitation3 < controller_P.OutputLimitation_LowerSat) {
+    // MATLABSystem: '<Root>/PX4 Actuator Write'
+    controller_B.servoValues[6] = controller_P.OutputLimitation_LowerSat;
   } else {
-    rtb_OutputLimitation[4] = controller_DW.TmpRTBAtFunctionforDeflectionVa;
+    // MATLABSystem: '<Root>/PX4 Actuator Write'
+    controller_B.servoValues[6] = rtb_OutputLimitation3;
   }
 
-  if (controller_DW.TmpRTBAtFunctionforDeflection_m >
-      controller_P.OutputLimitation_UpperSat) {
-    rtb_OutputLimitation[5] = controller_P.OutputLimitation_UpperSat;
-  } else if (controller_DW.TmpRTBAtFunctionforDeflection_m <
-             controller_P.OutputLimitation_LowerSat) {
-    rtb_OutputLimitation[5] = controller_P.OutputLimitation_LowerSat;
+  if (rtb_Add1_e > controller_P.OutputLimitation_UpperSat) {
+    // MATLABSystem: '<Root>/PX4 Actuator Write'
+    controller_B.servoValues[7] = controller_P.OutputLimitation_UpperSat;
+  } else if (rtb_Add1_e < controller_P.OutputLimitation_LowerSat) {
+    // MATLABSystem: '<Root>/PX4 Actuator Write'
+    controller_B.servoValues[7] = controller_P.OutputLimitation_LowerSat;
   } else {
-    rtb_OutputLimitation[5] = controller_DW.TmpRTBAtFunctionforDeflection_m;
+    // MATLABSystem: '<Root>/PX4 Actuator Write'
+    controller_B.servoValues[7] = rtb_Add1_e;
   }
 
-  // RateTransition generated from: '<S2>/Output Limitation'
-  for (int32_T i = 0; i < 6; i++) {
-    controller_DW.TmpRTBAtOutputLimitationOutport[i] = rtb_OutputLimitation[i];
+  // End of Saturate: '<S2>/Output Limitation'
+
+  // MATLABSystem: '<Root>/PX4 Actuator Write' incorporates:
+  //   Constant: '<S17>/Constant'
+  //   RelationalOperator: '<S17>/Compare'
+
+  MW_actuators_set(controller_B.In1_d.values[4] >=
+                   controller_P.CompareToConstant3_const,
+                   &controller_B.motorValues[0], &controller_B.servoValues[0]);
+  controller_PX4Timestamp(&controller_B.PX4Timestamp_n);
+
+  // Saturate: '<S15>/Output Limitation1'
+  if (rtb_Saturation8 > controller_P.OutputLimitation1_UpperSat) {
+    rtb_Saturation8 = controller_P.OutputLimitation1_UpperSat;
+  } else if (rtb_Saturation8 < controller_P.OutputLimitation1_LowerSat) {
+    rtb_Saturation8 = controller_P.OutputLimitation1_LowerSat;
   }
 
-  uint64_T rtb_PX4Timestamp;
+  // End of Saturate: '<S15>/Output Limitation1'
 
-  // End of RateTransition generated from: '<S2>/Output Limitation'
+  // Saturate: '<S15>/Output Limitation'
+  if (rtb_OutputLimitation_e > controller_P.OutputLimitation_UpperSat_m) {
+    rtb_OutputLimitation_e = controller_P.OutputLimitation_UpperSat_m;
+  } else if (rtb_OutputLimitation_e < controller_P.OutputLimitation_LowerSat_l)
+  {
+    rtb_OutputLimitation_e = controller_P.OutputLimitation_LowerSat_l;
+  }
+
+  // End of Saturate: '<S15>/Output Limitation'
+
+  // MATLABSystem: '<S159>/SourceBlock'
+  b_varargout_1 = uORB_read_step(controller_DW.obj_o.orbMetadataObj,
+    &controller_DW.obj_o.eventStructObj, &controller_B.r3, false, 1.0);
+
+  // Outputs for Enabled SubSystem: '<S159>/Enabled Subsystem' incorporates:
+  //   EnablePort: '<S160>/Enable'
+
+  // Start for MATLABSystem: '<S159>/SourceBlock'
+  if (b_varargout_1) {
+    // SignalConversion generated from: '<S160>/In1'
+    controller_B.In1_k = controller_B.r3;
+  }
+
+  // End of Outputs for SubSystem: '<S159>/Enabled Subsystem'
+
+  // BusAssignment: '<S156>/Bus Assignment' incorporates:
+  //   Gain: '<S15>/Gain'
+  //   Gain: '<S15>/Gain1'
+  //   MATLABSystem: '<S14>/Modulo by Constant'
+  //   MATLABSystem: '<S156>/PX4 Timestamp'
+  //   Sum: '<S15>/Add'
+  //   Sum: '<S15>/Sum'
+
+  controller_B.BusAssignment.timestamp =
+    controller_B.PX4Timestamp_n.PX4Timestamp;
+  controller_B.BusAssignment.activation_flag = rtb_Saturation1;
+  controller_B.BusAssignment.mode_selector = controller_B.yTemp;
+  controller_B.BusAssignment.test_mode_selector = rtb_Saturation;
+  controller_B.BusAssignment.aileron = (rtb_OutputLimitation_e - rtb_Saturation8)
+    * controller_P.Gain1_Gain_a;
+  controller_B.BusAssignment.elevator = (rtb_OutputLimitation_e +
+    rtb_Saturation8) * controller_P.Gain_Gain_l;
+
+  // Saturate: '<S15>/Output Limitation3'
+  if (rtb_OutputLimitation3 > controller_P.OutputLimitation3_UpperSat) {
+    rtb_OutputLimitation3 = controller_P.OutputLimitation3_UpperSat;
+  } else if (rtb_OutputLimitation3 < controller_P.OutputLimitation3_LowerSat) {
+    rtb_OutputLimitation3 = controller_P.OutputLimitation3_LowerSat;
+  }
+
+  // Saturate: '<S15>/Output Limitation2'
+  if (rtb_Add1_e > controller_P.OutputLimitation2_UpperSat) {
+    rtb_Add1_e = controller_P.OutputLimitation2_UpperSat;
+  } else if (rtb_Add1_e < controller_P.OutputLimitation2_LowerSat) {
+    rtb_Add1_e = controller_P.OutputLimitation2_LowerSat;
+  }
+
+  // BusAssignment: '<S156>/Bus Assignment' incorporates:
+  //   Fcn: '<S15>/Fcn1'
+  //   Fcn: '<S15>/Fcn5'
+  //   MATLAB Function: '<S2>/quat2eul'
+  //   Saturate: '<S15>/Output Limitation2'
+  //   Saturate: '<S15>/Output Limitation3'
+  //   Sum: '<S15>/Add1'
+
+  controller_B.BusAssignment.rudder = (rtb_OutputLimitation3 + 1.0F) / 2.0F -
+    (rtb_Add1_e + 1.0F) / 2.0F;
+  controller_B.BusAssignment.throttle = rtb_Saturation10;
+  controller_B.BusAssignment.roll_rate = controller_B.In1_k.x;
+  controller_B.BusAssignment.pitch_rate = controller_B.In1_k.y;
+  controller_B.BusAssignment.yaw_rate = controller_B.In1_k.z;
+  controller_B.BusAssignment.roll_angle = rt_atan2f_snf((controller_B.In1.q[0] *
+    controller_B.In1.q[1] + controller_B.In1.q[2] * controller_B.In1.q[3]) *
+    2.0F, ((controller_B.In1.q[0] * controller_B.In1.q[0] - controller_B.In1.q[1]
+            * controller_B.In1.q[1]) - controller_B.In1.q[2] *
+           controller_B.In1.q[2]) + controller_B.In1.q[3] * controller_B.In1.q[3]);
+  controller_B.BusAssignment.pitch_angle = rtb_Converttimefromustos;
+  controller_B.BusAssignment.airspeed = controller_B.In1_m.true_airspeed_m_s;
+  controller_B.BusAssignment._padding0[0] = 0U;
+  controller_B.BusAssignment._padding0[1] = 0U;
+  controller_B.BusAssignment._padding0[2] = 0U;
+  controller_B.BusAssignment._padding0[3] = 0U;
+
+  // MATLABSystem: '<S158>/SinkBlock' incorporates:
+  //   BusAssignment: '<S156>/Bus Assignment'
+
+  uORB_write_step(controller_DW.obj_md.orbMetadataObj,
+                  &controller_DW.obj_md.orbAdvertiseObj,
+                  &controller_B.BusAssignment);
+  controller_PX4Timestamp(&controller_B.PX4Timestamp);
+
+  // MATLABSystem: '<S12>/Read Parameter13'
+  b_varargout_1 = MW_ParamRead_Step(controller_DW.obj_lp.MW_PARAMHANDLE,
+    MW_INT32, &ParamStep);
+  if (b_varargout_1) {
+    ParamStep = 0;
+  }
+
+  // BusAssignment: '<S153>/Bus Assignment' incorporates:
+  //   DataTypeConversion: '<S12>/Data Type Conversion'
+  //   MATLABSystem: '<S12>/Read Parameter'
+  //   MATLABSystem: '<S12>/Read Parameter1'
+  //   MATLABSystem: '<S12>/Read Parameter10'
+  //   MATLABSystem: '<S12>/Read Parameter11'
+  //   MATLABSystem: '<S12>/Read Parameter12'
+  //   MATLABSystem: '<S12>/Read Parameter13'
+  //   MATLABSystem: '<S12>/Read Parameter2'
+  //   MATLABSystem: '<S12>/Read Parameter3'
+  //   MATLABSystem: '<S12>/Read Parameter4'
+  //   MATLABSystem: '<S12>/Read Parameter5'
+  //   MATLABSystem: '<S12>/Read Parameter6'
+  //   MATLABSystem: '<S12>/Read Parameter7'
+  //   MATLABSystem: '<S12>/Read Parameter8'
+  //   MATLABSystem: '<S12>/Read Parameter9'
+  //   MATLABSystem: '<S153>/PX4 Timestamp'
+  //
+  controller_B.BusAssignment_j.timestamp =
+    controller_B.PX4Timestamp.PX4Timestamp;
+  controller_B.BusAssignment_j.sp_doublet_amp = controller_B.ParamStep_cv;
+  controller_B.BusAssignment_j.sp_doublet_freq = controller_B.ParamStep_k;
+  controller_B.BusAssignment_j.sp_doublet_dur =
+    controller_InstP.short_period_dur;
+  controller_B.BusAssignment_j.dr_doublet_amp = controller_B.ParamStep_p;
+  controller_B.BusAssignment_j.dr_doublet_freq = controller_B.ParamStep;
+  controller_B.BusAssignment_j.dr_doublet_dur = controller_InstP.dutch_roll_dur;
+  controller_B.BusAssignment_j.ph_doublet_amp = controller_B.ParamStep_b;
+  controller_B.BusAssignment_j.ph_doublet_freq = controller_B.ParamStep_c;
+  controller_B.BusAssignment_j.ph_doublet_dur = controller_InstP.phugoid_dur;
+  controller_B.BusAssignment_j.pitch_con_gain_p =
+    controller_InstP.pitch_con_gain_p;
+  controller_B.BusAssignment_j.pitch_con_gain_i =
+    controller_InstP.pitch_con_gain_i;
+  controller_B.BusAssignment_j.vel_con_gain_p = controller_InstP.vel_con_gain_p;
+  controller_B.BusAssignment_j.vel_con_gain_i = controller_InstP.vel_con_gain_i;
+  controller_B.BusAssignment_j.pilot_marker = static_cast<uint32_T>(ParamStep);
+
+  // MATLABSystem: '<S155>/SinkBlock' incorporates:
+  //   BusAssignment: '<S153>/Bus Assignment'
+
+  uORB_write_step(controller_DW.obj_n.orbMetadataObj,
+                  &controller_DW.obj_n.orbAdvertiseObj,
+                  &controller_B.BusAssignment_j);
 
   // MATLABSystem: '<S6>/SourceBlock'
   uORB_read_step(controller_DW.obj_og.orbMetadataObj,
                  &controller_DW.obj_og.eventStructObj, &controller_B.r2, false,
                  1.0);
 
-  // MATLABSystem: '<S147>/SourceBlock'
-  uORB_read_step(controller_DW.obj_o.orbMetadataObj,
-                 &controller_DW.obj_o.eventStructObj, &controller_B.r3, false,
+  // MATLABSystem: '<S151>/SourceBlock'
+  uORB_read_step(controller_DW.obj_j.orbMetadataObj,
+                 &controller_DW.obj_j.eventStructObj, &controller_B.r1, false,
                  1.0);
-
-  // MATLABSystem: '<Root>/PX4 Timestamp'
-  rtb_PX4Timestamp = hrt_absolute_time();
-
-  // RateTransition generated from: '<Root>/PX4 Timestamp' incorporates:
-  //   MATLABSystem: '<Root>/PX4 Timestamp'
-
-  controller_DW.TmpRTBAtPX4TimestampOutport1_Bu = rtb_PX4Timestamp;
-}
-
-// Use this function only if you need to maintain compatibility with an existing static main program.
-void controller_step(int_T tid)
-{
-  switch (tid) {
-   case 0 :
-    controller_step0();
-    break;
-
-   case 1 :
-    controller_step1();
-    break;
-
-   default :
-    // do nothing
-    break;
-  }
 }
 
 // Model initialize function
@@ -1131,102 +1177,105 @@ void controller_initialize(void)
 
   {
     static const char_T ParameterNameStr[14] = "MODE_SELECTOR";
-    static const char_T ParameterNameStr_0[15] = "PH_DOUBLET_AMP";
-    static const char_T ParameterNameStr_1[16] = "SP_DOUBLET_FREQ";
+    static const char_T ParameterNameStr_0[16] = "DR_DOUBLET_FREQ";
+    static const char_T ParameterNameStr_1[15] = "PH_DOUBLET_DUR";
     static const char_T ParameterNameStr_2[15] = "DR_DOUBLET_DUR";
-    static const char_T ParameterNameStr_3[16] = "PH_DOUBLET_FREQ";
-    static const char_T ParameterNameStr_4[15] = "SP_DOUBLET_AMP";
-    static const char_T ParameterNameStr_5[15] = "DR_DOUBLET_AMP";
-    static const char_T ParameterNameStr_6[16] = "DR_DOUBLET_FREQ";
-    static const char_T ParameterNameStr_7[15] = "PH_DOUBLET_DUR";
-    static const char_T ParameterNameStr_8[15] = "SP_DOUBLET_DUR";
+    static const char_T ParameterNameStr_3[16] = "SP_DOUBLET_FREQ";
+    static const char_T ParameterNameStr_4[16] = "PH_DOUBLET_FREQ";
+    static const char_T ParameterNameStr_5[15] = "SP_DOUBLET_DUR";
+    static const char_T ParameterNameStr_6[15] = "PH_DOUBLET_AMP";
+    static const char_T ParameterNameStr_7[15] = "DR_DOUBLET_AMP";
+    static const char_T ParameterNameStr_8[15] = "SP_DOUBLET_AMP";
     static const char_T ParameterNameStr_9[17] = "PITCH_CON_GAIN_I";
-    static const char_T ParameterNameStr_a[17] = "PITCH_CON_GAIN_P";
-    static const char_T ParameterNameStr_b[14] = "THETA_COMMAND";
-    static const char_T ParameterNameStr_c[17] = "AIRSPEED_COMMAND";
+    static const char_T ParameterNameStr_a[17] = "VEL_CONTR_GAIN_I";
+    static const char_T ParameterNameStr_b[17] = "PITCH_CON_GAIN_P";
+    static const char_T ParameterNameStr_c[17] = "VEL_CONTR_GAIN_P";
+    static const char_T ParameterNameStr_d[14] = "THETA_COMMAND";
+    static const char_T ParameterNameStr_e[17] = "AIRSPEED_COMMAND";
+    static const char_T ParameterNameStr_f[13] = "PILOT_MARKER";
     int32_T i;
-    for (i = 0; i < 6; i++) {
-      // Start for RateTransition generated from: '<S2>/Output Limitation'
-      controller_B.TmpRTBAtOutputLimitationOutport[i] =
-        controller_P.TmpRTBAtOutputLimitationOutport;
-    }
 
-    // Start for RateTransition generated from: '<Root>/PX4 Timestamp'
-    controller_B.TmpRTBAtPX4TimestampOutport1 =
-      controller_P.TmpRTBAtPX4TimestampOutport1_In;
-
-    // InitializeConditions for RateTransition generated from: '<S2>/Output Limitation' 
-    for (i = 0; i < 6; i++) {
-      controller_DW.TmpRTBAtOutputLimitationOutport[i] =
-        controller_P.TmpRTBAtOutputLimitationOutport;
-    }
-
-    // End of InitializeConditions for RateTransition generated from: '<S2>/Output Limitation' 
-
-    // InitializeConditions for Switch: '<S25>/Check for activation' incorporates:
-    //   Memory: '<S25>/Saved pitch input'
+    // InitializeConditions for Switch: '<S26>/Check for activation' incorporates:
+    //   Memory: '<S26>/Saved pitch input'
 
     controller_DW.Savedpitchinput_PreviousInput =
       controller_P.Savedpitchinput_InitialConditio;
 
-    // InitializeConditions for Switch: '<S27>/Check for activation' incorporates:
-    //   Memory: '<S27>/Saved yaw input'
+    // InitializeConditions for Switch: '<S28>/Check for activation' incorporates:
+    //   Memory: '<S28>/Saved yaw input'
 
     controller_DW.Savedyawinput_PreviousInput =
       controller_P.Savedyawinput_InitialCondition;
 
-    // InitializeConditions for Switch: '<S26>/Check for activation' incorporates:
-    //   Memory: '<S26>/Saved Thrust input'
+    // InitializeConditions for Switch: '<S27>/Check for activation' incorporates:
+    //   Memory: '<S27>/Saved Thrust input'
 
     controller_DW.SavedThrustinput_PreviousInput =
       controller_P.SavedThrustinput_InitialConditi;
 
-    // InitializeConditions for RateTransition generated from: '<Root>/PX4 Timestamp' 
-    controller_DW.TmpRTBAtPX4TimestampOutport1_Bu =
-      controller_P.TmpRTBAtPX4TimestampOutport1_In;
-
-    // InitializeConditions for Switch: '<S29>/Give stored time instead  of current time after activation' incorporates:
-    //   Memory: '<S29>/Store Start Time'
+    // InitializeConditions for Switch: '<S30>/Give stored time instead  of current time after activation' incorporates:
+    //   Memory: '<S30>/Store Start Time'
 
     controller_DW.StoreStartTime_PreviousInput =
       controller_P.StoreStartTime_InitialCondition;
 
-    // SystemInitialize for Atomic SubSystem: '<S19>/Controller'
-    // InitializeConditions for DiscreteIntegrator: '<S121>/Integrator'
-    controller_DW.Integrator_PrevResetState = 2;
-    controller_DW.Integrator_IC_LOADING = 1U;
+    // SystemInitialize for Enabled SubSystem: '<S161>/Enabled Subsystem'
+    // SystemInitialize for SignalConversion generated from: '<S162>/In1' incorporates:
+    //   Outport: '<S162>/Out1'
 
-    // InitializeConditions for DiscreteIntegrator: '<S68>/Integrator'
-    controller_DW.Integrator_PrevResetState_k = 2;
-    controller_DW.Integrator_IC_LOADING_p = 1U;
+    controller_B.In1_d = controller_P.Out1_Y0_i;
 
-    // End of SystemInitialize for SubSystem: '<S19>/Controller'
+    // End of SystemInitialize for SubSystem: '<S161>/Enabled Subsystem'
 
-    // SystemInitialize for Enabled SubSystem: '<S143>/Enabled Subsystem'
-    // SystemInitialize for SignalConversion generated from: '<S144>/In1' incorporates:
-    //   Outport: '<S144>/Out1'
+    // SystemInitialize for Enabled SubSystem: '<S163>/Enabled Subsystem'
+    // SystemInitialize for SignalConversion generated from: '<S164>/In1' incorporates:
+    //   Outport: '<S164>/Out1'
 
-    controller_B.In1_m = controller_P.Out1_Y0_io;
+    controller_B.In1 = controller_P.Out1_Y0;
 
-    // End of SystemInitialize for SubSystem: '<S143>/Enabled Subsystem'
+    // End of SystemInitialize for SubSystem: '<S163>/Enabled Subsystem'
 
     // SystemInitialize for Enabled SubSystem: '<S149>/Enabled Subsystem'
     // SystemInitialize for SignalConversion generated from: '<S150>/In1' incorporates:
     //   Outport: '<S150>/Out1'
 
-    controller_B.In1_d = controller_P.Out1_Y0_i;
+    controller_B.In1_m = controller_P.Out1_Y0_io;
 
     // End of SystemInitialize for SubSystem: '<S149>/Enabled Subsystem'
 
-    // SystemInitialize for Enabled SubSystem: '<S151>/Enabled Subsystem'
-    // SystemInitialize for SignalConversion generated from: '<S152>/In1' incorporates:
-    //   Outport: '<S152>/Out1'
+    // SystemInitialize for Atomic SubSystem: '<S20>/Controller'
+    // InitializeConditions for DiscreteIntegrator: '<S127>/Integrator'
+    controller_DW.Integrator_PrevResetState = 2;
+    controller_DW.Integrator_IC_LOADING = 1U;
 
-    controller_B.In1 = controller_P.Out1_Y0;
+    // InitializeConditions for DiscreteIntegrator: '<S74>/Integrator'
+    controller_DW.Integrator_PrevResetState_k = 2;
+    controller_DW.Integrator_IC_LOADING_p = 1U;
+    controller_PX4Timestamp_Init(&controller_DW.PX4Timestamp_h);
 
-    // End of SystemInitialize for SubSystem: '<S151>/Enabled Subsystem'
+    // Start for MATLABSystem: '<S38>/SinkBlock' incorporates:
+    //   BusAssignment: '<S32>/Bus Assignment'
 
-    // Start for MATLABSystem: '<S149>/SourceBlock'
+    controller_DW.obj_h0.matlabCodegenIsDeleted = false;
+    controller_DW.obj_h0.isSetupComplete = false;
+    controller_DW.obj_h0.isInitialized = 1;
+    controller_DW.obj_h0.orbMetadataObj = ORB_ID(glide_controller);
+    uORB_write_initialize(controller_DW.obj_h0.orbMetadataObj,
+                          &controller_DW.obj_h0.orbAdvertiseObj,
+                          &controller_B.BusAssignment_e, 1);
+    controller_DW.obj_h0.isSetupComplete = true;
+
+    // End of SystemInitialize for SubSystem: '<S20>/Controller'
+
+    // SystemInitialize for Enabled SubSystem: '<S159>/Enabled Subsystem'
+    // SystemInitialize for SignalConversion generated from: '<S160>/In1' incorporates:
+    //   Outport: '<S160>/Out1'
+
+    controller_B.In1_k = controller_P.Out1_Y0_e;
+
+    // End of SystemInitialize for SubSystem: '<S159>/Enabled Subsystem'
+
+    // Start for MATLABSystem: '<S161>/SourceBlock'
     controller_DW.obj_d.matlabCodegenIsDeleted = false;
     controller_DW.obj_d.isSetupComplete = false;
     controller_DW.obj_d.isInitialized = 1;
@@ -1234,6 +1283,141 @@ void controller_initialize(void)
     uORB_read_initialize(controller_DW.obj_d.orbMetadataObj,
                          &controller_DW.obj_d.eventStructObj);
     controller_DW.obj_d.isSetupComplete = true;
+
+    // Start for MATLABSystem: '<S14>/Read Parameter2'
+    controller_DW.obj_ms.matlabCodegenIsDeleted = false;
+    controller_DW.obj_ms.isInitialized = 1;
+    controller_DW.obj_ms.MW_PARAMHANDLE = MW_Init_Param(&ParameterNameStr[0],
+      true, 4.0);
+    controller_DW.obj_ms.isSetupComplete = true;
+
+    // Start for MATLABSystem: '<Root>/PX4 Timestamp'
+    controller_DW.obj_h.matlabCodegenIsDeleted = false;
+    controller_DW.obj_h.isInitialized = 1;
+    controller_DW.obj_h.isSetupComplete = true;
+
+    // Start for MATLABSystem: '<S12>/Read Parameter4'
+    controller_DW.obj_e.matlabCodegenIsDeleted = false;
+    controller_DW.obj_e.isInitialized = 1;
+    controller_DW.obj_e.MW_PARAMHANDLE = MW_Init_Param(&ParameterNameStr_0[0],
+      true, 4.0);
+    controller_DW.obj_e.isSetupComplete = true;
+
+    // Start for MATLABSystem: '<S12>/Read Parameter8'
+    controller_DW.obj_p.matlabCodegenIsDeleted = false;
+    controller_DW.obj_p.isInitialized = 1;
+    controller_DW.obj_p.MW_PARAMHANDLE = MW_Init_Param(&ParameterNameStr_1[0],
+      true, 4.0);
+    controller_DW.obj_p.isSetupComplete = true;
+
+    // Start for MATLABSystem: '<S12>/Read Parameter5'
+    controller_DW.obj_o5.matlabCodegenIsDeleted = false;
+    controller_DW.obj_o5.isInitialized = 1;
+    controller_DW.obj_o5.MW_PARAMHANDLE = MW_Init_Param(&ParameterNameStr_2[0],
+      true, 4.0);
+    controller_DW.obj_o5.isSetupComplete = true;
+
+    // Start for MATLABSystem: '<S12>/Read Parameter1'
+    controller_DW.obj_a.matlabCodegenIsDeleted = false;
+    controller_DW.obj_a.isInitialized = 1;
+    controller_DW.obj_a.MW_PARAMHANDLE = MW_Init_Param(&ParameterNameStr_3[0],
+      true, 4.0);
+    controller_DW.obj_a.isSetupComplete = true;
+
+    // Start for MATLABSystem: '<S12>/Read Parameter7'
+    controller_DW.obj_l1.matlabCodegenIsDeleted = false;
+    controller_DW.obj_l1.isInitialized = 1;
+    controller_DW.obj_l1.MW_PARAMHANDLE = MW_Init_Param(&ParameterNameStr_4[0],
+      true, 4.0);
+    controller_DW.obj_l1.isSetupComplete = true;
+
+    // Start for MATLABSystem: '<S12>/Read Parameter2'
+    controller_DW.obj_ju.matlabCodegenIsDeleted = false;
+    controller_DW.obj_ju.isInitialized = 1;
+    controller_DW.obj_ju.MW_PARAMHANDLE = MW_Init_Param(&ParameterNameStr_5[0],
+      true, 4.0);
+    controller_DW.obj_ju.isSetupComplete = true;
+
+    // Start for MATLABSystem: '<S12>/Read Parameter6'
+    controller_DW.obj_pe.matlabCodegenIsDeleted = false;
+    controller_DW.obj_pe.isInitialized = 1;
+    controller_DW.obj_pe.MW_PARAMHANDLE = MW_Init_Param(&ParameterNameStr_6[0],
+      true, 4.0);
+    controller_DW.obj_pe.isSetupComplete = true;
+
+    // Start for MATLABSystem: '<S12>/Read Parameter3'
+    controller_DW.obj_f.matlabCodegenIsDeleted = false;
+    controller_DW.obj_f.isInitialized = 1;
+    controller_DW.obj_f.MW_PARAMHANDLE = MW_Init_Param(&ParameterNameStr_7[0],
+      true, 4.0);
+    controller_DW.obj_f.isSetupComplete = true;
+
+    // Start for MATLABSystem: '<S12>/Read Parameter'
+    controller_DW.obj_ng.matlabCodegenIsDeleted = false;
+    controller_DW.obj_ng.isInitialized = 1;
+    controller_DW.obj_ng.MW_PARAMHANDLE = MW_Init_Param(&ParameterNameStr_8[0],
+      true, 4.0);
+    controller_DW.obj_ng.isSetupComplete = true;
+
+    // Start for MATLABSystem: '<S12>/Read Parameter9'
+    controller_DW.obj_mf.matlabCodegenIsDeleted = false;
+    controller_DW.obj_mf.isInitialized = 1;
+    controller_DW.obj_mf.MW_PARAMHANDLE = MW_Init_Param(&ParameterNameStr_9[0],
+      true, 4.0);
+    controller_DW.obj_mf.isSetupComplete = true;
+
+    // Start for MATLABSystem: '<S12>/Read Parameter11'
+    controller_DW.obj_i.matlabCodegenIsDeleted = false;
+    controller_DW.obj_i.isInitialized = 1;
+    controller_DW.obj_i.MW_PARAMHANDLE = MW_Init_Param(&ParameterNameStr_a[0],
+      true, 4.0);
+    controller_DW.obj_i.isSetupComplete = true;
+
+    // Start for MATLABSystem: '<S12>/Read Parameter10'
+    controller_DW.obj_b.matlabCodegenIsDeleted = false;
+    controller_DW.obj_b.isInitialized = 1;
+    controller_DW.obj_b.MW_PARAMHANDLE = MW_Init_Param(&ParameterNameStr_b[0],
+      true, 4.0);
+    controller_DW.obj_b.isSetupComplete = true;
+
+    // Start for MATLABSystem: '<S12>/Read Parameter12'
+    controller_DW.obj_g.matlabCodegenIsDeleted = false;
+    controller_DW.obj_g.isInitialized = 1;
+    controller_DW.obj_g.MW_PARAMHANDLE = MW_Init_Param(&ParameterNameStr_c[0],
+      true, 4.0);
+    controller_DW.obj_g.isSetupComplete = true;
+
+    // Start for MATLABSystem: '<S163>/SourceBlock'
+    controller_DW.obj_l.matlabCodegenIsDeleted = false;
+    controller_DW.obj_l.isSetupComplete = false;
+    controller_DW.obj_l.isInitialized = 1;
+    controller_DW.obj_l.orbMetadataObj = ORB_ID(vehicle_odometry);
+    uORB_read_initialize(controller_DW.obj_l.orbMetadataObj,
+                         &controller_DW.obj_l.eventStructObj);
+    controller_DW.obj_l.isSetupComplete = true;
+
+    // Start for MATLABSystem: '<S149>/SourceBlock'
+    controller_DW.obj_m.matlabCodegenIsDeleted = false;
+    controller_DW.obj_m.isSetupComplete = false;
+    controller_DW.obj_m.isInitialized = 1;
+    controller_DW.obj_m.orbMetadataObj = ORB_ID(airspeed);
+    uORB_read_initialize(controller_DW.obj_m.orbMetadataObj,
+                         &controller_DW.obj_m.eventStructObj);
+    controller_DW.obj_m.isSetupComplete = true;
+
+    // Start for MATLABSystem: '<S14>/Read Parameter'
+    controller_DW.obj_nh.matlabCodegenIsDeleted = false;
+    controller_DW.obj_nh.isInitialized = 1;
+    controller_DW.obj_nh.MW_PARAMHANDLE = MW_Init_Param(&ParameterNameStr_d[0],
+      true, 4.0);
+    controller_DW.obj_nh.isSetupComplete = true;
+
+    // Start for MATLABSystem: '<S14>/Read Parameter1'
+    controller_DW.obj_k.matlabCodegenIsDeleted = false;
+    controller_DW.obj_k.isInitialized = 1;
+    controller_DW.obj_k.MW_PARAMHANDLE = MW_Init_Param(&ParameterNameStr_e[0],
+      true, 4.0);
+    controller_DW.obj_k.isSetupComplete = true;
 
     // Start for MATLABSystem: '<Root>/PX4 Actuator Write'
     for (i = 0; i < 12; i++) {
@@ -1251,133 +1435,48 @@ void controller_initialize(void)
     controller_DW.obj.isSetupComplete = true;
 
     // End of Start for MATLABSystem: '<Root>/PX4 Actuator Write'
+    controller_PX4Timestamp_Init(&controller_DW.PX4Timestamp_n);
 
-    // Start for MATLABSystem: '<S14>/Read Parameter2'
-    controller_DW.obj_ms.matlabCodegenIsDeleted = false;
-    controller_DW.obj_ms.isInitialized = 1;
-    controller_DW.obj_ms.MW_PARAMHANDLE = MW_Init_Param(&ParameterNameStr[0],
-      true, 1.0);
-    controller_DW.obj_ms.isSetupComplete = true;
+    // Start for MATLABSystem: '<S159>/SourceBlock'
+    controller_DW.obj_o.matlabCodegenIsDeleted = false;
+    controller_DW.obj_o.isSetupComplete = false;
+    controller_DW.obj_o.isInitialized = 1;
+    controller_DW.obj_o.orbMetadataObj = ORB_ID(sensor_gyro);
+    uORB_read_initialize(controller_DW.obj_o.orbMetadataObj,
+                         &controller_DW.obj_o.eventStructObj);
+    controller_DW.obj_o.isSetupComplete = true;
 
-    // Start for MATLABSystem: '<S12>/Read Parameter6'
-    controller_DW.obj_pe.matlabCodegenIsDeleted = false;
-    controller_DW.obj_pe.isInitialized = 1;
-    controller_DW.obj_pe.MW_PARAMHANDLE = MW_Init_Param(&ParameterNameStr_0[0],
-      true, 1.0);
-    controller_DW.obj_pe.isSetupComplete = true;
+    // Start for MATLABSystem: '<S158>/SinkBlock' incorporates:
+    //   BusAssignment: '<S156>/Bus Assignment'
 
-    // Start for MATLABSystem: '<S12>/Read Parameter1'
-    controller_DW.obj_a.matlabCodegenIsDeleted = false;
-    controller_DW.obj_a.isInitialized = 1;
-    controller_DW.obj_a.MW_PARAMHANDLE = MW_Init_Param(&ParameterNameStr_1[0],
-      true, 1.0);
-    controller_DW.obj_a.isSetupComplete = true;
+    controller_DW.obj_md.matlabCodegenIsDeleted = false;
+    controller_DW.obj_md.isSetupComplete = false;
+    controller_DW.obj_md.isInitialized = 1;
+    controller_DW.obj_md.orbMetadataObj = ORB_ID(system_identification);
+    uORB_write_initialize(controller_DW.obj_md.orbMetadataObj,
+                          &controller_DW.obj_md.orbAdvertiseObj,
+                          &controller_B.BusAssignment, 1);
+    controller_DW.obj_md.isSetupComplete = true;
+    controller_PX4Timestamp_Init(&controller_DW.PX4Timestamp);
 
-    // Start for MATLABSystem: '<S12>/Read Parameter5'
-    controller_DW.obj_o5.matlabCodegenIsDeleted = false;
-    controller_DW.obj_o5.isInitialized = 1;
-    controller_DW.obj_o5.MW_PARAMHANDLE = MW_Init_Param(&ParameterNameStr_2[0],
-      true, 1.0);
-    controller_DW.obj_o5.isSetupComplete = true;
+    // Start for MATLABSystem: '<S12>/Read Parameter13'
+    controller_DW.obj_lp.matlabCodegenIsDeleted = false;
+    controller_DW.obj_lp.isInitialized = 1;
+    controller_DW.obj_lp.MW_PARAMHANDLE = MW_Init_Param(&ParameterNameStr_f[0],
+      true, 4.0);
+    controller_DW.obj_lp.isSetupComplete = true;
 
-    // Start for MATLABSystem: '<S12>/Read Parameter7'
-    controller_DW.obj_l1.matlabCodegenIsDeleted = false;
-    controller_DW.obj_l1.isInitialized = 1;
-    controller_DW.obj_l1.MW_PARAMHANDLE = MW_Init_Param(&ParameterNameStr_3[0],
-      true, 1.0);
-    controller_DW.obj_l1.isSetupComplete = true;
+    // Start for MATLABSystem: '<S155>/SinkBlock' incorporates:
+    //   BusAssignment: '<S153>/Bus Assignment'
 
-    // Start for MATLABSystem: '<S12>/Read Parameter'
-    controller_DW.obj_ng.matlabCodegenIsDeleted = false;
-    controller_DW.obj_ng.isInitialized = 1;
-    controller_DW.obj_ng.MW_PARAMHANDLE = MW_Init_Param(&ParameterNameStr_4[0],
-      true, 1.0);
-    controller_DW.obj_ng.isSetupComplete = true;
-
-    // Start for MATLABSystem: '<S12>/Read Parameter3'
-    controller_DW.obj_f.matlabCodegenIsDeleted = false;
-    controller_DW.obj_f.isInitialized = 1;
-    controller_DW.obj_f.MW_PARAMHANDLE = MW_Init_Param(&ParameterNameStr_5[0],
-      true, 1.0);
-    controller_DW.obj_f.isSetupComplete = true;
-
-    // Start for MATLABSystem: '<S12>/Read Parameter4'
-    controller_DW.obj_e.matlabCodegenIsDeleted = false;
-    controller_DW.obj_e.isInitialized = 1;
-    controller_DW.obj_e.MW_PARAMHANDLE = MW_Init_Param(&ParameterNameStr_6[0],
-      true, 1.0);
-    controller_DW.obj_e.isSetupComplete = true;
-
-    // Start for MATLABSystem: '<S12>/Read Parameter8'
-    controller_DW.obj_p.matlabCodegenIsDeleted = false;
-    controller_DW.obj_p.isInitialized = 1;
-    controller_DW.obj_p.MW_PARAMHANDLE = MW_Init_Param(&ParameterNameStr_7[0],
-      true, 1.0);
-    controller_DW.obj_p.isSetupComplete = true;
-
-    // Start for MATLABSystem: '<S12>/Read Parameter2'
-    controller_DW.obj_ju.matlabCodegenIsDeleted = false;
-    controller_DW.obj_ju.isInitialized = 1;
-    controller_DW.obj_ju.MW_PARAMHANDLE = MW_Init_Param(&ParameterNameStr_8[0],
-      true, 1.0);
-    controller_DW.obj_ju.isSetupComplete = true;
-
-    // Start for MATLABSystem: '<S12>/Read Parameter9'
-    controller_DW.obj_mf.matlabCodegenIsDeleted = false;
-    controller_DW.obj_mf.isInitialized = 1;
-    controller_DW.obj_mf.MW_PARAMHANDLE = MW_Init_Param(&ParameterNameStr_9[0],
-      true, 1.0);
-    controller_DW.obj_mf.isSetupComplete = true;
-    contro_ReadParameter11_Init(&controller_DW.ReadParameter12);
-
-    // Start for MATLABSystem: '<S12>/Read Parameter10'
-    controller_DW.obj_b.matlabCodegenIsDeleted = false;
-    controller_DW.obj_b.isInitialized = 1;
-    controller_DW.obj_b.MW_PARAMHANDLE = MW_Init_Param(&ParameterNameStr_a[0],
-      true, 1.0);
-    controller_DW.obj_b.isSetupComplete = true;
-    contro_ReadParameter11_Init(&controller_DW.ReadParameter11);
-
-    // Start for MATLABSystem: '<S151>/SourceBlock'
-    controller_DW.obj_l.matlabCodegenIsDeleted = false;
-    controller_DW.obj_l.isSetupComplete = false;
-    controller_DW.obj_l.isInitialized = 1;
-    controller_DW.obj_l.orbMetadataObj = ORB_ID(vehicle_odometry);
-    uORB_read_initialize(controller_DW.obj_l.orbMetadataObj,
-                         &controller_DW.obj_l.eventStructObj);
-    controller_DW.obj_l.isSetupComplete = true;
-
-    // Start for MATLABSystem: '<S143>/SourceBlock'
-    controller_DW.obj_m.matlabCodegenIsDeleted = false;
-    controller_DW.obj_m.isSetupComplete = false;
-    controller_DW.obj_m.isInitialized = 1;
-    controller_DW.obj_m.orbMetadataObj = ORB_ID(airspeed);
-    uORB_read_initialize(controller_DW.obj_m.orbMetadataObj,
-                         &controller_DW.obj_m.eventStructObj);
-    controller_DW.obj_m.isSetupComplete = true;
-
-    // Start for MATLABSystem: '<S14>/Read Parameter'
     controller_DW.obj_n.matlabCodegenIsDeleted = false;
+    controller_DW.obj_n.isSetupComplete = false;
     controller_DW.obj_n.isInitialized = 1;
-    controller_DW.obj_n.MW_PARAMHANDLE = MW_Init_Param(&ParameterNameStr_b[0],
-      true, 1.0);
+    controller_DW.obj_n.orbMetadataObj = ORB_ID(flight_testing);
+    uORB_write_initialize(controller_DW.obj_n.orbMetadataObj,
+                          &controller_DW.obj_n.orbAdvertiseObj,
+                          &controller_B.BusAssignment_j, 1);
     controller_DW.obj_n.isSetupComplete = true;
-
-    // Start for MATLABSystem: '<S14>/Read Parameter1'
-    controller_DW.obj_k.matlabCodegenIsDeleted = false;
-    controller_DW.obj_k.isInitialized = 1;
-    controller_DW.obj_k.MW_PARAMHANDLE = MW_Init_Param(&ParameterNameStr_c[0],
-      true, 1.0);
-    controller_DW.obj_k.isSetupComplete = true;
-
-    // Start for MATLABSystem: '<S145>/SourceBlock'
-    controller_DW.obj_j.matlabCodegenIsDeleted = false;
-    controller_DW.obj_j.isSetupComplete = false;
-    controller_DW.obj_j.isInitialized = 1;
-    controller_DW.obj_j.orbMetadataObj = ORB_ID(input_rc);
-    uORB_read_initialize(controller_DW.obj_j.orbMetadataObj,
-                         &controller_DW.obj_j.eventStructObj);
-    controller_DW.obj_j.isSetupComplete = true;
 
     // Start for MATLABSystem: '<S6>/SourceBlock'
     controller_DW.obj_og.matlabCodegenIsDeleted = false;
@@ -1388,19 +1487,14 @@ void controller_initialize(void)
                          &controller_DW.obj_og.eventStructObj);
     controller_DW.obj_og.isSetupComplete = true;
 
-    // Start for MATLABSystem: '<S147>/SourceBlock'
-    controller_DW.obj_o.matlabCodegenIsDeleted = false;
-    controller_DW.obj_o.isSetupComplete = false;
-    controller_DW.obj_o.isInitialized = 1;
-    controller_DW.obj_o.orbMetadataObj = ORB_ID(sensor_gyro);
-    uORB_read_initialize(controller_DW.obj_o.orbMetadataObj,
-                         &controller_DW.obj_o.eventStructObj);
-    controller_DW.obj_o.isSetupComplete = true;
-
-    // Start for MATLABSystem: '<Root>/PX4 Timestamp'
-    controller_DW.obj_h.matlabCodegenIsDeleted = false;
-    controller_DW.obj_h.isInitialized = 1;
-    controller_DW.obj_h.isSetupComplete = true;
+    // Start for MATLABSystem: '<S151>/SourceBlock'
+    controller_DW.obj_j.matlabCodegenIsDeleted = false;
+    controller_DW.obj_j.isSetupComplete = false;
+    controller_DW.obj_j.isInitialized = 1;
+    controller_DW.obj_j.orbMetadataObj = ORB_ID(input_rc);
+    uORB_read_initialize(controller_DW.obj_j.orbMetadataObj,
+                         &controller_DW.obj_j.eventStructObj);
+    controller_DW.obj_j.isSetupComplete = true;
   }
 }
 
@@ -1410,7 +1504,7 @@ void controller_terminate(void)
   int32_T i;
   real32_T servoValues[8];
 
-  // Terminate for MATLABSystem: '<S149>/SourceBlock'
+  // Terminate for MATLABSystem: '<S161>/SourceBlock'
   if (!controller_DW.obj_d.matlabCodegenIsDeleted) {
     controller_DW.obj_d.matlabCodegenIsDeleted = true;
     if ((controller_DW.obj_d.isInitialized == 1) &&
@@ -1419,7 +1513,163 @@ void controller_terminate(void)
     }
   }
 
+  // End of Terminate for MATLABSystem: '<S161>/SourceBlock'
+
+  // Terminate for MATLABSystem: '<S14>/Read Parameter2'
+  if (!controller_DW.obj_ms.matlabCodegenIsDeleted) {
+    controller_DW.obj_ms.matlabCodegenIsDeleted = true;
+  }
+
+  // End of Terminate for MATLABSystem: '<S14>/Read Parameter2'
+
+  // Terminate for MATLABSystem: '<Root>/PX4 Timestamp'
+  if (!controller_DW.obj_h.matlabCodegenIsDeleted) {
+    controller_DW.obj_h.matlabCodegenIsDeleted = true;
+  }
+
+  // End of Terminate for MATLABSystem: '<Root>/PX4 Timestamp'
+
+  // Terminate for MATLABSystem: '<S12>/Read Parameter4'
+  if (!controller_DW.obj_e.matlabCodegenIsDeleted) {
+    controller_DW.obj_e.matlabCodegenIsDeleted = true;
+  }
+
+  // End of Terminate for MATLABSystem: '<S12>/Read Parameter4'
+
+  // Terminate for MATLABSystem: '<S12>/Read Parameter8'
+  if (!controller_DW.obj_p.matlabCodegenIsDeleted) {
+    controller_DW.obj_p.matlabCodegenIsDeleted = true;
+  }
+
+  // End of Terminate for MATLABSystem: '<S12>/Read Parameter8'
+
+  // Terminate for MATLABSystem: '<S12>/Read Parameter5'
+  if (!controller_DW.obj_o5.matlabCodegenIsDeleted) {
+    controller_DW.obj_o5.matlabCodegenIsDeleted = true;
+  }
+
+  // End of Terminate for MATLABSystem: '<S12>/Read Parameter5'
+
+  // Terminate for MATLABSystem: '<S12>/Read Parameter1'
+  if (!controller_DW.obj_a.matlabCodegenIsDeleted) {
+    controller_DW.obj_a.matlabCodegenIsDeleted = true;
+  }
+
+  // End of Terminate for MATLABSystem: '<S12>/Read Parameter1'
+
+  // Terminate for MATLABSystem: '<S12>/Read Parameter7'
+  if (!controller_DW.obj_l1.matlabCodegenIsDeleted) {
+    controller_DW.obj_l1.matlabCodegenIsDeleted = true;
+  }
+
+  // End of Terminate for MATLABSystem: '<S12>/Read Parameter7'
+
+  // Terminate for MATLABSystem: '<S12>/Read Parameter2'
+  if (!controller_DW.obj_ju.matlabCodegenIsDeleted) {
+    controller_DW.obj_ju.matlabCodegenIsDeleted = true;
+  }
+
+  // End of Terminate for MATLABSystem: '<S12>/Read Parameter2'
+
+  // Terminate for MATLABSystem: '<S12>/Read Parameter6'
+  if (!controller_DW.obj_pe.matlabCodegenIsDeleted) {
+    controller_DW.obj_pe.matlabCodegenIsDeleted = true;
+  }
+
+  // End of Terminate for MATLABSystem: '<S12>/Read Parameter6'
+
+  // Terminate for MATLABSystem: '<S12>/Read Parameter3'
+  if (!controller_DW.obj_f.matlabCodegenIsDeleted) {
+    controller_DW.obj_f.matlabCodegenIsDeleted = true;
+  }
+
+  // End of Terminate for MATLABSystem: '<S12>/Read Parameter3'
+
+  // Terminate for MATLABSystem: '<S12>/Read Parameter'
+  if (!controller_DW.obj_ng.matlabCodegenIsDeleted) {
+    controller_DW.obj_ng.matlabCodegenIsDeleted = true;
+  }
+
+  // End of Terminate for MATLABSystem: '<S12>/Read Parameter'
+
+  // Terminate for MATLABSystem: '<S12>/Read Parameter9'
+  if (!controller_DW.obj_mf.matlabCodegenIsDeleted) {
+    controller_DW.obj_mf.matlabCodegenIsDeleted = true;
+  }
+
+  // End of Terminate for MATLABSystem: '<S12>/Read Parameter9'
+
+  // Terminate for MATLABSystem: '<S12>/Read Parameter11'
+  if (!controller_DW.obj_i.matlabCodegenIsDeleted) {
+    controller_DW.obj_i.matlabCodegenIsDeleted = true;
+  }
+
+  // End of Terminate for MATLABSystem: '<S12>/Read Parameter11'
+
+  // Terminate for MATLABSystem: '<S12>/Read Parameter10'
+  if (!controller_DW.obj_b.matlabCodegenIsDeleted) {
+    controller_DW.obj_b.matlabCodegenIsDeleted = true;
+  }
+
+  // End of Terminate for MATLABSystem: '<S12>/Read Parameter10'
+
+  // Terminate for MATLABSystem: '<S12>/Read Parameter12'
+  if (!controller_DW.obj_g.matlabCodegenIsDeleted) {
+    controller_DW.obj_g.matlabCodegenIsDeleted = true;
+  }
+
+  // End of Terminate for MATLABSystem: '<S12>/Read Parameter12'
+
+  // Terminate for MATLABSystem: '<S163>/SourceBlock'
+  if (!controller_DW.obj_l.matlabCodegenIsDeleted) {
+    controller_DW.obj_l.matlabCodegenIsDeleted = true;
+    if ((controller_DW.obj_l.isInitialized == 1) &&
+        controller_DW.obj_l.isSetupComplete) {
+      uORB_read_terminate(&controller_DW.obj_l.eventStructObj);
+    }
+  }
+
+  // End of Terminate for MATLABSystem: '<S163>/SourceBlock'
+
+  // Terminate for MATLABSystem: '<S149>/SourceBlock'
+  if (!controller_DW.obj_m.matlabCodegenIsDeleted) {
+    controller_DW.obj_m.matlabCodegenIsDeleted = true;
+    if ((controller_DW.obj_m.isInitialized == 1) &&
+        controller_DW.obj_m.isSetupComplete) {
+      uORB_read_terminate(&controller_DW.obj_m.eventStructObj);
+    }
+  }
+
   // End of Terminate for MATLABSystem: '<S149>/SourceBlock'
+
+  // Terminate for MATLABSystem: '<S14>/Read Parameter'
+  if (!controller_DW.obj_nh.matlabCodegenIsDeleted) {
+    controller_DW.obj_nh.matlabCodegenIsDeleted = true;
+  }
+
+  // End of Terminate for MATLABSystem: '<S14>/Read Parameter'
+
+  // Terminate for MATLABSystem: '<S14>/Read Parameter1'
+  if (!controller_DW.obj_k.matlabCodegenIsDeleted) {
+    controller_DW.obj_k.matlabCodegenIsDeleted = true;
+  }
+
+  // End of Terminate for MATLABSystem: '<S14>/Read Parameter1'
+
+  // Terminate for Atomic SubSystem: '<S20>/Controller'
+  controller_PX4Timestamp_Term(&controller_DW.PX4Timestamp_h);
+
+  // Terminate for MATLABSystem: '<S38>/SinkBlock'
+  if (!controller_DW.obj_h0.matlabCodegenIsDeleted) {
+    controller_DW.obj_h0.matlabCodegenIsDeleted = true;
+    if ((controller_DW.obj_h0.isInitialized == 1) &&
+        controller_DW.obj_h0.isSetupComplete) {
+      uORB_write_terminate(&controller_DW.obj_h0.orbAdvertiseObj);
+    }
+  }
+
+  // End of Terminate for MATLABSystem: '<S38>/SinkBlock'
+  // End of Terminate for SubSystem: '<S20>/Controller'
 
   // Terminate for MATLABSystem: '<Root>/PX4 Actuator Write'
   if (!controller_DW.obj.matlabCodegenIsDeleted) {
@@ -1452,139 +1702,48 @@ void controller_terminate(void)
   }
 
   // End of Terminate for MATLABSystem: '<Root>/PX4 Actuator Write'
+  controller_PX4Timestamp_Term(&controller_DW.PX4Timestamp_n);
 
-  // Terminate for MATLABSystem: '<S14>/Read Parameter2'
-  if (!controller_DW.obj_ms.matlabCodegenIsDeleted) {
-    controller_DW.obj_ms.matlabCodegenIsDeleted = true;
-  }
-
-  // End of Terminate for MATLABSystem: '<S14>/Read Parameter2'
-
-  // Terminate for MATLABSystem: '<S12>/Read Parameter6'
-  if (!controller_DW.obj_pe.matlabCodegenIsDeleted) {
-    controller_DW.obj_pe.matlabCodegenIsDeleted = true;
-  }
-
-  // End of Terminate for MATLABSystem: '<S12>/Read Parameter6'
-
-  // Terminate for MATLABSystem: '<S12>/Read Parameter1'
-  if (!controller_DW.obj_a.matlabCodegenIsDeleted) {
-    controller_DW.obj_a.matlabCodegenIsDeleted = true;
-  }
-
-  // End of Terminate for MATLABSystem: '<S12>/Read Parameter1'
-
-  // Terminate for MATLABSystem: '<S12>/Read Parameter5'
-  if (!controller_DW.obj_o5.matlabCodegenIsDeleted) {
-    controller_DW.obj_o5.matlabCodegenIsDeleted = true;
-  }
-
-  // End of Terminate for MATLABSystem: '<S12>/Read Parameter5'
-
-  // Terminate for MATLABSystem: '<S12>/Read Parameter7'
-  if (!controller_DW.obj_l1.matlabCodegenIsDeleted) {
-    controller_DW.obj_l1.matlabCodegenIsDeleted = true;
-  }
-
-  // End of Terminate for MATLABSystem: '<S12>/Read Parameter7'
-
-  // Terminate for MATLABSystem: '<S12>/Read Parameter'
-  if (!controller_DW.obj_ng.matlabCodegenIsDeleted) {
-    controller_DW.obj_ng.matlabCodegenIsDeleted = true;
-  }
-
-  // End of Terminate for MATLABSystem: '<S12>/Read Parameter'
-
-  // Terminate for MATLABSystem: '<S12>/Read Parameter3'
-  if (!controller_DW.obj_f.matlabCodegenIsDeleted) {
-    controller_DW.obj_f.matlabCodegenIsDeleted = true;
-  }
-
-  // End of Terminate for MATLABSystem: '<S12>/Read Parameter3'
-
-  // Terminate for MATLABSystem: '<S12>/Read Parameter4'
-  if (!controller_DW.obj_e.matlabCodegenIsDeleted) {
-    controller_DW.obj_e.matlabCodegenIsDeleted = true;
-  }
-
-  // End of Terminate for MATLABSystem: '<S12>/Read Parameter4'
-
-  // Terminate for MATLABSystem: '<S12>/Read Parameter8'
-  if (!controller_DW.obj_p.matlabCodegenIsDeleted) {
-    controller_DW.obj_p.matlabCodegenIsDeleted = true;
-  }
-
-  // End of Terminate for MATLABSystem: '<S12>/Read Parameter8'
-
-  // Terminate for MATLABSystem: '<S12>/Read Parameter2'
-  if (!controller_DW.obj_ju.matlabCodegenIsDeleted) {
-    controller_DW.obj_ju.matlabCodegenIsDeleted = true;
-  }
-
-  // End of Terminate for MATLABSystem: '<S12>/Read Parameter2'
-
-  // Terminate for MATLABSystem: '<S12>/Read Parameter9'
-  if (!controller_DW.obj_mf.matlabCodegenIsDeleted) {
-    controller_DW.obj_mf.matlabCodegenIsDeleted = true;
-  }
-
-  // End of Terminate for MATLABSystem: '<S12>/Read Parameter9'
-  contro_ReadParameter11_Term(&controller_DW.ReadParameter12);
-
-  // Terminate for MATLABSystem: '<S12>/Read Parameter10'
-  if (!controller_DW.obj_b.matlabCodegenIsDeleted) {
-    controller_DW.obj_b.matlabCodegenIsDeleted = true;
-  }
-
-  // End of Terminate for MATLABSystem: '<S12>/Read Parameter10'
-  contro_ReadParameter11_Term(&controller_DW.ReadParameter11);
-
-  // Terminate for MATLABSystem: '<S151>/SourceBlock'
-  if (!controller_DW.obj_l.matlabCodegenIsDeleted) {
-    controller_DW.obj_l.matlabCodegenIsDeleted = true;
-    if ((controller_DW.obj_l.isInitialized == 1) &&
-        controller_DW.obj_l.isSetupComplete) {
-      uORB_read_terminate(&controller_DW.obj_l.eventStructObj);
+  // Terminate for MATLABSystem: '<S159>/SourceBlock'
+  if (!controller_DW.obj_o.matlabCodegenIsDeleted) {
+    controller_DW.obj_o.matlabCodegenIsDeleted = true;
+    if ((controller_DW.obj_o.isInitialized == 1) &&
+        controller_DW.obj_o.isSetupComplete) {
+      uORB_read_terminate(&controller_DW.obj_o.eventStructObj);
     }
   }
 
-  // End of Terminate for MATLABSystem: '<S151>/SourceBlock'
+  // End of Terminate for MATLABSystem: '<S159>/SourceBlock'
 
-  // Terminate for MATLABSystem: '<S143>/SourceBlock'
-  if (!controller_DW.obj_m.matlabCodegenIsDeleted) {
-    controller_DW.obj_m.matlabCodegenIsDeleted = true;
-    if ((controller_DW.obj_m.isInitialized == 1) &&
-        controller_DW.obj_m.isSetupComplete) {
-      uORB_read_terminate(&controller_DW.obj_m.eventStructObj);
+  // Terminate for MATLABSystem: '<S158>/SinkBlock'
+  if (!controller_DW.obj_md.matlabCodegenIsDeleted) {
+    controller_DW.obj_md.matlabCodegenIsDeleted = true;
+    if ((controller_DW.obj_md.isInitialized == 1) &&
+        controller_DW.obj_md.isSetupComplete) {
+      uORB_write_terminate(&controller_DW.obj_md.orbAdvertiseObj);
     }
   }
 
-  // End of Terminate for MATLABSystem: '<S143>/SourceBlock'
+  // End of Terminate for MATLABSystem: '<S158>/SinkBlock'
+  controller_PX4Timestamp_Term(&controller_DW.PX4Timestamp);
 
-  // Terminate for MATLABSystem: '<S14>/Read Parameter'
+  // Terminate for MATLABSystem: '<S12>/Read Parameter13'
+  if (!controller_DW.obj_lp.matlabCodegenIsDeleted) {
+    controller_DW.obj_lp.matlabCodegenIsDeleted = true;
+  }
+
+  // End of Terminate for MATLABSystem: '<S12>/Read Parameter13'
+
+  // Terminate for MATLABSystem: '<S155>/SinkBlock'
   if (!controller_DW.obj_n.matlabCodegenIsDeleted) {
     controller_DW.obj_n.matlabCodegenIsDeleted = true;
-  }
-
-  // End of Terminate for MATLABSystem: '<S14>/Read Parameter'
-
-  // Terminate for MATLABSystem: '<S14>/Read Parameter1'
-  if (!controller_DW.obj_k.matlabCodegenIsDeleted) {
-    controller_DW.obj_k.matlabCodegenIsDeleted = true;
-  }
-
-  // End of Terminate for MATLABSystem: '<S14>/Read Parameter1'
-
-  // Terminate for MATLABSystem: '<S145>/SourceBlock'
-  if (!controller_DW.obj_j.matlabCodegenIsDeleted) {
-    controller_DW.obj_j.matlabCodegenIsDeleted = true;
-    if ((controller_DW.obj_j.isInitialized == 1) &&
-        controller_DW.obj_j.isSetupComplete) {
-      uORB_read_terminate(&controller_DW.obj_j.eventStructObj);
+    if ((controller_DW.obj_n.isInitialized == 1) &&
+        controller_DW.obj_n.isSetupComplete) {
+      uORB_write_terminate(&controller_DW.obj_n.orbAdvertiseObj);
     }
   }
 
-  // End of Terminate for MATLABSystem: '<S145>/SourceBlock'
+  // End of Terminate for MATLABSystem: '<S155>/SinkBlock'
 
   // Terminate for MATLABSystem: '<S6>/SourceBlock'
   if (!controller_DW.obj_og.matlabCodegenIsDeleted) {
@@ -1597,23 +1756,16 @@ void controller_terminate(void)
 
   // End of Terminate for MATLABSystem: '<S6>/SourceBlock'
 
-  // Terminate for MATLABSystem: '<S147>/SourceBlock'
-  if (!controller_DW.obj_o.matlabCodegenIsDeleted) {
-    controller_DW.obj_o.matlabCodegenIsDeleted = true;
-    if ((controller_DW.obj_o.isInitialized == 1) &&
-        controller_DW.obj_o.isSetupComplete) {
-      uORB_read_terminate(&controller_DW.obj_o.eventStructObj);
+  // Terminate for MATLABSystem: '<S151>/SourceBlock'
+  if (!controller_DW.obj_j.matlabCodegenIsDeleted) {
+    controller_DW.obj_j.matlabCodegenIsDeleted = true;
+    if ((controller_DW.obj_j.isInitialized == 1) &&
+        controller_DW.obj_j.isSetupComplete) {
+      uORB_read_terminate(&controller_DW.obj_j.eventStructObj);
     }
   }
 
-  // End of Terminate for MATLABSystem: '<S147>/SourceBlock'
-
-  // Terminate for MATLABSystem: '<Root>/PX4 Timestamp'
-  if (!controller_DW.obj_h.matlabCodegenIsDeleted) {
-    controller_DW.obj_h.matlabCodegenIsDeleted = true;
-  }
-
-  // End of Terminate for MATLABSystem: '<Root>/PX4 Timestamp'
+  // End of Terminate for MATLABSystem: '<S151>/SourceBlock'
 }
 
 const char_T* RT_MODEL_controller_T::getErrorStatus() const
@@ -1625,16 +1777,6 @@ void RT_MODEL_controller_T::setErrorStatus(const char_T* const volatile
   aErrorStatus)
 {
   (errorStatus = aErrorStatus);
-}
-
-boolean_T RT_MODEL_controller_T::StepTask(int32_T idx) const
-{
-  return (Timing.TaskCounters.TID[(idx)] == 0);
-}
-
-uint8_T &RT_MODEL_controller_T::TaskCounter(int32_T idx)
-{
-  return (Timing.TaskCounters.TID[(idx)]);
 }
 
 //

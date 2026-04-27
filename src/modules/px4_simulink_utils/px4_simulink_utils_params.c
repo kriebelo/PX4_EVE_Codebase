@@ -214,3 +214,14 @@ PARAM_DEFINE_FLOAT(PITCH_CON_GAIN_P, -1.3751);
  * @group Flight Testing
  */
 PARAM_DEFINE_FLOAT(MODE_SELECTOR, 0);
+
+/**
+ * Pilot Marker
+ * 
+ * Pilot Marker for showing a point of interest during log
+ * 
+ * @min 0
+ * @max 1
+ * @group Flight Testing
+ */
+PARAM_DEFINE_INT32(PILOT_MARKER, 0);

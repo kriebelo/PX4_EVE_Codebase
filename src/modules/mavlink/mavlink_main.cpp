@@ -1426,6 +1426,7 @@ Mavlink::configure_streams_to_default(const char *configure_single_stream)
 		configure_stream_local("SCALED_PRESSURE", 1.0f);
 		configure_stream_local("SERVO_OUTPUT_RAW_0", 1.0f);
 		configure_stream_local("SYS_STATUS", 1.0f);
+		configure_stream_local("SYSTEM_IDENTIFICATION", 50.0f);
 		configure_stream_local("TIME_ESTIMATE_TO_TARGET", 1.0f);
 		configure_stream_local("UTM_GLOBAL_POSITION", 0.5f);
 		configure_stream_local("VFR_HUD", 4.0f);

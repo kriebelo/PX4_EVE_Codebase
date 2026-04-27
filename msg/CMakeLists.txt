@@ -85,6 +85,7 @@ set(msg_files
 	Event.msg
 	FailsafeFlags.msg
 	FailureDetectorStatus.msg
+	FlightTesting.msg
 	FollowTarget.msg
 	FollowTargetEstimator.msg
 	FollowTargetStatus.msg
@@ -97,6 +98,7 @@ set(msg_files
 	GimbalManagerSetAttitude.msg
 	GimbalManagerSetManualControl.msg
 	GimbalManagerStatus.msg
+	GlideController.msg
 	GpsDump.msg
 	GpsInjectData.msg
 	GimbalControls.msg

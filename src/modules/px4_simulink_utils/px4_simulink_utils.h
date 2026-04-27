@@ -58,6 +58,7 @@ private:
 
 
 	DEFINE_PARAMETERS(
+		(ParamInt<px4::params::PILOT_MARKER>) _param_pilot_marker,
 		(ParamFloat<px4::params::MODE_SELECTOR>) _param_mode_selector,
 		(ParamFloat<px4::params::PITCH_CON_GAIN_P>) _param_pitch_con_gain_p,
 		(ParamFloat<px4::params::PITCH_CON_GAIN_I>) _param_pitch_con_gain_i,

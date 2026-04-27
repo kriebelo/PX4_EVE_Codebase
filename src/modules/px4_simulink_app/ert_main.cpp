@@ -7,9 +7,9 @@
 //
 // Code generated for Simulink model 'controller'.
 //
-// Model version                  : 1.82
+// Model version                  : 1.86
 // Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
-// C/C++ source code generated on : Sun Apr 26 21:15:41 2026
+// C/C++ source code generated on : Mon Apr 27 13:35:29 2026
 //
 // Target selection: ert.tlc
 // Embedded hardware selection: ARM Compatible->ARM Cortex
@@ -37,63 +37,22 @@ volatile boolean_T stopRequested = false;
 volatile boolean_T runModel = true;
 px4_sem_t stopSem;
 px4_sem_t baserateTaskSem;
-px4_sem_t subrateTaskSem[1];
-int taskId[1];
 pthread_t schedulerThread;
 pthread_t baseRateThread;
 void *threadJoinStatus;
 int terminatingmodel = 0;
-pthread_t subRateThread[1];
-int subratePriority[1];
-void *subrateTask(void *arg)
-{
-  int_T tid = *((int_T *) arg);
-  int_T subRateId;
-  subRateId = tid + 1;
-  while (runModel) {
-    px4_sem_wait(&subrateTaskSem[tid]);
-    if (terminatingmodel)
-      break;
-
-#ifdef MW_RTOS_DEBUG
-
-    printf(" -subrate task %d semaphore received\n", subRateId);
-
-#endif
-
-    controller_step(subRateId);
-
-    // Get model outputs here
-  }
-
-  pthread_exit((void *)0);
-  return NULL;
-}
-
 void *baseRateTask(void *arg)
 {
   runModel = (controller_M->getErrorStatus() == (NULL));
   while (runModel) {
     px4_sem_wait(&baserateTaskSem);
-
-#ifdef MW_RTOS_DEBUG
-
-    printf("*base rate task semaphore received\n");
-    fflush(stdout);
-
-#endif
-
-    if (controller_M->StepTask(1)
-        ) {
-      px4_sem_post(&subrateTaskSem[0]);
-    }
-
-    controller_step(0);
+    controller_step();
 
     // Get model outputs here
     stopRequested = !((controller_M->getErrorStatus() == (NULL)));
   }
 
+  runModel = 0;
   terminateTask(arg);
   pthread_exit((void *)0);
   return NULL;
@@ -112,20 +71,6 @@ void *terminateTask(void *arg)
   terminatingmodel = 1;
 
   {
-    int i;
-
-    // Signal all periodic tasks to complete
-    for (i=0; i<1; i++) {
-      CHECK_STATUS(px4_sem_post(&subrateTaskSem[i]), 0, "px4_sem_post");
-      CHECK_STATUS(px4_sem_destroy(&subrateTaskSem[i]), 0, "px4_sem_destroy");
-    }
-
-    // Wait for all periodic tasks to complete
-    for (i=0; i<1; i++) {
-      CHECK_STATUS(pthread_join(subRateThread[i], &threadJoinStatus), 0,
-                   "pthread_join");
-    }
-
     runModel = 0;
   }
 
@@ -139,7 +84,6 @@ void *terminateTask(void *arg)
 
 int px4_simulink_app_task_main (int argc, char *argv[])
 {
-  subratePriority[0] = 249;
   px4_simulink_app_control_MAVLink();
   controller_M->setErrorStatus(0);
 
@@ -147,7 +91,7 @@ int px4_simulink_app_task_main (int argc, char *argv[])
   controller_initialize();
 
   // Call RTOS Initialization function
-  nuttxRTOSInit(0.001, 1);
+  nuttxRTOSInit(0.004, 0);
 
   // Wait for stop semaphore
   px4_sem_wait(&stopSem);
