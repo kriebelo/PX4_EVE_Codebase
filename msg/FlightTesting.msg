@@ -12,4 +12,5 @@ float32 pitch_con_gain_p
 float32 pitch_con_gain_i
 float32 vel_con_gain_p
 float32 vel_con_gain_i
+float32 vel_lp_freq
 uint32 pilot_marker

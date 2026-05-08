@@ -58,6 +58,7 @@ private:
 
 
 	DEFINE_PARAMETERS(
+		(ParamFloat<px4::params::VEL_LP_FREQ>) _param_vel_lp_freq,
 		(ParamInt<px4::params::PILOT_MARKER>) _param_pilot_marker,
 		(ParamFloat<px4::params::MODE_SELECTOR>) _param_mode_selector,
 		(ParamFloat<px4::params::PITCH_CON_GAIN_P>) _param_pitch_con_gain_p,

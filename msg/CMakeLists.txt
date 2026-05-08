@@ -223,6 +223,7 @@ set(msg_files
 	VtolVehicleStatus.msg
 	Wind.msg
 	YawEstimatorStatus.msg
+	VelocityFilter.msg
 	SystemIdentification.msg
 	TestLog.msg
 	SimulinkCustomMessage.msg

@@ -225,3 +225,16 @@ PARAM_DEFINE_FLOAT(MODE_SELECTOR, 0);
  * @group Flight Testing
  */
 PARAM_DEFINE_INT32(PILOT_MARKER, 0);
+
+
+/**
+ * Velocity low pass filter frequency
+ * 
+ * Velocity controller low pass filter cutoff frequency
+ * 
+ * @unit Hz
+ * @min 0.1
+ * @max 99999
+ * @group Flight Testing
+ */
+PARAM_DEFINE_FLOAT(VEL_LP_FREQ, 20);

@@ -7,9 +7,9 @@
 //
 // Code generated for Simulink model 'controller'.
 //
-// Model version                  : 1.86
+// Model version                  : 1.88
 // Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
-// C/C++ source code generated on : Mon Apr 27 13:35:29 2026
+// C/C++ source code generated on : Tue Apr 28 23:51:53 2026
 //
 // Target selection: ert.tlc
 // Embedded hardware selection: ARM Compatible->ARM Cortex
@@ -30,12 +30,13 @@
 #include "controller_types.h"
 #include <uORB/topics/vehicle_odometry.h>
 #include <uORB/topics/input_rc.h>
-#include <uORB/topics/system_identification.h>
 #include <uORB/topics/flight_testing.h>
+#include <uORB/topics/system_identification.h>
 #include <uORB/topics/sensor_accel.h>
 #include <uORB/topics/sensor_gyro.h>
 #include <uORB/topics/glide_controller.h>
 #include <uORB/topics/airspeed.h>
+#include <uORB/topics/velocity_filter.h>
 
 extern "C"
 {
@@ -66,23 +67,25 @@ struct DW_PX4Timestamp_controller_T {
 
 // Block signals (default storage)
 struct B_controller_T {
-  px4_Bus_vehicle_odometry In1;        // '<S164>/In1'
+  px4_Bus_vehicle_odometry In1;        // '<S167>/In1'
   px4_Bus_vehicle_odometry r;
-  px4_Bus_input_rc In1_d;              // '<S162>/In1'
+  px4_Bus_input_rc In1_d;              // '<S165>/In1'
+  px4_Bus_flight_testing BusAssignment;// '<S156>/Bus Assignment'
   px4_Bus_input_rc r1;
-  px4_Bus_system_identification BusAssignment;// '<S156>/Bus Assignment'
-  px4_Bus_flight_testing BusAssignment_j;// '<S153>/Bus Assignment'
+  px4_Bus_system_identification BusAssignment_c;// '<S159>/Bus Assignment'
   real32_T motorValues[12];
   real32_T motorValues_m[12];
   px4_Bus_sensor_accel r2;
-  px4_Bus_sensor_gyro In1_k;           // '<S160>/In1'
+  px4_Bus_sensor_gyro In1_k;           // '<S163>/In1'
   px4_Bus_sensor_gyro r3;
   px4_Bus_glide_controller BusAssignment_e;// '<S32>/Bus Assignment'
   real32_T servoValues[8];
-  px4_Bus_airspeed In1_m;              // '<S150>/In1'
+  px4_Bus_airspeed In1_m;              // '<S153>/In1'
   px4_Bus_airspeed r4;
+  px4_Bus_velocity_filter BusAssignment_k;// '<S93>/Bus Assignment'
   real_T temp;
   uint64_T rtb_PX4Timestamp_c;
+  real32_T denAccum;
   real32_T ParamStep;
   real32_T yTemp;
   real32_T ParamStep_k;
@@ -92,23 +95,26 @@ struct B_controller_T {
   real32_T ParamStep_cv;
   real32_T ParamStep_f;
   real32_T ParamStep_g;
+  int32_T ParamStep_g1;
   B_PX4Timestamp_controller_T PX4Timestamp_n;// '<S32>/PX4 Timestamp'
   B_PX4Timestamp_controller_T PX4Timestamp;// '<S32>/PX4 Timestamp'
+  B_PX4Timestamp_controller_T PX4Timestamp_c;// '<S32>/PX4 Timestamp'
   B_PX4Timestamp_controller_T PX4Timestamp_h;// '<S32>/PX4 Timestamp'
 };
 
 // Block states (default storage) for system '<Root>'
 struct DW_controller_T {
   px4_internal_block_PX4Actuato_T obj; // '<Root>/PX4 Actuator Write'
-  px4_internal_block_Subscriber_T obj_l;// '<S163>/SourceBlock'
-  px4_internal_block_Subscriber_T obj_d;// '<S161>/SourceBlock'
-  px4_internal_block_Subscriber_T obj_o;// '<S159>/SourceBlock'
-  px4_internal_block_Subscriber_T obj_j;// '<S151>/SourceBlock'
-  px4_internal_block_Subscriber_T obj_m;// '<S149>/SourceBlock'
+  px4_internal_block_Subscriber_T obj_l;// '<S166>/SourceBlock'
+  px4_internal_block_Subscriber_T obj_d;// '<S164>/SourceBlock'
+  px4_internal_block_Subscriber_T obj_o;// '<S162>/SourceBlock'
+  px4_internal_block_Subscriber_T obj_j;// '<S154>/SourceBlock'
+  px4_internal_block_Subscriber_T obj_m;// '<S152>/SourceBlock'
   px4_internal_block_Subscriber_T obj_og;// '<S6>/SourceBlock'
   px4_internal_block_getPX4Abso_T obj_h;// '<Root>/PX4 Timestamp'
-  px4_internal_block_Publisher__T obj_md;// '<S158>/SinkBlock'
-  px4_internal_block_Publisher__T obj_n;// '<S155>/SinkBlock'
+  px4_internal_block_Publisher__T obj_md;// '<S161>/SinkBlock'
+  px4_internal_block_Publisher__T obj_g;// '<S158>/SinkBlock'
+  px4_internal_block_Publisher__T obj_n;// '<S147>/SinkBlock'
   px4_internal_block_Publisher__T obj_h0;// '<S38>/SinkBlock'
   px4_internal_block_ParameterU_T obj_ms;// '<S14>/Read Parameter2'
   px4_internal_block_ParameterU_T obj_k;// '<S14>/Read Parameter1'
@@ -121,58 +127,61 @@ struct DW_controller_T {
   px4_internal_block_ParameterU_T obj_e;// '<S12>/Read Parameter4'
   px4_internal_block_ParameterU_T obj_f;// '<S12>/Read Parameter3'
   px4_internal_block_ParameterU_T obj_ju;// '<S12>/Read Parameter2'
+  px4_internal_block_ParameterU_T obj_lx;// '<S12>/Read Parameter14'
   px4_internal_block_ParameterU_T obj_lp;// '<S12>/Read Parameter13'
-  px4_internal_block_ParameterU_T obj_g;// '<S12>/Read Parameter12'
+  px4_internal_block_ParameterU_T obj_gx;// '<S12>/Read Parameter12'
   px4_internal_block_ParameterU_T obj_i;// '<S12>/Read Parameter11'
   px4_internal_block_ParameterU_T obj_b;// '<S12>/Read Parameter10'
   px4_internal_block_ParameterU_T obj_a;// '<S12>/Read Parameter1'
   px4_internal_block_ParameterU_T obj_ng;// '<S12>/Read Parameter'
   uint64_T StoreStartTime_PreviousInput;// '<S30>/Store Start Time'
-  real32_T Integrator_DSTATE;          // '<S127>/Integrator'
+  real32_T DiscreteFilter1_states;     // '<S36>/Discrete Filter1'
+  real32_T Integrator_DSTATE;          // '<S128>/Integrator'
   real32_T Integrator_DSTATE_e;        // '<S74>/Integrator'
   real32_T Savedpitchinput_PreviousInput;// '<S26>/Saved pitch input'
   real32_T Savedyawinput_PreviousInput;// '<S28>/Saved yaw input'
   real32_T SavedThrustinput_PreviousInput;// '<S27>/Saved Thrust input'
-  int8_T Integrator_PrevResetState;    // '<S127>/Integrator'
+  int8_T Integrator_PrevResetState;    // '<S128>/Integrator'
   int8_T Integrator_PrevResetState_k;  // '<S74>/Integrator'
-  uint8_T Integrator_IC_LOADING;       // '<S127>/Integrator'
+  uint8_T Integrator_IC_LOADING;       // '<S128>/Integrator'
   uint8_T Integrator_IC_LOADING_p;     // '<S74>/Integrator'
   DW_PX4Timestamp_controller_T PX4Timestamp_n;// '<S32>/PX4 Timestamp'
   DW_PX4Timestamp_controller_T PX4Timestamp;// '<S32>/PX4 Timestamp'
+  DW_PX4Timestamp_controller_T PX4Timestamp_c;// '<S32>/PX4 Timestamp'
   DW_PX4Timestamp_controller_T PX4Timestamp_h;// '<S32>/PX4 Timestamp'
 };
 
 // instance parameters, for system '<Root>'
 struct InstP_controller_T {
   real_T dutch_roll_amp;               // Variable: dutch_roll_amp
-                                          //  Referenced by: '<S146>/Doublet Generator'
+                                          //  Referenced by: '<S149>/Doublet Generator'
 
   real_T dutch_roll_freq;              // Variable: dutch_roll_freq
-                                          //  Referenced by: '<S146>/Doublet Generator'
+                                          //  Referenced by: '<S149>/Doublet Generator'
 
   real_T phugoid_amp;                  // Variable: phugoid_amp
-                                          //  Referenced by: '<S147>/Doublet Generator'
+                                          //  Referenced by: '<S150>/Doublet Generator'
 
   real_T phugoid_freq;                 // Variable: phugoid_freq
-                                          //  Referenced by: '<S147>/Doublet Generator'
+                                          //  Referenced by: '<S150>/Doublet Generator'
 
   real_T short_period_amp;             // Variable: short_period_amp
-                                          //  Referenced by: '<S148>/Doublet Generator'
+                                          //  Referenced by: '<S151>/Doublet Generator'
 
   real_T short_period_freq;            // Variable: short_period_freq
-                                          //  Referenced by: '<S148>/Doublet Generator'
+                                          //  Referenced by: '<S151>/Doublet Generator'
 
   real32_T dutch_roll_dur;             // Variable: dutch_roll_dur
-                                          //  Referenced by: '<S146>/Set time to re-allow  pilot inputs'
+                                          //  Referenced by: '<S149>/Set time to re-allow  pilot inputs'
 
   real32_T dutch_roll_period;          // Variable: dutch_roll_period
-                                          //  Referenced by: '<S146>/Switch1'
+                                          //  Referenced by: '<S149>/Switch1'
 
   real32_T phugoid_dur;                // Variable: phugoid_dur
-                                          //  Referenced by: '<S147>/Set time to re-allow  pilot inputs'
+                                          //  Referenced by: '<S150>/Set time to re-allow  pilot inputs'
 
   real32_T phugoid_period;             // Variable: phugoid_period
-                                          //  Referenced by: '<S147>/Switch1'
+                                          //  Referenced by: '<S150>/Switch1'
 
   real32_T pitch_con_gain_i;           // Variable: pitch_con_gain_i
                                           //  Referenced by: '<S71>/Integral Gain'
@@ -181,16 +190,19 @@ struct InstP_controller_T {
                                           //  Referenced by: '<S79>/Proportional Gain'
 
   real32_T short_period_dur;           // Variable: short_period_dur
-                                          //  Referenced by: '<S148>/Set time to re-allow  pilot inputs'
+                                          //  Referenced by: '<S151>/Set time to re-allow  pilot inputs'
 
   real32_T short_period_period;        // Variable: short_period_period
-                                          //  Referenced by: '<S148>/Set end time of doublet'
+                                          //  Referenced by: '<S151>/Set end time of doublet'
 
   real32_T vel_con_gain_i;             // Variable: vel_con_gain_i
-                                          //  Referenced by: '<S124>/Integral Gain'
+                                          //  Referenced by: '<S125>/Integral Gain'
 
   real32_T vel_con_gain_p;             // Variable: vel_con_gain_p
-                                          //  Referenced by: '<S132>/Proportional Gain'
+                                          //  Referenced by: '<S133>/Proportional Gain'
+
+  real32_T vel_lp_freq;                // Variable: vel_lp_freq
+                                          //  Referenced by: '<S36>/Constant'
 
 };
 
@@ -200,11 +212,11 @@ struct P_controller_T_ {
                                           //  Referenced by: '<S66>/Kb'
 
   real32_T PIDController_Kb_p;         // Mask Parameter: PIDController_Kb_p
-                                          //  Referenced by: '<S119>/Kb'
+                                          //  Referenced by: '<S120>/Kb'
 
   real32_T PIDController_LowerSaturationLi;
                               // Mask Parameter: PIDController_LowerSaturationLi
-                                 //  Referenced by: '<S134>/Saturation'
+                                 //  Referenced by: '<S135>/Saturation'
 
   real32_T PIDController_LowerSaturation_m;
                               // Mask Parameter: PIDController_LowerSaturation_m
@@ -212,7 +224,7 @@ struct P_controller_T_ {
 
   real32_T PIDController_UpperSaturationLi;
                               // Mask Parameter: PIDController_UpperSaturationLi
-                                 //  Referenced by: '<S134>/Saturation'
+                                 //  Referenced by: '<S135>/Saturation'
 
   real32_T PIDController_UpperSaturation_d;
                               // Mask Parameter: PIDController_UpperSaturation_d
@@ -222,28 +234,28 @@ struct P_controller_T_ {
                                         //  Referenced by: '<S17>/Constant'
 
   px4_Bus_vehicle_odometry Out1_Y0;    // Computed Parameter: Out1_Y0
-                                          //  Referenced by: '<S164>/Out1'
+                                          //  Referenced by: '<S167>/Out1'
 
   px4_Bus_vehicle_odometry Constant_Value;// Computed Parameter: Constant_Value
-                                             //  Referenced by: '<S163>/Constant'
+                                             //  Referenced by: '<S166>/Constant'
+
+  px4_Bus_flight_testing Constant_Value_e;// Computed Parameter: Constant_Value_e
+                                             //  Referenced by: '<S157>/Constant'
 
   px4_Bus_input_rc Out1_Y0_a;          // Computed Parameter: Out1_Y0_a
-                                          //  Referenced by: '<S152>/Out1'
+                                          //  Referenced by: '<S155>/Out1'
 
   px4_Bus_input_rc Out1_Y0_i;          // Computed Parameter: Out1_Y0_i
-                                          //  Referenced by: '<S162>/Out1'
+                                          //  Referenced by: '<S165>/Out1'
 
   px4_Bus_input_rc Constant_Value_d;   // Computed Parameter: Constant_Value_d
-                                          //  Referenced by: '<S161>/Constant'
+                                          //  Referenced by: '<S164>/Constant'
 
   px4_Bus_input_rc Constant_Value_c;   // Computed Parameter: Constant_Value_c
-                                          //  Referenced by: '<S151>/Constant'
-
-  px4_Bus_flight_testing Constant_Value_cr;// Computed Parameter: Constant_Value_cr
-                                              //  Referenced by: '<S154>/Constant'
+                                          //  Referenced by: '<S154>/Constant'
 
   px4_Bus_system_identification Constant_Value_j;// Computed Parameter: Constant_Value_j
-                                                    //  Referenced by: '<S157>/Constant'
+                                                    //  Referenced by: '<S160>/Constant'
 
   px4_Bus_sensor_accel Out1_Y0_k;      // Computed Parameter: Out1_Y0_k
                                           //  Referenced by: '<S7>/Out1'
@@ -252,28 +264,31 @@ struct P_controller_T_ {
                                            //  Referenced by: '<S6>/Constant'
 
   px4_Bus_sensor_gyro Out1_Y0_e;       // Computed Parameter: Out1_Y0_e
-                                          //  Referenced by: '<S160>/Out1'
+                                          //  Referenced by: '<S163>/Out1'
 
   px4_Bus_sensor_gyro Constant_Value_m;// Computed Parameter: Constant_Value_m
-                                          //  Referenced by: '<S159>/Constant'
+                                          //  Referenced by: '<S162>/Constant'
 
   px4_Bus_glide_controller Constant_Value_d3;// Computed Parameter: Constant_Value_d3
                                                 //  Referenced by: '<S37>/Constant'
 
   px4_Bus_airspeed Out1_Y0_io;         // Computed Parameter: Out1_Y0_io
-                                          //  Referenced by: '<S150>/Out1'
+                                          //  Referenced by: '<S153>/Out1'
 
   px4_Bus_airspeed Constant_Value_a;   // Computed Parameter: Constant_Value_a
-                                          //  Referenced by: '<S149>/Constant'
+                                          //  Referenced by: '<S152>/Constant'
 
-  real_T Gain2_Gain;                   // Expression: 1/100
-                                          //  Referenced by: '<S12>/Gain2'
+  px4_Bus_velocity_filter Constant_Value_o;// Computed Parameter: Constant_Value_o
+                                              //  Referenced by: '<S146>/Constant'
 
   real_T Gain1_Gain;                   // Expression: 1/100
                                           //  Referenced by: '<S12>/Gain1'
 
   real_T Gain_Gain;                    // Expression: double(1/12.5)
                                           //  Referenced by: '<S12>/Gain'
+
+  real_T Gain2_Gain;                   // Expression: 1/100
+                                          //  Referenced by: '<S12>/Gain2'
 
   uint64_T StoreStartTime_InitialCondition;
                           // Computed Parameter: StoreStartTime_InitialCondition
@@ -298,8 +313,24 @@ struct P_controller_T_ {
   real32_T Switch3_Threshold;          // Computed Parameter: Switch3_Threshold
                                           //  Referenced by: '<S24>/Switch3'
 
+  real32_T Constant1_Value;            // Computed Parameter: Constant1_Value
+                                          //  Referenced by: '<S36>/Constant1'
+
+  real32_T Gain_Gain_b;                // Computed Parameter: Gain_Gain_b
+                                          //  Referenced by: '<S36>/Gain'
+
+  real32_T Constant2_Value;            // Computed Parameter: Constant2_Value
+                                          //  Referenced by: '<S36>/Constant2'
+
+  real32_T Bias_Bias;                  // Computed Parameter: Bias_Bias
+                                          //  Referenced by: '<S36>/Bias'
+
+  real32_T DiscreteFilter1_InitialStates;
+                            // Computed Parameter: DiscreteFilter1_InitialStates
+                               //  Referenced by: '<S36>/Discrete Filter1'
+
   real32_T Integrator_gainval;         // Computed Parameter: Integrator_gainval
-                                          //  Referenced by: '<S127>/Integrator'
+                                          //  Referenced by: '<S128>/Integrator'
 
   real32_T Switch_Threshold_k;         // Computed Parameter: Switch_Threshold_k
                                           //  Referenced by: '<S31>/Switch'
@@ -570,8 +601,8 @@ extern volatile boolean_T runModel;
 //  These blocks were eliminated from the model due to optimizations:
 //
 //  Block '<S6>/NOT' : Unused code path elimination
-//  Block '<S149>/NOT' : Unused code path elimination
-//  Block '<S151>/NOT' : Unused code path elimination
+//  Block '<S152>/NOT' : Unused code path elimination
+//  Block '<S154>/NOT' : Unused code path elimination
 //  Block '<S14>/Cast To Single2' : Unused code path elimination
 //  Block '<S14>/Cast To Single3' : Unused code path elimination
 //  Block '<S14>/Cast To Single4' : Unused code path elimination
@@ -594,16 +625,16 @@ extern volatile boolean_T runModel;
 //  Block '<S14>/Switch1' : Unused code path elimination
 //  Block '<S14>/Switch2' : Unused code path elimination
 //  Block '<S14>/Switch3' : Unused code path elimination
-//  Block '<S159>/NOT' : Unused code path elimination
+//  Block '<S162>/NOT' : Unused code path elimination
 //  Block '<S4>/Bitwise Operator' : Unused code path elimination
 //  Block '<S4>/Data Type Conversion' : Unused code path elimination
 //  Block '<S4>/Data Type Conversion1' : Unused code path elimination
 //  Block '<S4>/Data Type Conversion2' : Unused code path elimination
 //  Block '<S4>/Gain' : Unused code path elimination
 //  Block '<S4>/Gain1' : Unused code path elimination
-//  Block '<S161>/NOT' : Unused code path elimination
+//  Block '<S164>/NOT' : Unused code path elimination
 //  Block '<S4>/Signal Copy7' : Unused code path elimination
-//  Block '<S163>/NOT' : Unused code path elimination
+//  Block '<S166>/NOT' : Unused code path elimination
 //  Block '<S5>/Signal Copy' : Unused code path elimination
 //  Block '<S5>/Signal Copy1' : Unused code path elimination
 //  Block '<S5>/Signal Copy2' : Unused code path elimination
@@ -724,78 +755,81 @@ extern volatile boolean_T runModel;
 //  '<S90>'  : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Theta Control/PID Controller/preInt Signal/Internal PreInt'
 //  '<S91>'  : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Theta Control/PID Controller/preSat Signal/Forward_Path'
 //  '<S92>'  : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller'
-//  '<S93>'  : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Anti-windup'
-//  '<S94>'  : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/D Gain'
-//  '<S95>'  : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/External Derivative'
-//  '<S96>'  : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Filter'
-//  '<S97>'  : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Filter ICs'
-//  '<S98>'  : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/I Gain'
-//  '<S99>'  : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Ideal P Gain'
-//  '<S100>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Ideal P Gain Fdbk'
-//  '<S101>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Integrator'
-//  '<S102>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Integrator ICs'
-//  '<S103>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/N Copy'
-//  '<S104>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/N Gain'
-//  '<S105>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/P Copy'
-//  '<S106>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Parallel P Gain'
-//  '<S107>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Reset Signal'
-//  '<S108>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Saturation'
-//  '<S109>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Saturation Fdbk'
-//  '<S110>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Sum'
-//  '<S111>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Sum Fdbk'
-//  '<S112>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Tracking Mode'
-//  '<S113>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Tracking Mode Sum'
-//  '<S114>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Tsamp - Integral'
-//  '<S115>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Tsamp - Ngain'
-//  '<S116>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/postSat Signal'
-//  '<S117>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/preInt Signal'
-//  '<S118>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/preSat Signal'
-//  '<S119>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Anti-windup/Back Calculation'
-//  '<S120>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/D Gain/Disabled'
-//  '<S121>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/External Derivative/Disabled'
-//  '<S122>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Filter/Disabled'
-//  '<S123>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Filter ICs/Disabled'
-//  '<S124>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/I Gain/Internal Parameters'
-//  '<S125>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Ideal P Gain/Passthrough'
-//  '<S126>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Ideal P Gain Fdbk/Disabled'
-//  '<S127>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Integrator/Discrete'
-//  '<S128>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Integrator ICs/External IC'
-//  '<S129>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/N Copy/Disabled wSignal Specification'
-//  '<S130>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/N Gain/Disabled'
-//  '<S131>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/P Copy/Disabled'
-//  '<S132>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Parallel P Gain/Internal Parameters'
-//  '<S133>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Reset Signal/External Reset'
-//  '<S134>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Saturation/Enabled'
-//  '<S135>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Saturation Fdbk/Disabled'
-//  '<S136>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Sum/Sum_PI'
-//  '<S137>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Sum Fdbk/Disabled'
-//  '<S138>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Tracking Mode/Disabled'
-//  '<S139>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Tracking Mode Sum/Passthrough'
-//  '<S140>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Tsamp - Integral/TsSignalSpecification'
-//  '<S141>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Tsamp - Ngain/Passthrough'
-//  '<S142>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/postSat Signal/Forward_Path'
-//  '<S143>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/preInt Signal/Internal PreInt'
-//  '<S144>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/preSat Signal/Forward_Path'
-//  '<S145>' : 'controller/Flight Controller/Control logic/Flight Testing/Mode Selection - SysID/Default Deflections'
-//  '<S146>' : 'controller/Flight Controller/Control logic/Flight Testing/Mode Selection - SysID/Dutch Roll Doublet'
-//  '<S147>' : 'controller/Flight Controller/Control logic/Flight Testing/Mode Selection - SysID/Phugoid Doublet'
-//  '<S148>' : 'controller/Flight Controller/Control logic/Flight Testing/Mode Selection - SysID/Short Period Doublet'
-//  '<S149>' : 'controller/Flight Controller/Get AIrpeed/PX4 uORB Read2'
-//  '<S150>' : 'controller/Flight Controller/Get AIrpeed/PX4 uORB Read2/Enabled Subsystem'
-//  '<S151>' : 'controller/Flight Controller/Get Additional RC Inputs/PX4 uORB Read1'
-//  '<S152>' : 'controller/Flight Controller/Get Additional RC Inputs/PX4 uORB Read1/Enabled Subsystem'
-//  '<S153>' : 'controller/Flight Controller/Getting Parameters from PX4/PX4 ULog'
-//  '<S154>' : 'controller/Flight Controller/Getting Parameters from PX4/PX4 ULog/PX4 uORB Message'
-//  '<S155>' : 'controller/Flight Controller/Getting Parameters from PX4/PX4 ULog/PX4_log_write'
-//  '<S156>' : 'controller/Flight Controller/System Identification Logging/PX4 ULog'
-//  '<S157>' : 'controller/Flight Controller/System Identification Logging/PX4 ULog/PX4 uORB Message'
-//  '<S158>' : 'controller/Flight Controller/System Identification Logging/PX4 ULog/PX4_log_write'
-//  '<S159>' : 'controller/Gyroscope/PX4 uORB Read'
-//  '<S160>' : 'controller/Gyroscope/PX4 uORB Read/Enabled Subsystem'
-//  '<S161>' : 'controller/Radio Control Transmitter/PX4 uORB Read'
-//  '<S162>' : 'controller/Radio Control Transmitter/PX4 uORB Read/Enabled Subsystem'
-//  '<S163>' : 'controller/Vehicle Attitude/PX4 uORB Read'
-//  '<S164>' : 'controller/Vehicle Attitude/PX4 uORB Read/Enabled Subsystem'
+//  '<S93>'  : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PX4 ULog'
+//  '<S94>'  : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Anti-windup'
+//  '<S95>'  : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/D Gain'
+//  '<S96>'  : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/External Derivative'
+//  '<S97>'  : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Filter'
+//  '<S98>'  : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Filter ICs'
+//  '<S99>'  : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/I Gain'
+//  '<S100>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Ideal P Gain'
+//  '<S101>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Ideal P Gain Fdbk'
+//  '<S102>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Integrator'
+//  '<S103>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Integrator ICs'
+//  '<S104>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/N Copy'
+//  '<S105>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/N Gain'
+//  '<S106>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/P Copy'
+//  '<S107>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Parallel P Gain'
+//  '<S108>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Reset Signal'
+//  '<S109>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Saturation'
+//  '<S110>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Saturation Fdbk'
+//  '<S111>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Sum'
+//  '<S112>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Sum Fdbk'
+//  '<S113>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Tracking Mode'
+//  '<S114>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Tracking Mode Sum'
+//  '<S115>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Tsamp - Integral'
+//  '<S116>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Tsamp - Ngain'
+//  '<S117>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/postSat Signal'
+//  '<S118>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/preInt Signal'
+//  '<S119>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/preSat Signal'
+//  '<S120>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Anti-windup/Back Calculation'
+//  '<S121>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/D Gain/Disabled'
+//  '<S122>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/External Derivative/Disabled'
+//  '<S123>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Filter/Disabled'
+//  '<S124>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Filter ICs/Disabled'
+//  '<S125>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/I Gain/Internal Parameters'
+//  '<S126>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Ideal P Gain/Passthrough'
+//  '<S127>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Ideal P Gain Fdbk/Disabled'
+//  '<S128>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Integrator/Discrete'
+//  '<S129>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Integrator ICs/External IC'
+//  '<S130>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/N Copy/Disabled wSignal Specification'
+//  '<S131>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/N Gain/Disabled'
+//  '<S132>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/P Copy/Disabled'
+//  '<S133>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Parallel P Gain/Internal Parameters'
+//  '<S134>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Reset Signal/External Reset'
+//  '<S135>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Saturation/Enabled'
+//  '<S136>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Saturation Fdbk/Disabled'
+//  '<S137>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Sum/Sum_PI'
+//  '<S138>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Sum Fdbk/Disabled'
+//  '<S139>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Tracking Mode/Disabled'
+//  '<S140>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Tracking Mode Sum/Passthrough'
+//  '<S141>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Tsamp - Integral/TsSignalSpecification'
+//  '<S142>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/Tsamp - Ngain/Passthrough'
+//  '<S143>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/postSat Signal/Forward_Path'
+//  '<S144>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/preInt Signal/Internal PreInt'
+//  '<S145>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PID Controller/preSat Signal/Forward_Path'
+//  '<S146>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PX4 ULog/PX4 uORB Message'
+//  '<S147>' : 'controller/Flight Controller/Control logic/Flight Testing/Controller/Glide Controller/Velocity controller/PX4 ULog/PX4_log_write'
+//  '<S148>' : 'controller/Flight Controller/Control logic/Flight Testing/Mode Selection - SysID/Default Deflections'
+//  '<S149>' : 'controller/Flight Controller/Control logic/Flight Testing/Mode Selection - SysID/Dutch Roll Doublet'
+//  '<S150>' : 'controller/Flight Controller/Control logic/Flight Testing/Mode Selection - SysID/Phugoid Doublet'
+//  '<S151>' : 'controller/Flight Controller/Control logic/Flight Testing/Mode Selection - SysID/Short Period Doublet'
+//  '<S152>' : 'controller/Flight Controller/Get AIrpeed/PX4 uORB Read2'
+//  '<S153>' : 'controller/Flight Controller/Get AIrpeed/PX4 uORB Read2/Enabled Subsystem'
+//  '<S154>' : 'controller/Flight Controller/Get Additional RC Inputs/PX4 uORB Read1'
+//  '<S155>' : 'controller/Flight Controller/Get Additional RC Inputs/PX4 uORB Read1/Enabled Subsystem'
+//  '<S156>' : 'controller/Flight Controller/Getting Parameters from PX4/PX4 ULog'
+//  '<S157>' : 'controller/Flight Controller/Getting Parameters from PX4/PX4 ULog/PX4 uORB Message'
+//  '<S158>' : 'controller/Flight Controller/Getting Parameters from PX4/PX4 ULog/PX4_log_write'
+//  '<S159>' : 'controller/Flight Controller/System Identification Logging/PX4 ULog'
+//  '<S160>' : 'controller/Flight Controller/System Identification Logging/PX4 ULog/PX4 uORB Message'
+//  '<S161>' : 'controller/Flight Controller/System Identification Logging/PX4 ULog/PX4_log_write'
+//  '<S162>' : 'controller/Gyroscope/PX4 uORB Read'
+//  '<S163>' : 'controller/Gyroscope/PX4 uORB Read/Enabled Subsystem'
+//  '<S164>' : 'controller/Radio Control Transmitter/PX4 uORB Read'
+//  '<S165>' : 'controller/Radio Control Transmitter/PX4 uORB Read/Enabled Subsystem'
+//  '<S166>' : 'controller/Vehicle Attitude/PX4 uORB Read'
+//  '<S167>' : 'controller/Vehicle Attitude/PX4 uORB Read/Enabled Subsystem'
 
 #endif                                 // controller_h_
 

@@ -66,10 +66,12 @@ void LoggedTopics::add_default_topics()
 	add_optional_topic("follow_target_estimator", 200);
 	add_optional_topic("follow_target_status", 400);
 	add_optional_topic("flaps_setpoint", 1000);
+	add_optional_topic("flight_testing", 250);
 	add_topic("gimbal_manager_set_attitude", 500);
 	add_optional_topic("generator_status");
 	add_optional_topic("gps_dump");
 	add_optional_topic("gimbal_controls", 200);
+	add_optional_topic("glide_controller", 250);
 	add_optional_topic("gripper");
 	add_optional_topic("heater_status");
 	add_topic("home_position");
@@ -103,6 +105,7 @@ void LoggedTopics::add_default_topics()
 	add_topic("sensor_selection");
 	add_topic("sensors_status_imu", 200);
 	add_optional_topic("spoilers_setpoint", 1000);
+	add_optional_topic("system_identification", 250);
 	add_topic("system_power", 500);
 	add_optional_topic("takeoff_status", 1000);
 	add_optional_topic("tecs_status", 200);
@@ -126,6 +129,7 @@ void LoggedTopics::add_default_topics()
 	add_topic("vehicle_magnetometer", 200);
 	add_topic("vehicle_rates_setpoint", 20);
 	add_topic("vehicle_roi", 1000);
+	add_optional_topic("velocity_filter", 250);
 	add_topic("vehicle_status");
 	add_optional_topic("vtol_vehicle_status", 200);
 	add_topic("wind", 1000);

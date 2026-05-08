@@ -7,9 +7,9 @@
 //
 // Code generated for Simulink model 'controller'.
 //
-// Model version                  : 1.86
+// Model version                  : 1.88
 // Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
-// C/C++ source code generated on : Mon Apr 27 13:35:29 2026
+// C/C++ source code generated on : Tue Apr 28 23:51:53 2026
 //
 // Target selection: ert.tlc
 // Embedded hardware selection: ARM Compatible->ARM Cortex
@@ -26,12 +26,12 @@ P_controller_T controller_P = {
   1.0F,
 
   // Mask Parameter: PIDController_Kb_p
-  //  Referenced by: '<S119>/Kb'
+  //  Referenced by: '<S120>/Kb'
 
   1.0F,
 
   // Mask Parameter: PIDController_LowerSaturationLi
-  //  Referenced by: '<S134>/Saturation'
+  //  Referenced by: '<S135>/Saturation'
 
   -0.17453292F,
 
@@ -41,7 +41,7 @@ P_controller_T controller_P = {
   -0.75F,
 
   // Mask Parameter: PIDController_UpperSaturationLi
-  //  Referenced by: '<S134>/Saturation'
+  //  Referenced by: '<S135>/Saturation'
 
   0.34906584F,
 
@@ -56,7 +56,7 @@ P_controller_T controller_P = {
   1500U,
 
   // Computed Parameter: Out1_Y0
-  //  Referenced by: '<S164>/Out1'
+  //  Referenced by: '<S167>/Out1'
 
   {
     (0ULL),                            // timestamp
@@ -100,7 +100,7 @@ P_controller_T controller_P = {
   },
 
   // Computed Parameter: Constant_Value
-  //  Referenced by: '<S163>/Constant'
+  //  Referenced by: '<S166>/Constant'
 
   {
     (0ULL),                            // timestamp
@@ -143,8 +143,34 @@ P_controller_T controller_P = {
     // _padding0
   },
 
+  // Computed Parameter: Constant_Value_e
+  //  Referenced by: '<S157>/Constant'
+
+  {
+    (0ULL),                            // timestamp
+    0.0F,                              // sp_doublet_amp
+    0.0F,                              // sp_doublet_freq
+    0.0F,                              // sp_doublet_dur
+    0.0F,                              // dr_doublet_amp
+    0.0F,                              // dr_doublet_freq
+    0.0F,                              // dr_doublet_dur
+    0.0F,                              // ph_doublet_amp
+    0.0F,                              // ph_doublet_freq
+    0.0F,                              // ph_doublet_dur
+    0.0F,                              // pitch_con_gain_p
+    0.0F,                              // pitch_con_gain_i
+    0.0F,                              // vel_con_gain_p
+    0.0F,                              // vel_con_gain_i
+    0.0F,                              // vel_lp_freq
+    0U,                                // pilot_marker
+
+    {
+      0U, 0U, 0U, 0U }
+    // _padding0
+  },
+
   // Computed Parameter: Out1_Y0_a
-  //  Referenced by: '<S152>/Out1'
+  //  Referenced by: '<S155>/Out1'
 
   {
     (0ULL),                            // timestamp
@@ -167,7 +193,7 @@ P_controller_T controller_P = {
   },
 
   // Computed Parameter: Out1_Y0_i
-  //  Referenced by: '<S162>/Out1'
+  //  Referenced by: '<S165>/Out1'
 
   {
     (0ULL),                            // timestamp
@@ -190,7 +216,7 @@ P_controller_T controller_P = {
   },
 
   // Computed Parameter: Constant_Value_d
-  //  Referenced by: '<S161>/Constant'
+  //  Referenced by: '<S164>/Constant'
 
   {
     (0ULL),                            // timestamp
@@ -213,7 +239,7 @@ P_controller_T controller_P = {
   },
 
   // Computed Parameter: Constant_Value_c
-  //  Referenced by: '<S151>/Constant'
+  //  Referenced by: '<S154>/Constant'
 
   {
     (0ULL),                            // timestamp
@@ -235,29 +261,8 @@ P_controller_T controller_P = {
     0U                                 // _padding0
   },
 
-  // Computed Parameter: Constant_Value_cr
-  //  Referenced by: '<S154>/Constant'
-
-  {
-    (0ULL),                            // timestamp
-    0.0F,                              // sp_doublet_amp
-    0.0F,                              // sp_doublet_freq
-    0.0F,                              // sp_doublet_dur
-    0.0F,                              // dr_doublet_amp
-    0.0F,                              // dr_doublet_freq
-    0.0F,                              // dr_doublet_dur
-    0.0F,                              // ph_doublet_amp
-    0.0F,                              // ph_doublet_freq
-    0.0F,                              // ph_doublet_dur
-    0.0F,                              // pitch_con_gain_p
-    0.0F,                              // pitch_con_gain_i
-    0.0F,                              // vel_con_gain_p
-    0.0F,                              // vel_con_gain_i
-    0U                                 // pilot_marker
-  },
-
   // Computed Parameter: Constant_Value_j
-  //  Referenced by: '<S157>/Constant'
+  //  Referenced by: '<S160>/Constant'
 
   {
     (0ULL),                            // timestamp
@@ -327,7 +332,7 @@ P_controller_T controller_P = {
   },
 
   // Computed Parameter: Out1_Y0_e
-  //  Referenced by: '<S160>/Out1'
+  //  Referenced by: '<S163>/Out1'
 
   {
     (0ULL),                            // timestamp
@@ -350,7 +355,7 @@ P_controller_T controller_P = {
   },
 
   // Computed Parameter: Constant_Value_m
-  //  Referenced by: '<S159>/Constant'
+  //  Referenced by: '<S162>/Constant'
 
   {
     (0ULL),                            // timestamp
@@ -388,7 +393,7 @@ P_controller_T controller_P = {
   },
 
   // Computed Parameter: Out1_Y0_io
-  //  Referenced by: '<S150>/Out1'
+  //  Referenced by: '<S153>/Out1'
 
   {
     (0ULL),                            // timestamp
@@ -400,7 +405,7 @@ P_controller_T controller_P = {
   },
 
   // Computed Parameter: Constant_Value_a
-  //  Referenced by: '<S149>/Constant'
+  //  Referenced by: '<S152>/Constant'
 
   {
     (0ULL),                            // timestamp
@@ -411,10 +416,14 @@ P_controller_T controller_P = {
     0.0F                               // confidence
   },
 
-  // Expression: 1/100
-  //  Referenced by: '<S12>/Gain2'
+  // Computed Parameter: Constant_Value_o
+  //  Referenced by: '<S146>/Constant'
 
-  0.01,
+  {
+    (0ULL),                            // timestamp
+    0.0F,                              // v_raw
+    0.0F                               // v_filtered
+  },
 
   // Expression: 1/100
   //  Referenced by: '<S12>/Gain1'
@@ -425,6 +434,11 @@ P_controller_T controller_P = {
   //  Referenced by: '<S12>/Gain'
 
   0.08,
+
+  // Expression: 1/100
+  //  Referenced by: '<S12>/Gain2'
+
+  0.01,
 
   // Computed Parameter: StoreStartTime_InitialCondition
   //  Referenced by: '<S30>/Store Start Time'
@@ -461,8 +475,33 @@ P_controller_T controller_P = {
 
   0.5F,
 
+  // Computed Parameter: Constant1_Value
+  //  Referenced by: '<S36>/Constant1'
+
+  0.0F,
+
+  // Computed Parameter: Gain_Gain_b
+  //  Referenced by: '<S36>/Gain'
+
+  0.004F,
+
+  // Computed Parameter: Constant2_Value
+  //  Referenced by: '<S36>/Constant2'
+
+  1.0F,
+
+  // Computed Parameter: Bias_Bias
+  //  Referenced by: '<S36>/Bias'
+
+  -1.0F,
+
+  // Computed Parameter: DiscreteFilter1_InitialStates
+  //  Referenced by: '<S36>/Discrete Filter1'
+
+  0.0F,
+
   // Computed Parameter: Integrator_gainval
-  //  Referenced by: '<S127>/Integrator'
+  //  Referenced by: '<S128>/Integrator'
 
   0.004F,
 
@@ -730,52 +769,52 @@ P_controller_T controller_P = {
 // instance parameters
 InstP_controller_T controller_InstP = {
   // Variable: dutch_roll_amp
-  //  Referenced by: '<S146>/Doublet Generator'
+  //  Referenced by: '<S149>/Doublet Generator'
 
   0.1,
 
   // Variable: dutch_roll_freq
-  //  Referenced by: '<S146>/Doublet Generator'
+  //  Referenced by: '<S149>/Doublet Generator'
 
   0.44,
 
   // Variable: phugoid_amp
-  //  Referenced by: '<S147>/Doublet Generator'
+  //  Referenced by: '<S150>/Doublet Generator'
 
   0.1,
 
   // Variable: phugoid_freq
-  //  Referenced by: '<S147>/Doublet Generator'
+  //  Referenced by: '<S150>/Doublet Generator'
 
   0.166667,
 
   // Variable: short_period_amp
-  //  Referenced by: '<S148>/Doublet Generator'
+  //  Referenced by: '<S151>/Doublet Generator'
 
   0.24,
 
   // Variable: short_period_freq
-  //  Referenced by: '<S148>/Doublet Generator'
+  //  Referenced by: '<S151>/Doublet Generator'
 
   1.1,
 
   // Variable: dutch_roll_dur
-  //  Referenced by: '<S146>/Set time to re-allow  pilot inputs'
+  //  Referenced by: '<S149>/Set time to re-allow  pilot inputs'
 
   7.5F,
 
   // Variable: dutch_roll_period
-  //  Referenced by: '<S146>/Switch1'
+  //  Referenced by: '<S149>/Switch1'
 
   2.2727F,
 
   // Variable: phugoid_dur
-  //  Referenced by: '<S147>/Set time to re-allow  pilot inputs'
+  //  Referenced by: '<S150>/Set time to re-allow  pilot inputs'
 
   20.0F,
 
   // Variable: phugoid_period
-  //  Referenced by: '<S147>/Switch1'
+  //  Referenced by: '<S150>/Switch1'
 
   6.0F,
 
@@ -790,24 +829,29 @@ InstP_controller_T controller_InstP = {
   -1.3751F,
 
   // Variable: short_period_dur
-  //  Referenced by: '<S148>/Set time to re-allow  pilot inputs'
+  //  Referenced by: '<S151>/Set time to re-allow  pilot inputs'
 
   2.5F,
 
   // Variable: short_period_period
-  //  Referenced by: '<S148>/Set end time of doublet'
+  //  Referenced by: '<S151>/Set end time of doublet'
 
   0.9091F,
 
   // Variable: vel_con_gain_i
-  //  Referenced by: '<S124>/Integral Gain'
+  //  Referenced by: '<S125>/Integral Gain'
 
   -0.015F,
 
   // Variable: vel_con_gain_p
-  //  Referenced by: '<S132>/Proportional Gain'
+  //  Referenced by: '<S133>/Proportional Gain'
 
-  -0.06F
+  -0.06F,
+
+  // Variable: vel_lp_freq
+  //  Referenced by: '<S36>/Constant'
+
+  20.0F
 };
 
 //

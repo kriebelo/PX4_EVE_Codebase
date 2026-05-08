@@ -7,9 +7,9 @@
 //
 // Code generated for Simulink model 'controller'.
 //
-// Model version                  : 1.86
+// Model version                  : 1.88
 // Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
-// C/C++ source code generated on : Mon Apr 27 13:35:29 2026
+// C/C++ source code generated on : Tue Apr 28 23:51:53 2026
 //
 // Target selection: ert.tlc
 // Embedded hardware selection: ARM Compatible->ARM Cortex
@@ -23,6 +23,7 @@
 #include <uORB/topics/sensor_accel.h>
 #include <uORB/topics/flight_testing.h>
 #include <uORB/topics/glide_controller.h>
+#include <uORB/topics/velocity_filter.h>
 #include <uORB/topics/airspeed.h>
 #include <uORB/topics/input_rc.h>
 #include <uORB/topics/system_identification.h>

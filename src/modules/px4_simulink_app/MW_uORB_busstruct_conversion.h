@@ -9,6 +9,7 @@
 #include <uORB/topics/sensor_gyro.h>
 #include <uORB/topics/system_identification.h>
 #include <uORB/topics/vehicle_odometry.h>
+#include <uORB/topics/velocity_filter.h>
 
 typedef struct airspeed_s  px4_Bus_airspeed ;
 typedef struct flight_testing_s  px4_Bus_flight_testing ;
@@ -18,5 +19,6 @@ typedef struct sensor_accel_s  px4_Bus_sensor_accel ;
 typedef struct sensor_gyro_s  px4_Bus_sensor_gyro ;
 typedef struct system_identification_s  px4_Bus_system_identification ;
 typedef struct vehicle_odometry_s  px4_Bus_vehicle_odometry ;
+typedef struct velocity_filter_s  px4_Bus_velocity_filter ;
 
 #endif
