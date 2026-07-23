@@ -58,6 +58,12 @@ private:
 
 
 	DEFINE_PARAMETERS(
+		(ParamFloat<px4::params::DR_DIFF_THR_PER>) _param_dr_diff_thr_per,
+		(ParamFloat<px4::params::DR_DIFF_THR_AMP>) _param_dr_diff_thr_amp,
+		(ParamFloat<px4::params::SP_SWEEP_AMP>) _param_sp_sweep_amp,
+		(ParamFloat<px4::params::SP_SWEEP_FR_MAX>) _param_sp_sweep_fr_max,
+		(ParamFloat<px4::params::SP_SWEEP_FR_MIN>) _param_sp_sweep_fr_min,
+		(ParamFloat<px4::params::SP_SWEEP_DUR>) _param_sp_sweep_dur,
 		(ParamFloat<px4::params::VEL_LP_FREQ>) _param_vel_lp_freq,
 		(ParamInt<px4::params::PILOT_MARKER>) _param_pilot_marker,
 		(ParamFloat<px4::params::MODE_SELECTOR>) _param_mode_selector,

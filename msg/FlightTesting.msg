@@ -2,9 +2,15 @@ uint64 timestamp    #time since system start (microseconds)
 float32 sp_doublet_amp
 float32 sp_doublet_freq
 float32 sp_doublet_dur
+float32 sp_sweep_amp
+float32 sp_sweep_freq_min
+float32 sp_sweep_freq_max
+float32 sp_sweep_dur
 float32 dr_doublet_amp
 float32 dr_doublet_freq
 float32 dr_doublet_dur
+float32 dr_diff_thrust_amp
+float32 dr_diff_thrust_period
 float32 ph_doublet_amp
 float32 ph_doublet_freq
 float32 ph_doublet_dur

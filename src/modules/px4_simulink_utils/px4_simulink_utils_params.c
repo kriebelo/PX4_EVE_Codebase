@@ -238,3 +238,76 @@ PARAM_DEFINE_INT32(PILOT_MARKER, 0);
  * @group Flight Testing
  */
 PARAM_DEFINE_FLOAT(VEL_LP_FREQ, 20);
+
+
+/**
+ * SP sine sweep duration
+ * 
+ * Duration of sine sweep for short period identification
+ * 
+ * @unit s
+ * @min 0
+ * @max 9999
+ * @group Flight Testing
+ */
+PARAM_DEFINE_FLOAT(SP_SWEEP_DUR, 30);
+
+/**
+ * SP sine sweep start frequency
+ * 
+ * Starting frequency for sine sweep for short period identification
+ * 
+ * @unit Hz
+ * @min 0
+ * @max 5
+ * @group Flight Testing
+ */
+PARAM_DEFINE_FLOAT(SP_SWEEP_FR_MIN, 0.5);
+
+/**
+ * SP sine sweep end frequency
+ * 
+ * End frequency for sine sweep for short period identification
+ * 
+ * @unit Hz
+ * @min 0
+ * @max 5
+ * @group Flight Testing
+ */
+PARAM_DEFINE_FLOAT(SP_SWEEP_FR_MAX, 1.5);
+
+/**
+ * SP sine sweep amplitude
+ * 
+ * Elevator amplitude in sine sweep for short period identification
+ * 
+ * @unit deg
+ * @min -20
+ * @max 20
+ * @group Flight Testing
+ */
+PARAM_DEFINE_FLOAT(SP_SWEEP_AMP, -3.75);
+
+/**
+ * Amplitude of differential thrust for DR
+ * 
+ * Amplitude of differential thrust for 3-2-1-1 maneuver for dutch roll identification
+ * 
+ * @unit %
+ * @min 0
+ * @max 100
+ * @group Flight Testing
+ */
+PARAM_DEFINE_FLOAT(DR_DIFF_THR_AMP, 20);
+
+/**
+ * Time segment of differential thrust for DR
+ * 
+ * Time segment of differential thrust for 3-2-1-1 maneuver for dutch roll identification
+ * 
+ * @unit s
+ * @min 0
+ * @max 100
+ * @group Flight Testing
+ */
+PARAM_DEFINE_FLOAT(DR_DIFF_THR_PER, 1);

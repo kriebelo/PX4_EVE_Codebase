@@ -7,9 +7,9 @@
 //
 // Code generated for Simulink model 'controller'.
 //
-// Model version                  : 1.88
+// Model version                  : 1.137
 // Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
-// C/C++ source code generated on : Tue Apr 28 23:51:53 2026
+// C/C++ source code generated on : Thu Jul 23 11:45:57 2026
 //
 // Target selection: ert.tlc
 // Embedded hardware selection: ARM Compatible->ARM Cortex
@@ -21,37 +21,37 @@
 // Block parameters (default storage)
 P_controller_T controller_P = {
   // Mask Parameter: PIDController_Kb
-  //  Referenced by: '<S66>/Kb'
+  //  Referenced by: '<S65>/Kb'
 
   1.0F,
 
-  // Mask Parameter: PIDController_Kb_p
-  //  Referenced by: '<S120>/Kb'
+  // Mask Parameter: PIDController_Kb_c
+  //  Referenced by: '<S119>/Kb'
 
   1.0F,
 
   // Mask Parameter: PIDController_LowerSaturationLi
-  //  Referenced by: '<S135>/Saturation'
+  //  Referenced by: '<S134>/Saturation'
 
   -0.17453292F,
 
   // Mask Parameter: PIDController_LowerSaturation_m
-  //  Referenced by: '<S81>/Saturation'
+  //  Referenced by: '<S80>/Saturation'
 
   -0.75F,
 
   // Mask Parameter: PIDController_UpperSaturationLi
-  //  Referenced by: '<S135>/Saturation'
+  //  Referenced by: '<S134>/Saturation'
 
   0.34906584F,
 
-  // Mask Parameter: PIDController_UpperSaturation_d
-  //  Referenced by: '<S81>/Saturation'
+  // Mask Parameter: PIDController_UpperSaturation_o
+  //  Referenced by: '<S80>/Saturation'
 
   0.75F,
 
   // Mask Parameter: CompareToConstant3_const
-  //  Referenced by: '<S17>/Constant'
+  //  Referenced by: '<S16>/Constant'
 
   1500U,
 
@@ -151,9 +151,15 @@ P_controller_T controller_P = {
     0.0F,                              // sp_doublet_amp
     0.0F,                              // sp_doublet_freq
     0.0F,                              // sp_doublet_dur
+    0.0F,                              // sp_sweep_amp
+    0.0F,                              // sp_sweep_freq_min
+    0.0F,                              // sp_sweep_freq_max
+    0.0F,                              // sp_sweep_dur
     0.0F,                              // dr_doublet_amp
     0.0F,                              // dr_doublet_freq
     0.0F,                              // dr_doublet_dur
+    0.0F,                              // dr_diff_thrust_amp
+    0.0F,                              // dr_diff_thrust_period
     0.0F,                              // ph_doublet_amp
     0.0F,                              // ph_doublet_freq
     0.0F,                              // ph_doublet_dur
@@ -167,29 +173,6 @@ P_controller_T controller_P = {
     {
       0U, 0U, 0U, 0U }
     // _padding0
-  },
-
-  // Computed Parameter: Out1_Y0_a
-  //  Referenced by: '<S155>/Out1'
-
-  {
-    (0ULL),                            // timestamp
-    (0ULL),                            // timestamp_last_signal
-    0,                                 // rssi
-    0.0F,                              // rssi_dbm
-    0U,                                // rc_lost_frame_count
-    0U,                                // rc_total_frame_count
-    0U,                                // rc_ppm_frame_length
-
-    {
-      0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U }
-    ,                                  // values
-    0U,                                // channel_count
-    false,                             // rc_failsafe
-    false,                             // rc_lost
-    0U,                                // input_source
-    0,                                 // link_quality
-    0U                                 // _padding0
   },
 
   // Computed Parameter: Out1_Y0_i
@@ -217,29 +200,6 @@ P_controller_T controller_P = {
 
   // Computed Parameter: Constant_Value_d
   //  Referenced by: '<S164>/Constant'
-
-  {
-    (0ULL),                            // timestamp
-    (0ULL),                            // timestamp_last_signal
-    0,                                 // rssi
-    0.0F,                              // rssi_dbm
-    0U,                                // rc_lost_frame_count
-    0U,                                // rc_total_frame_count
-    0U,                                // rc_ppm_frame_length
-
-    {
-      0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U }
-    ,                                  // values
-    0U,                                // channel_count
-    false,                             // rc_failsafe
-    false,                             // rc_lost
-    0U,                                // input_source
-    0,                                 // link_quality
-    0U                                 // _padding0
-  },
-
-  // Computed Parameter: Constant_Value_c
-  //  Referenced by: '<S154>/Constant'
 
   {
     (0ULL),                            // timestamp
@@ -377,8 +337,8 @@ P_controller_T controller_P = {
     // _padding0
   },
 
-  // Computed Parameter: Constant_Value_d3
-  //  Referenced by: '<S37>/Constant'
+  // Computed Parameter: Constant_Value_p
+  //  Referenced by: '<S36>/Constant'
 
   {
     (0ULL),                            // timestamp
@@ -393,7 +353,7 @@ P_controller_T controller_P = {
   },
 
   // Computed Parameter: Out1_Y0_io
-  //  Referenced by: '<S153>/Out1'
+  //  Referenced by: '<S155>/Out1'
 
   {
     (0ULL),                            // timestamp
@@ -405,7 +365,7 @@ P_controller_T controller_P = {
   },
 
   // Computed Parameter: Constant_Value_a
-  //  Referenced by: '<S152>/Constant'
+  //  Referenced by: '<S154>/Constant'
 
   {
     (0ULL),                            // timestamp
@@ -416,8 +376,8 @@ P_controller_T controller_P = {
     0.0F                               // confidence
   },
 
-  // Computed Parameter: Constant_Value_o
-  //  Referenced by: '<S146>/Constant'
+  // Computed Parameter: Constant_Value_b
+  //  Referenced by: '<S145>/Constant'
 
   {
     (0ULL),                            // timestamp
@@ -425,243 +385,308 @@ P_controller_T controller_P = {
     0.0F                               // v_filtered
   },
 
+  // Expression: short_period_sweep_dur
+  //  Referenced by: '<S153>/Constant'
+
+  30.0,
+
+  // Expression: 0.5
+  //  Referenced by: '<S153>/Constant1'
+
+  0.5,
+
+  // Expression: 1
+  //  Referenced by: '<S149>/Gain1'
+
+  1.0,
+
+  // Expression: -1
+  //  Referenced by: '<S149>/Gain'
+
+  -1.0,
+
+  // Expression: 0
+  //  Referenced by: '<S149>/Constant3'
+
+  0.0,
+
+  // Expression: -1
+  //  Referenced by: '<S149>/Constant1'
+
+  -1.0,
+
+  // Expression: 1
+  //  Referenced by: '<S149>/Constant'
+
+  1.0,
+
   // Expression: 1/100
-  //  Referenced by: '<S12>/Gain1'
+  //  Referenced by: '<S11>/Gain2'
+
+  0.01,
+
+  // Expression: 1/100
+  //  Referenced by: '<S11>/Gain1'
+
+  0.01,
+
+  // Expression: double(1/100)
+  //  Referenced by: '<S11>/Gain4'
 
   0.01,
 
   // Expression: double(1/12.5)
-  //  Referenced by: '<S12>/Gain'
+  //  Referenced by: '<S11>/Gain'
 
   0.08,
 
-  // Expression: 1/100
-  //  Referenced by: '<S12>/Gain2'
+  // Expression: double(1/12.5)
+  //  Referenced by: '<S11>/Gain3'
 
-  0.01,
+  0.08,
 
   // Computed Parameter: StoreStartTime_InitialCondition
-  //  Referenced by: '<S30>/Store Start Time'
+  //  Referenced by: '<S29>/Store Start Time'
 
   (0ULL),
 
   // Computed Parameter: SpoilerRudderDeflectionValue_Va
-  //  Referenced by: '<S23>/Spoiler Rudder Deflection Value'
+  //  Referenced by: '<S22>/Spoiler Rudder Deflection Value'
 
   0.5F,
 
   // Computed Parameter: Gain1_Gain_o
-  //  Referenced by: '<S19>/Gain1'
+  //  Referenced by: '<S153>/Gain1'
+
+  6.28318548F,
+
+  // Expression: short_period_sweep_dur
+  //  Referenced by: '<S152>/Set end time of doublet'
+
+  30.0F,
+
+  // Computed Parameter: Gain3_Gain_n
+  //  Referenced by: '<S149>/Gain3'
+
+  0.333333343F,
+
+  // Computed Parameter: Gain4_Gain_m
+  //  Referenced by: '<S149>/Gain4'
+
+  0.2F,
+
+  // Computed Parameter: Gain5_Gain
+  //  Referenced by: '<S149>/Gain5'
+
+  0.166666672F,
+
+  // Computed Parameter: Gain6_Gain
+  //  Referenced by: '<S149>/Gain6'
+
+  0.142857149F,
+
+  // Computed Parameter: Gain7_Gain
+  //  Referenced by: '<S149>/Gain7'
+
+  0.05F,
+
+  // Computed Parameter: Merge2_InitialOutput
+  //  Referenced by: '<S28>/Merge2'
+
+  0.0F,
+
+  // Computed Parameter: Gain1_Gain_g
+  //  Referenced by: '<S18>/Gain1'
 
   0.0174532924F,
 
   // Computed Parameter: Switch_Threshold
-  //  Referenced by: '<S24>/Switch'
+  //  Referenced by: '<S23>/Switch'
 
   0.5F,
 
-  // Computed Parameter: Constant_Value_b
-  //  Referenced by: '<S24>/Constant'
+  // Computed Parameter: Constant_Value_k2
+  //  Referenced by: '<S23>/Constant'
 
   0.0F,
 
   // Computed Parameter: Switch2_Threshold
-  //  Referenced by: '<S24>/Switch2'
+  //  Referenced by: '<S23>/Switch2'
 
   0.5F,
 
   // Computed Parameter: Switch3_Threshold
-  //  Referenced by: '<S24>/Switch3'
+  //  Referenced by: '<S23>/Switch3'
 
-  0.5F,
+  4.5F,
 
-  // Computed Parameter: Constant1_Value
-  //  Referenced by: '<S36>/Constant1'
+  // Computed Parameter: Constant1_Value_ii
+  //  Referenced by: '<S35>/Constant1'
 
   0.0F,
 
-  // Computed Parameter: Gain_Gain_b
-  //  Referenced by: '<S36>/Gain'
+  // Computed Parameter: Gain_Gain_m
+  //  Referenced by: '<S35>/Gain'
 
   0.004F,
 
   // Computed Parameter: Constant2_Value
-  //  Referenced by: '<S36>/Constant2'
+  //  Referenced by: '<S35>/Constant2'
 
   1.0F,
 
   // Computed Parameter: Bias_Bias
-  //  Referenced by: '<S36>/Bias'
+  //  Referenced by: '<S35>/Bias'
 
   -1.0F,
 
   // Computed Parameter: DiscreteFilter1_InitialStates
-  //  Referenced by: '<S36>/Discrete Filter1'
+  //  Referenced by: '<S35>/Discrete Filter1'
 
   0.0F,
 
   // Computed Parameter: Integrator_gainval
-  //  Referenced by: '<S128>/Integrator'
+  //  Referenced by: '<S127>/Integrator'
 
   0.004F,
 
-  // Computed Parameter: Switch_Threshold_k
-  //  Referenced by: '<S31>/Switch'
+  // Computed Parameter: Switch_Threshold_e
+  //  Referenced by: '<S30>/Switch'
 
-  0.5F,
+  5.5F,
 
-  // Computed Parameter: Integrator_gainval_b
-  //  Referenced by: '<S74>/Integrator'
+  // Computed Parameter: Integrator_gainval_i
+  //  Referenced by: '<S73>/Integrator'
 
   0.004F,
 
-  // Computed Parameter: Gain_Gain_p
-  //  Referenced by: '<S31>/Gain'
+  // Computed Parameter: Gain_Gain_mm
+  //  Referenced by: '<S30>/Gain'
 
   12.5F,
 
-  // Computed Parameter: Gain_Gain_o
+  // Computed Parameter: Gain_Gain_i
+  //  Referenced by: '<S32>/Gain'
+
+  57.2957802F,
+
+  // Computed Parameter: Gain_Gain_ax
   //  Referenced by: '<S33>/Gain'
 
   57.2957802F,
 
-  // Computed Parameter: Gain_Gain_m
-  //  Referenced by: '<S34>/Gain'
-
-  57.2957802F,
-
   // Computed Parameter: Switch1_Threshold
-  //  Referenced by: '<S24>/Switch1'
+  //  Referenced by: '<S23>/Switch1'
 
-  0.5F,
-
-  // Computed Parameter: Constant7_Value
-  //  Referenced by: '<S14>/Constant7'
-
-  1.0F,
-
-  // Computed Parameter: Constant6_Value
-  //  Referenced by: '<S14>/Constant6'
-
-  0.0F,
+  4.5F,
 
   // Computed Parameter: Saturation1_UpperSat
-  //  Referenced by: '<S14>/Saturation1'
+  //  Referenced by: '<S13>/Saturation1'
 
   2.0F,
 
   // Computed Parameter: Saturation1_LowerSat
-  //  Referenced by: '<S14>/Saturation1'
+  //  Referenced by: '<S13>/Saturation1'
 
   0.0F,
 
-  // Computed Parameter: Switch4_Threshold
-  //  Referenced by: '<S14>/Switch4'
-
-  2.5F,
-
-  // Computed Parameter: Saturation_UpperSat
-  //  Referenced by: '<S14>/Saturation'
-
-  1.0F,
-
-  // Computed Parameter: Saturation_LowerSat
-  //  Referenced by: '<S14>/Saturation'
+  // Computed Parameter: Savedpitchinput_InitialConditio
+  //  Referenced by: '<S25>/Saved pitch input'
 
   0.0F,
 
   // Computed Parameter: Saturation8_UpperSat
-  //  Referenced by: '<S13>/Saturation8'
+  //  Referenced by: '<S12>/Saturation8'
 
   1.0F,
 
   // Computed Parameter: Saturation8_LowerSat
-  //  Referenced by: '<S13>/Saturation8'
+  //  Referenced by: '<S12>/Saturation8'
 
   -1.0F,
 
-  // Computed Parameter: Savedpitchinput_InitialConditio
-  //  Referenced by: '<S26>/Saved pitch input'
+  // Computed Parameter: Checkforactivation_Threshold
+  //  Referenced by: '<S25>/Check for activation'
+
+  0.5F,
+
+  // Computed Parameter: Constant6_Value
+  //  Referenced by: '<S13>/Constant6'
 
   0.0F,
 
-  // Computed Parameter: Checkforactivation_Threshold
+  // Computed Parameter: Saturation10_UpperSat
+  //  Referenced by: '<S12>/Saturation10'
+
+  1.0F,
+
+  // Computed Parameter: Saturation10_LowerSat
+  //  Referenced by: '<S12>/Saturation10'
+
+  0.0F,
+
+  // Computed Parameter: SavedThrustinput_InitialConditi
+  //  Referenced by: '<S26>/Saved Thrust input'
+
+  0.0F,
+
+  // Computed Parameter: Checkforactivation_Threshold_a
   //  Referenced by: '<S26>/Check for activation'
 
   0.5F,
 
   // Computed Parameter: Saturation7_UpperSat
-  //  Referenced by: '<S13>/Saturation7'
+  //  Referenced by: '<S12>/Saturation7'
 
   1.0F,
 
   // Computed Parameter: Saturation7_LowerSat
-  //  Referenced by: '<S13>/Saturation7'
+  //  Referenced by: '<S12>/Saturation7'
 
   -1.0F,
 
   // Computed Parameter: Savedyawinput_InitialCondition
-  //  Referenced by: '<S28>/Saved yaw input'
+  //  Referenced by: '<S27>/Saved yaw input'
 
   0.0F,
 
-  // Computed Parameter: Checkforactivation_Threshold_d
-  //  Referenced by: '<S28>/Check for activation'
-
-  0.5F,
-
-  // Computed Parameter: Saturation10_UpperSat
-  //  Referenced by: '<S13>/Saturation10'
-
-  1.0F,
-
-  // Computed Parameter: Saturation10_LowerSat
-  //  Referenced by: '<S13>/Saturation10'
-
-  0.0F,
-
-  // Computed Parameter: SavedThrustinput_InitialConditi
-  //  Referenced by: '<S27>/Saved Thrust input'
-
-  0.0F,
-
-  // Computed Parameter: Checkforactivation_Threshold_m
+  // Computed Parameter: Checkforactivation_Threshold_g
   //  Referenced by: '<S27>/Check for activation'
 
   0.5F,
 
   // Computed Parameter: Givestoredtimeinsteadofcurrentt
-  //  Referenced by: '<S30>/Give stored time instead  of current time after activation'
+  //  Referenced by: '<S29>/Give stored time instead  of current time after activation'
 
   0.5F,
 
   // Computed Parameter: Converttimefromustos_Gain
-  //  Referenced by: '<S30>/Convert time from us to s'
+  //  Referenced by: '<S29>/Convert time from us to s'
 
   1.0E-6F,
 
   // Computed Parameter: Pitchcontrolportion_Gain
-  //  Referenced by: '<S22>/Pitch control portion'
+  //  Referenced by: '<S21>/Pitch control portion'
 
   0.5F,
 
   // Computed Parameter: Saturation9_UpperSat
-  //  Referenced by: '<S13>/Saturation9'
+  //  Referenced by: '<S12>/Saturation9'
 
   1.0F,
 
   // Computed Parameter: Saturation9_LowerSat
-  //  Referenced by: '<S13>/Saturation9'
+  //  Referenced by: '<S12>/Saturation9'
 
   -1.0F,
 
   // Computed Parameter: Gain_Gain_h
-  //  Referenced by: '<S13>/Gain'
+  //  Referenced by: '<S12>/Gain'
 
   -1.0F,
 
   // Computed Parameter: Rollcontrolportion_Gain
-  //  Referenced by: '<S22>/Roll control portion'
+  //  Referenced by: '<S21>/Roll control portion'
 
   0.5F,
 
@@ -671,37 +696,37 @@ P_controller_T controller_P = {
   1.0F,
 
   // Computed Parameter: NoRudderDeflectionValue_Value
-  //  Referenced by: '<S23>/No Rudder Deflection Value'
+  //  Referenced by: '<S22>/No Rudder Deflection Value'
 
   0.0F,
 
   // Computed Parameter: DeflectionLogicRudderRight_Thre
-  //  Referenced by: '<S23>/Deflection Logic Rudder Right'
+  //  Referenced by: '<S22>/Deflection Logic Rudder Right'
 
   0.0F,
 
   // Computed Parameter: Saturation7_UpperSat_m
-  //  Referenced by: '<S14>/Saturation7'
+  //  Referenced by: '<S13>/Saturation7'
 
   2.0F,
 
   // Computed Parameter: Saturation7_LowerSat_b
-  //  Referenced by: '<S14>/Saturation7'
+  //  Referenced by: '<S13>/Saturation7'
 
   0.0F,
 
-  // Computed Parameter: Switch_Threshold_j
-  //  Referenced by: '<S23>/Switch'
+  // Computed Parameter: Switch_Threshold_n
+  //  Referenced by: '<S22>/Switch'
 
   0.5F,
 
   // Computed Parameter: ReverseforRudderLeft_Gain
-  //  Referenced by: '<S23>/Reverse for Rudder Left'
+  //  Referenced by: '<S22>/Reverse for Rudder Left'
 
   -1.0F,
 
   // Computed Parameter: DeflectionLogicRudderLeft_Thres
-  //  Referenced by: '<S23>/Deflection Logic Rudder Left'
+  //  Referenced by: '<S22>/Deflection Logic Rudder Left'
 
   0.0F,
 
@@ -716,52 +741,52 @@ P_controller_T controller_P = {
   -1.0F,
 
   // Computed Parameter: OutputLimitation2_UpperSat
-  //  Referenced by: '<S15>/Output Limitation2'
+  //  Referenced by: '<S14>/Output Limitation2'
 
   1.0F,
 
   // Computed Parameter: OutputLimitation2_LowerSat
-  //  Referenced by: '<S15>/Output Limitation2'
+  //  Referenced by: '<S14>/Output Limitation2'
 
   -1.0F,
 
   // Computed Parameter: OutputLimitation3_UpperSat
-  //  Referenced by: '<S15>/Output Limitation3'
+  //  Referenced by: '<S14>/Output Limitation3'
 
   1.0F,
 
   // Computed Parameter: OutputLimitation3_LowerSat
-  //  Referenced by: '<S15>/Output Limitation3'
+  //  Referenced by: '<S14>/Output Limitation3'
 
   -1.0F,
 
   // Computed Parameter: OutputLimitation1_UpperSat
-  //  Referenced by: '<S15>/Output Limitation1'
+  //  Referenced by: '<S14>/Output Limitation1'
 
   1.0F,
 
   // Computed Parameter: OutputLimitation1_LowerSat
-  //  Referenced by: '<S15>/Output Limitation1'
+  //  Referenced by: '<S14>/Output Limitation1'
 
   -1.0F,
 
   // Computed Parameter: OutputLimitation_UpperSat_m
-  //  Referenced by: '<S15>/Output Limitation'
+  //  Referenced by: '<S14>/Output Limitation'
 
   1.0F,
 
   // Computed Parameter: OutputLimitation_LowerSat_l
-  //  Referenced by: '<S15>/Output Limitation'
+  //  Referenced by: '<S14>/Output Limitation'
 
   -1.0F,
 
   // Computed Parameter: Gain1_Gain_a
-  //  Referenced by: '<S15>/Gain1'
+  //  Referenced by: '<S14>/Gain1'
 
   0.5F,
 
   // Computed Parameter: Gain_Gain_l
-  //  Referenced by: '<S15>/Gain'
+  //  Referenced by: '<S14>/Gain'
 
   0.5F
 };
@@ -769,12 +794,17 @@ P_controller_T controller_P = {
 // instance parameters
 InstP_controller_T controller_InstP = {
   // Variable: dutch_roll_amp
-  //  Referenced by: '<S149>/Doublet Generator'
+  //  Referenced by: '<S148>/Doublet Generator'
 
   0.1,
 
+  // Variable: dutch_roll_diff_thrust_amp
+  //  Referenced by: '<S149>/Gain2'
+
+  0.2,
+
   // Variable: dutch_roll_freq
-  //  Referenced by: '<S149>/Doublet Generator'
+  //  Referenced by: '<S148>/Doublet Generator'
 
   0.44,
 
@@ -798,13 +828,33 @@ InstP_controller_T controller_InstP = {
 
   1.1,
 
+  // Variable: short_period_sweep_freq_max
+  //  Referenced by: '<S153>/Constant2'
+
+  1.5,
+
+  // Variable: short_period_sweep_freq_min
+  //  Referenced by: '<S153>/Constant3'
+
+  0.5,
+
+  // Variable: dutch_roll_diff_thrust_period
+  //  Referenced by:
+  //    '<S149>/Switch'
+  //    '<S149>/Switch1'
+  //    '<S149>/Switch2'
+  //    '<S149>/Switch3'
+  //    '<S149>/Switch5'
+
+  1.0F,
+
   // Variable: dutch_roll_dur
-  //  Referenced by: '<S149>/Set time to re-allow  pilot inputs'
+  //  Referenced by: '<S148>/Set time to re-allow  pilot inputs'
 
   7.5F,
 
   // Variable: dutch_roll_period
-  //  Referenced by: '<S149>/Switch1'
+  //  Referenced by: '<S148>/Switch1'
 
   2.2727F,
 
@@ -819,12 +869,12 @@ InstP_controller_T controller_InstP = {
   6.0F,
 
   // Variable: pitch_con_gain_i
-  //  Referenced by: '<S71>/Integral Gain'
+  //  Referenced by: '<S70>/Integral Gain'
 
   -2.2918F,
 
   // Variable: pitch_con_gain_p
-  //  Referenced by: '<S79>/Proportional Gain'
+  //  Referenced by: '<S78>/Proportional Gain'
 
   -1.3751F,
 
@@ -838,18 +888,23 @@ InstP_controller_T controller_InstP = {
 
   0.9091F,
 
+  // Variable: short_period_sweep_amp
+  //  Referenced by: '<S152>/Gain'
+
+  -0.3F,
+
   // Variable: vel_con_gain_i
-  //  Referenced by: '<S125>/Integral Gain'
+  //  Referenced by: '<S124>/Integral Gain'
 
   -0.015F,
 
   // Variable: vel_con_gain_p
-  //  Referenced by: '<S133>/Proportional Gain'
+  //  Referenced by: '<S132>/Proportional Gain'
 
   -0.06F,
 
   // Variable: vel_lp_freq
-  //  Referenced by: '<S36>/Constant'
+  //  Referenced by: '<S35>/Constant'
 
   20.0F
 };

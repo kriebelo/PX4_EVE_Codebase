@@ -7,9 +7,9 @@
 //
 // Code generated for Simulink model 'controller'.
 //
-// Model version                  : 1.88
+// Model version                  : 1.137
 // Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
-// C/C++ source code generated on : Tue Apr 28 23:51:53 2026
+// C/C++ source code generated on : Thu Jul 23 11:45:57 2026
 //
 // Target selection: ert.tlc
 // Embedded hardware selection: ARM Compatible->ARM Cortex
@@ -25,9 +25,9 @@
 #include <uORB/topics/glide_controller.h>
 #include <uORB/topics/velocity_filter.h>
 #include <uORB/topics/airspeed.h>
-#include <uORB/topics/input_rc.h>
 #include <uORB/topics/system_identification.h>
 #include <uORB/topics/sensor_gyro.h>
+#include <uORB/topics/input_rc.h>
 #include <uORB/topics/vehicle_odometry.h>
 #ifndef struct_d_px4_internal_block_SampleTi_T
 #define struct_d_px4_internal_block_SampleTi_T
@@ -78,16 +78,6 @@ struct px4_internal_block_ParameterU_T
 };
 
 #endif                                // struct_px4_internal_block_ParameterU_T
-
-#ifndef struct_fixed_system_ModByConstant_co_T
-#define struct_fixed_system_ModByConstant_co_T
-
-struct fixed_system_ModByConstant_co_T
-{
-  int32_T isInitialized;
-};
-
-#endif                                // struct_fixed_system_ModByConstant_co_T
 
 #ifndef struct_px4_internal_block_PX4Actuato_T
 #define struct_px4_internal_block_PX4Actuato_T
